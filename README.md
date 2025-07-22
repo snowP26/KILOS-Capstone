@@ -1,7 +1,3 @@
-markdown
-
-Run
-Copy code
 # 🌟 KILOS - Kabataan's Integrated Leadership and Organization System 🌟
 
 Welcome to the **KILOS** repository! This project is a management application designed specifically for youth officials, aiming to streamline and enhance the leadership and organizational capabilities of the youth sector.
