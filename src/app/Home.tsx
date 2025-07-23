@@ -1,4 +1,3 @@
-import Image from "next/image";
 import "@/api/route"
 
 export default function Home() {
