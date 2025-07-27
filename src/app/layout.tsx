@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children,
+  children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
@@ -27,7 +27,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <header className="bg-slate-900 text-white p-4 text-center">
+          <h1>This creates an header for all of the children</h1>
+        </header>
         {children}
+        <footer className="bg-slate-900 text-white p-4 text-center">
+          snowP26
+        </footer>
       </body>
     </html>
   );
