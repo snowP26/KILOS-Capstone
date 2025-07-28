@@ -1,3 +1,15 @@
+import { ComNav } from "../../components/navigation_comm";
+import Link from "next/link";
+
+
 export default function Login() {
-    return <h1>Login Screen</h1>
+    return (
+        <div>
+            <ComNav />
+            <h1>Login Screen</h1>
+            <nav>
+                <Link href='/register'>Register</Link>
+            </nav>
+        </div>
+    )
 }
