@@ -25,15 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white`}
       >
-        <header className="bg-slate-900 text-white p-4 text-center">
-          <h1>This creates an header for all of the children</h1>
-        </header>
         {children}
-        <footer className="bg-slate-900 text-white p-4 text-center">
-          snowP26
-        </footer>
       </body>
     </html>
   );
