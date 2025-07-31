@@ -1,4 +1,4 @@
-import { ComNav } from "../components/navigation_comm"
+import { ComNav } from "../components/community/nav"
 
 export default function Feedback(){
     return (

@@ -1,4 +1,4 @@
-import { ComNav } from "../../components/navigation_comm";
+import { ComNav } from "@/src/app/components/community/nav";
 import Link from "next/link";
 
 
