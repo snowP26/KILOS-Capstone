@@ -1,5 +1,4 @@
-import { ComNav } from "./components/navigation_comm";
-import { UserNav } from "./components/nav_user";
+import { ComNav } from "./components/community/nav";
 
 export default function Home() {
   return (
