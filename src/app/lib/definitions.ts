@@ -13,6 +13,10 @@ export type users = {
     position_id: number;
 }
 
+export type admin = {
+    
+}
+
 // define Announcement based on ERD
 export type announcement = {
     id: number;
