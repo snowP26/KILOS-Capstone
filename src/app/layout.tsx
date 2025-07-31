@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${lato.variable} antialiased bg-black text-white`}
+        className={`${lato.variable} antialiased`}
       >
         {children}
       </body>
