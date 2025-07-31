@@ -1,7 +1,7 @@
 'use client';
 
 import client from "@/src/api/client";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, FormEvent } from "react";
 import { u } from "@/src/app/lib/definitions";
 
 export default function MockUsers() {
@@ -53,7 +53,7 @@ export default function MockUsers() {
         updateUsers();
     }
 
-    const handleSubmit = async (e: HTMLFormElement) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const { error } = await client.from("user-test").insert(newUser);
@@ -73,7 +73,7 @@ export default function MockUsers() {
 
     return (
         <div className="py-10 px-4 max-w-6xl mx-auto">
-            <form className="mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4" ref={ref}>
+            <form className="mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4" ref={ref} onSubmit={handleSubmit}>
                 <input
                     type="text"
                     name="name"
@@ -90,7 +90,6 @@ export default function MockUsers() {
                 />
                 <button
                     type="submit"
-                    onClick={handleSubmit}
                     className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 cursor-pointer"
                 >
                     Add User
