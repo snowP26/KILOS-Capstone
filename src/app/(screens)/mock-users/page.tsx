@@ -53,7 +53,7 @@ export default function MockUsers() {
         updateUsers();
     }
 
-    const handleSubmit = async (e: any) => {
+    const handleSubmit = async (e: HTMLFormElement) => {
         e.preventDefault();
 
         const { error } = await client.from("user-test").insert(newUser);
