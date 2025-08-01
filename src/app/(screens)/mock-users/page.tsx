@@ -3,13 +3,32 @@
 import client from "@/src/api/client";
 import { useRef, useEffect, useState, FormEvent } from "react";
 import { u } from "@/src/app/lib/definitions";
+import { useRouter } from "next/navigation";
 
 export default function MockUsers() {
-
     const [newUser, setNewUser] = useState({ name: "" });
     const [newName, setNewName] = useState("");
+    const [session, setSession] = useState<any>(null);
     const [users, setUsers] = useState<u[]>([]);
     const ref = useRef<HTMLFormElement>(null);
+    const router = useRouter();
+
+    const fetchSession =async () => {
+        const currentSession = await client.auth.getSession();
+        console.log(currentSession.data)
+        setSession(currentSession.data);
+    }
+
+    const logOut = async() => {
+        await client.auth.signOut();
+        setSession(null);
+        console.info("Successfully logged out!")
+        return router.push("/login");
+    }
+
+    useEffect(() => {
+        fetchSession();
+    }, [])
 
     const getUsers = async () => {
         const { data, error } = await client
@@ -72,7 +91,8 @@ export default function MockUsers() {
         updateUsers();
     });
 
-    return (
+    if(!session == null){
+        return (
         <div className="py-10 px-4 max-w-6xl mx-auto">
             <form className="mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4" ref={ref} onSubmit={handleSubmit}>
                 <input
@@ -122,7 +142,16 @@ export default function MockUsers() {
                         </div>
                     ))}
                 </div>
+
             </form>
+            <button
+    onClick={logOut}
+    className="mb-4 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200"
+>
+    Log Out
+</button>
         </div>
-    );
+        );
+    }
+    
 }
