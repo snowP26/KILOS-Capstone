@@ -10,7 +10,7 @@ const locations = [
 ]
 
 export default function LocationSelect() {
-    const [selected, setSelected] = useState(locations[0])
+    const [selected, setSelected] = useState<null | typeof locations[0]>(null)
 
     return (
         <div className="min-w-[130px]">
@@ -18,10 +18,12 @@ export default function LocationSelect() {
                 {({ open }) => (
                     <div className="relative">
                         <Listbox.Button className="min-h-[48px] relative w-full cursor-default rounded-lg bg-[#D9D9D9] py-2 px-3 pr-8 text-center shadow-md focus:outline-none focus:ring-2 focus:ring-[#0073FF]">
-                            {selected.name}
+                            <span className={`${selected ? 'text-black' : 'text-gray-500'}`}>
+                                {selected ? selected.name : 'Location'}
+                            </span>
                             <span
-                                className={`absolute inset-y-0 right-3 flex items-center pointer-events-none text-[10px] transform transition-transform duration-400 ease-in-out 
-                                    ${open ? 'rotate-180' : 'rotate-0'}`}
+                                className={`absolute inset-y-0 right-3 flex items-center pointer-events-none text-[10px] transform transition-transform duration-300 ease-in-out 
+                    ${open ? 'rotate-180' : 'rotate-0'}`}
                             >
                                 ▼
                             </span>
@@ -31,11 +33,10 @@ export default function LocationSelect() {
                                 <Listbox.Option
                                     key={index}
                                     value={location}
-                                    className={({ active }: { active: boolean }) =>
-                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                            active
-                                                ? 'bg-blue-100 text-blue-900'
-                                                : 'text-gray-900'
+                                    className={({ active }) =>
+                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${active
+                                            ? 'bg-blue-100 text-blue-900'
+                                            : 'text-gray-900'
                                         }`
                                     }
                                 >
