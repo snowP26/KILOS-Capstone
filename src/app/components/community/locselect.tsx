@@ -4,7 +4,7 @@ import { Listbox } from '@headlessui/react'
 import { useState } from 'react'
 
 const locations = [
-    { name: 'City of Naga', value: 'Naga' },
+    { name: 'Naga City', value: 'Naga' },
     { name: 'Pili', value: 'Pili' },
     { name: 'Bula', value: 'Bula' }
 ]
