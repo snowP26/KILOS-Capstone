@@ -4,12 +4,13 @@ import client from "@/src/api/client";
 import { useRef, useEffect, useState, FormEvent } from "react";
 import { u } from "@/src/app/lib/definitions";
 import { useRouter } from "next/navigation";
+import { Session } from "@supabase/supabase-js";
 
 export default function MockUsers() {
     const [newUser, setNewUser] = useState({ name: "", author_id: "" });
     const [newName, setNewName] = useState("");
     const [userID, setUserId] = useState<string>("");
-    const [session, setSession] = useState<any>(null);
+    const [session, setSession] = useState<Session | null>(null);
     const [users, setUsers] = useState<u[]>([]);
     const ref = useRef<HTMLFormElement>(null);
     const router = useRouter();
@@ -17,6 +18,7 @@ export default function MockUsers() {
 
     const fetchSession = async () => {
         const currentSession = await client.auth.getSession();
+        console.log(currentSession.data.session);
         setSession(currentSession.data.session);
         return setUserId(currentSession.data.session?.user.id ?? "");
     }

@@ -3,7 +3,7 @@ import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 import { useRouter } from "next/navigation"
-import { FormEvent, useState } from "react"
+import { ChangeEvent, FormEvent, useState } from "react"
 import client from "@/src/api/client"
 
 export function LoginForm({
@@ -15,10 +15,10 @@ export function LoginForm({
   const [password, setPassword] = useState<string>("");
 
   function updatePassword() {
-    return (e: any) => { setPassword(e.target.value) }
+    return (e: ChangeEvent<HTMLInputElement>) => { setPassword(e.target.value) }
   } 
   function updateEmail() {
-    return ((e: any) => { 
+    return ((e: ChangeEvent<HTMLInputElement>) => { 
       const email = e.target.value;
       const emailRegex = /^\S+@\S+\.\S+$/;
 
