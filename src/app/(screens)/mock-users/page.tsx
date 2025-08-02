@@ -6,20 +6,22 @@ import { u } from "@/src/app/lib/definitions";
 import { useRouter } from "next/navigation";
 
 export default function MockUsers() {
-    const [newUser, setNewUser] = useState({ name: "" });
+    const [newUser, setNewUser] = useState({ name: "", author_id: "" });
     const [newName, setNewName] = useState("");
+    const [userID, setUserId] = useState<string>("");
     const [session, setSession] = useState<any>(null);
     const [users, setUsers] = useState<u[]>([]);
     const ref = useRef<HTMLFormElement>(null);
     const router = useRouter();
+    
 
-    const fetchSession =async () => {
+    const fetchSession = async () => {
         const currentSession = await client.auth.getSession();
-        console.log(currentSession.data)
-        setSession(currentSession.data);
+        setSession(currentSession.data.session);
+        return setUserId(currentSession.data.session?.user.id ?? "");
     }
 
-    const logOut = async() => {
+    const logOut = async () => {
         await client.auth.signOut();
         setSession(null);
         console.info("Successfully logged out!")
@@ -45,17 +47,16 @@ export default function MockUsers() {
 
     const updateUsers = async () => {
         const updatedUsers = await getUsers();
-        if (updatedUsers) setUsers(updatedUsers);
+        if (updatedUsers) return setUsers(updatedUsers);
     }
 
     const putUsers = async (id: number) => {
-        const { error } = await client.from("user-test").update({"name": newName}).eq("id", id);
-        if (error){
+        const { error } = await client.from("user-test").update({ "name": newName }).eq("id", id);
+        if (error) {
             return console.error("Error updating the user: ", error);
         }
-        console.log("Updated user: ", id);
         setNewName("");
-                if (ref.current) {
+        if (ref.current) {
             ref.current.reset();
         }
         updateUsers();
@@ -69,7 +70,6 @@ export default function MockUsers() {
             return console.error("Error deleting user: ", error);
         }
 
-        console.log("Successfully deleted the user.");
         updateUsers();
     }
 
@@ -83,75 +83,77 @@ export default function MockUsers() {
         }
 
         console.info("Successfully added the user!")
-        setNewUser({ name: "" });
+        setNewUser({ name: "", author_id: "" });
         updateUsers();
     }
-    
+
     useEffect(() => {
         updateUsers();
-    });
+    }, [setUsers]);
 
-    if(!session == null){
+    if (session !== null) {
         return (
-        <div className="py-10 px-4 max-w-6xl mx-auto">
-            <form className="mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4" ref={ref} onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    name="name"
-                    required
-                    onChange={(e) => {
-                        const input = e.target.value.trim();
-                        if(!input) return console.log("Name should not be empty.");
-                        setNewUser({ name: e.target.value })
-                    }}
-                    
-                    placeholder="Enter user name"
-                    className="border border-gray-300 rounded-lg px-4 py-2 w-full sm:w-auto"
-                    
-                />
-                <button
-                    type="submit"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 cursor-pointer"
-                >
-                    Add User
-                </button>
+            <div className="py-10 px-4 max-w-6xl mx-auto">
+                <form className="mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4" ref={ref} onSubmit={handleSubmit}>
+                    <input
+                        type="text"
+                        name="name"
+                        required
+                        onChange={(e) => {
+                            const input = e.target.value.trim();
+                            if (!input) return console.log("Name should not be empty.");
+                            setNewUser({ name: e.target.value, author_id: userID })
+                        }}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {users.map((user: u) => (
-                        <div key={user.id} className="p-4 bg-gray-900 shadow-md rounded-xl text-white flex flex-col justify-between h-full">
-                            <span className="text-lg font-semibold mb-4 break-words">{user.name}</span>
-                            <div className="flex justify-end gap-2 mt-auto">
-                                
-                                <button
-                                    type="button"
-                                    className="bg-blue-500 text-white rounded-lg px-3 py-1 text-sm hover:bg-blue-600 transition duration-200 cursor-pointer"
-                                    onClick={() => putUsers(user.id)}
-                                    
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    type="button"
-                                    className="bg-red-500 text-white rounded-lg px-3 py-1 text-sm hover:bg-red-600 transition duration-200 cursor-pointer"
-                                    onClick={() => deleteUsers(user.id)}
-                                >
-                                    Delete
-                                </button>
+                        placeholder="Enter user name"
+                        className="border border-gray-300 rounded-lg px-4 py-2 w-full sm:w-auto"
+
+                    />
+                    <button
+                        type="submit"
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 cursor-pointer"
+                    >
+                        Add User
+                    </button>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {users.map((user: u) => (
+                            <div key={user.id} className="p-4 bg-gray-900 shadow-md rounded-xl text-white flex flex-col justify-between h-full">
+                                <span className="text-lg font-semibold mb-4 break-words">{user.name}</span>
+                                <div className="flex justify-end gap-2 mt-auto">
+
+                                    <button
+                                        type="button"
+                                        className="bg-blue-500 text-white rounded-lg px-3 py-1 text-sm hover:bg-blue-600 transition duration-200 cursor-pointer"
+                                        onClick={() => putUsers(user.id)}
+
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="bg-red-500 text-white rounded-lg px-3 py-1 text-sm hover:bg-red-600 transition duration-200 cursor-pointer"
+                                        onClick={() => deleteUsers(user.id)}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                                <input type="text" name="newName" onChange={(e) => setNewName(e.target.value)} className="bg-white w-full mt-5 rounded-md text-black p-1" />
                             </div>
-                            <input type="text" name="newName" onChange={(e) => setNewName(e.target.value)} className="bg-white w-full mt-5 rounded-md text-black p-1"/>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
 
-            </form>
-            <button
-    onClick={logOut}
-    className="mb-4 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200"
->
-    Log Out
-</button>
-        </div>
+                </form>
+                <button
+                    onClick={logOut}
+                    className="mb-4 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200"
+                >
+                    Log Out
+                </button>
+            </div>
         );
     }
-    
+
+    return <button onClick={() => {router.push('/login')}}>go back</button>
+
 }

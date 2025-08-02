@@ -1,6 +1,9 @@
+import { UUID } from "crypto";
+
 export type u = {
     id: number;
     name: string;
+    author_id: UUID;
 }
 
 // define users(youth officials) based on ERD
