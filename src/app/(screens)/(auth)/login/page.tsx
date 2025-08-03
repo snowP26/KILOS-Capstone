@@ -1,7 +1,7 @@
 'use client';
 
 import { LoginForm } from "@/src/app/components/auth/login-form"
-import { TextIcon } from "../../components/text-logo";
+import { TextIcon } from "@/src/app/components/text-logo";
 
 export default function LoginPage() {
     return (

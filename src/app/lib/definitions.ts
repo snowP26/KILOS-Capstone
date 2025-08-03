@@ -26,7 +26,7 @@ export type announcement = {
     date: Date;
     header: string;
     body: string;
-    photo: string; // string = url to photo.
+    photo: string[]; // string = url to photo.
     author: string;
 };
 

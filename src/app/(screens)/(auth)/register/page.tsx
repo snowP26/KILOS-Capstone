@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { registerUser } from "../../lib/auth";
+import { registerUser } from "@/src/app/actions/auth";
 
 export default function Register() {
     const [formData, setFormData] = useState({
