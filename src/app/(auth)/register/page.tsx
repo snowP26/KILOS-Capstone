@@ -47,6 +47,7 @@ export default function Register() {
                     last_name: formData.lastName,
                     registration_code: formData.regCode
                 },
+                emailRedirectTo: 'http://localhost:3000/login'
             }
         });
 
