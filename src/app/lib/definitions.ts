@@ -1,16 +1,19 @@
+import { UUID } from "crypto";
+
 export type u = {
     id: number;
     name: string;
+    author_id: UUID;
 }
 
 // define users(youth officials) based on ERD
 export type users = {
-    id: number;
-    first_name: string;
-    last_name: string;
     email: string;
     password: string;
-    position_id: number;
+    firstName: string;
+    lastName: string;
+    regCode: string;
+    // position_id: number;
 }
 
 // export type admin = {
@@ -23,7 +26,7 @@ export type announcement = {
     date: Date;
     header: string;
     body: string;
-    photo: string; // string = url to photo.
+    photo: string[]; // string = url to photo.
     author: string;
 };
 
