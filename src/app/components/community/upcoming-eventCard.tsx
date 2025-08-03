@@ -2,7 +2,7 @@ import React from 'react'
 
 export const UpcomingEventCard = () => {
   return (
-    <div className="relative my-10 p-5 h-140 w-90 bg-blue-100 rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
+    <div className="relative mt-10 p-5 h-140 w-90 bg-blue-100 rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
         <div className="bg-black h-100 object-fill">
             
         </div>
