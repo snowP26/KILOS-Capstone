@@ -8,12 +8,12 @@ export type u = {
 
 // define users(youth officials) based on ERD
 export type users = {
-    id: number;
-    first_name: string;
-    last_name: string;
     email: string;
     password: string;
-    position_id: number;
+    firstName: string;
+    lastName: string;
+    regCode: string;
+    // position_id: number;
 }
 
 // export type admin = {

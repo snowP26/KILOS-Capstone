@@ -1,8 +1,8 @@
 'use client';
 
-import client from "@/src/api/client";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
+import { registerUser } from "../../lib/auth";
 
 export default function Register() {
     const [formData, setFormData] = useState({
@@ -36,30 +36,10 @@ export default function Register() {
         if(formData.password !== formData.confirmPass){
             return alert("Passwords must match!");
         }
-
-        const { error } = await client.auth.signUp({
-            email: formData.email,
-            password: formData.password,
-            options: {
-                data:
-                {
-                    first_name: formData.firstName,
-                    last_name: formData.lastName,
-                    registration_code: formData.regCode
-                },
-                emailRedirectTo: 'http://localhost:3000/login'
-            }
-        });
-
-        if(error){
-            return console.log("Error in registering your account: ", error);
-        }
-        alert("Check email for confirmation");
+        await registerUser(formData);
         router.push("/login")
         return clearFields();
     } 
-
-
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
