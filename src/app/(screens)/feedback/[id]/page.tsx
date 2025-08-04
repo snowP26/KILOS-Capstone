@@ -3,6 +3,11 @@ import { CommunityBanner } from "@/src/app/components/community/community-banner
 import { FeedbackCard } from "@/src/app/components/community/feedbackCard"
 import { Button } from "@/components/ui/button"
 
+interface PageProps {
+    params: {
+        id: string;
+    };
+}
 
 export default async function Page({params} : {params: {id: string}}) {
 
