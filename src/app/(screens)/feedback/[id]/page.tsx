@@ -4,12 +4,6 @@ import { FeedbackCard } from "@/src/app/components/community/feedbackCard"
 import { Button } from "@/components/ui/button"
 import { useParams } from "next/navigation";
 
-interface PageProps {
-    params: {
-        id: string;
-    };
-}
-
 export default function Page() {
     const params = useParams();
     const id = params.id as string
