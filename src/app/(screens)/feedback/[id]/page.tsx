@@ -5,13 +5,11 @@ import { Button } from "@/components/ui/button"
 
 // No need to explicitly define PageProps - Next.js handles this for dynamic routes
 
-export default async function Page({
-  params
-}: {
+export default async function Page(props: {
   params: { id: string }
 }) {
-  // No need to await params - Next.js provides it resolved
-  const { id } = params;
+  // Access params directly from props
+  const { id } = props.params;
 
   return (
     <div>
