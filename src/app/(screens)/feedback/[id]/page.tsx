@@ -3,7 +3,7 @@ import { CommunityBanner } from "@/src/app/components/community/community-banner
 import { FeedbackCard } from "@/src/app/components/community/feedbackCard"
 import { Button } from "@/components/ui/button"
 
-interface PageProps {
+type PageProps = {
     params: {
         id: string
     }
@@ -14,7 +14,7 @@ export default function Page({ params }: PageProps) {
         <div>
             <ComNav />
             <div className="mt-10">
-                <CommunityBanner params={params} />
+                <CommunityBanner id={params.id} />
             </div>
 
             <p className="text-4xl font-bold text-center">Community Feedback</p>
