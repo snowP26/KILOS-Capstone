@@ -1,3 +1,5 @@
+'use client';
+
 import { ComNav } from "@/src/app/components/community/nav"
 import { CommunityBanner } from "@/src/app/components/community/community-banner"
 import { FeedbackCard } from "@/src/app/components/community/feedbackCard"
