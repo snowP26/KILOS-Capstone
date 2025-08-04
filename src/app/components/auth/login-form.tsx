@@ -42,7 +42,7 @@ export function LoginForm({
       return console.log("Error signing you in: ", error)
     }
 
-    router.push('/mock-users')
+    router.push('/announcements')
   }
 
   return (

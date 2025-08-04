@@ -14,7 +14,7 @@ export default function Home() {
         <Title />
 
         <div className="flex justify-between items-end mx-25 relative z-10">
-          <p className="text-2xl font-bold">Upcoming Events</p>
+          <p className="text-2xl font-bold">Upcoming Projects</p>
           <div  className="overflow-visible">
             <LocationSelect />
           </div>
