@@ -3,10 +3,16 @@ import { CommunityBanner } from "@/src/app/components/community/community-banner
 import { FeedbackCard } from "@/src/app/components/community/feedbackCard"
 import { Button } from "@/components/ui/button"
 
-const page = ({ params } : { params: { id: string }}) => {
+type PageProps = {
+    params: {
+        id: string
+    }
+}
+
+const page = ({ params } : PageProps) => {
 
 
-  return (
+return (
     <div>
         <ComNav />
         <div className="mt-10">
