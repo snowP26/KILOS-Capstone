@@ -14,7 +14,7 @@ export default async function Page({ params }: PageProps) {
         <div>
             <ComNav />
             <div className="mt-10">
-                <CommunityBanner id={params.id} />
+                <CommunityBanner id={ await params.id} />
             </div>
 
             <p className="text-4xl font-bold text-center">Community Feedback</p>
