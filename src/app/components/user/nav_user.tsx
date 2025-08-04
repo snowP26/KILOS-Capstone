@@ -2,15 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { TextIcon } from "../text-logo";
 
 export const UserNav = () => {
     const pathname = usePathname();
 
     return (
-        <div className="text-center w-auto h-[116px] space-x-18 bg-[#021024] content-center text-2xl">
-            <Link href='/' className="font-extrabold text-[#C1E8FF] self-baseline">
-                KILOS
-            </Link>
+        <div className="text-center w-auto py-8 space-x-18 bg-[#021024] content-center ">
+            <TextIcon />
             <Link href='/' className={pathname === '/s' ? 'p-4 bg-white text-black ' : ''}>
                 Home
             </Link>
