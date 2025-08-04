@@ -9,14 +9,14 @@ interface PageProps {
     };
 }
 
-export default async function Page({params} : {params: {id: string}}) {
-
+export default async function Page({ params }: PageProps) {
+    const { id } = await params
 
     return (
         <div>
             <ComNav />
             <div className="mt-10">
-                <CommunityBanner id={params.id} />
+                <CommunityBanner id={id} />
             </div>
 
             <p className="text-4xl font-bold text-center">Community Feedback</p>
