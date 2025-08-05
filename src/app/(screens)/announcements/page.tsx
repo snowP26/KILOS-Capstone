@@ -1,12 +1,15 @@
 "use client";
 
-import { getAnnouncments, postAnnouncements, getPhoto } from "../../actions/announcements";
+import { getAnnouncments, postAnnouncements, getPhoto, deleteAnnouncements, testDelete } from "../../actions/announcements";
 import { useEffect, useRef, useState } from "react";
 import { announcement } from "../../lib/definitions";
+import { UserNav } from "../../components/user/nav_user";
 
 export default function Announcements() {
   const formRef = useRef<HTMLFormElement>(null) as React.RefObject<HTMLFormElement>;
   const [announcements, setAnnouncements] = useState<announcement[]>([]);
+  const [refresh, setRefresh] = useState(0)
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const updateAnnouncements = async () => {
     const updatedData = await getAnnouncments();
@@ -23,20 +26,32 @@ export default function Announcements() {
 
       setAnnouncements(processed);
     }
+    
   };
+
+  const editModal = () => {
+    return (
+      <div></div>
+    );
+  }
 
 
 
   useEffect(() => {
     updateAnnouncements();
-  }, [announcements])
+  }, [refresh])
 
   return (
+    <>
+    <UserNav />
     <div className="p-6 space-y-6 max-w-2xl mx-auto">
       {/* Add Announcement Form */}
       <div className="border rounded-lg p-4 shadow-md bg-white">
         <h2 className="text-lg font-semibold mb-4">Add New Announcement</h2>
-        <form className="space-y-4" ref={formRef} onSubmit={(e) => postAnnouncements(e, formRef)}>
+        <form className="space-y-4" ref={formRef} onSubmit={async (e) => {
+            await postAnnouncements(e, formRef);
+            setRefresh((prev) => prev+1);
+          }}>
           {/* Title Input */}
           <div>
             <label className="block text-sm font-medium mb-1">Title</label>
@@ -68,7 +83,7 @@ export default function Announcements() {
               type="file"
               name="image"
               accept="image/*"
-              className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700hover:file:bg-blue-100"
+              className=" block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700hover: file:cursor-pointer"
             />
           </div>
 
@@ -102,10 +117,13 @@ export default function Announcements() {
             )}
 
             <div className="flex gap-2">
-              <button className="px-3 py-1 text-sm bg-yellow-400 text-black rounded hover:bg-yellow-500 transition">
+              <button className="px-3 py-1 text-sm bg-yellow-400 text-black rounded hover:bg-yellow-500 transition cursor-pointer" >
                 Edit
               </button>
-              <button className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition">
+              <button className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition cursor-pointer" onClick={async () => {
+                  await testDelete();
+                  setRefresh((prev) => prev + 1)
+                }}>
                 Delete
               </button>
             </div>
@@ -113,5 +131,6 @@ export default function Announcements() {
         ))}
       </div>
     </div>
+    </>
   );
 }
