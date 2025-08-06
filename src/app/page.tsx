@@ -1,3 +1,4 @@
+
 import { ComNav } from "./components/community/nav";
 import { Title } from "./components/community/title";
 import { Events } from "./components/community/upcoming-events";
@@ -11,6 +12,7 @@ export default function Home() {
         <Title />
         <Events />
       </div>
+      
     </div>
   );
 }

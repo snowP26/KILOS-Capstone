@@ -1,16 +1,32 @@
+import { UUID } from "crypto";
+
+type AnnouncementType =
+    | "General"
+    | "Policy"
+    | "Public Service"
+    | "Administrative"
+    | "Electoral"
+    | "Event"
+    | "Emergency"
+    | "Financial"
+    | "Employment"
+    | "Infrastructure"
+    | "Press Release";
+
 export type u = {
     id: number;
     name: string;
+    author_id: UUID;
 }
 
 // define users(youth officials) based on ERD
 export type users = {
-    id: number;
-    first_name: string;
-    last_name: string;
     email: string;
     password: string;
-    position_id: number;
+    firstName: string;
+    lastName: string;
+    regCode: string;
+    // position_id: number;
 }
 
 // export type admin = {
@@ -20,11 +36,14 @@ export type users = {
 // define Announcement based on ERD
 export type announcement = {
     id: number;
-    date: Date;
+    created_at: Date;
     header: string;
     body: string;
+
+    type: AnnouncementType;
     photo: string; // string = url to photo.
-    author: string;
+    author_email: string;
+
 };
 
 // define Meeting based on ERD
