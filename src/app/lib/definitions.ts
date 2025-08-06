@@ -24,10 +24,10 @@ export type users = {
 // define Announcement based on ERD
 export type announcement = {
     id: number;
-    date: Date;
+    created_at: Date;
     header: string;
     body: string;
-    photo: string[]; // string = url to photo.
+    photo: string; // string = url to photo.
     author: string;
 };
 
