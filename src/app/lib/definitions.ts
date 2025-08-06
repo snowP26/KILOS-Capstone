@@ -39,9 +39,11 @@ export type announcement = {
     created_at: Date;
     header: string;
     body: string;
+
     type: AnnouncementType;
     photo: string; // string = url to photo.
     author_email: string;
+
 };
 
 // define Meeting based on ERD

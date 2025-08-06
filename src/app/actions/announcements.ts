@@ -3,8 +3,6 @@ import client from "@/src/api/client";
 import { FormEvent, RefObject } from "react";
 import Swal from "sweetalert2";
 
-
-
 export async function uploadFile(file: File, filename: string) {
     const { error } = await client.storage.from('users').upload(`announcements/${filename}`, file);
 
@@ -40,7 +38,6 @@ export const postAnnouncements = async (e: FormEvent<HTMLFormElement>, formRef: 
 
     const filename = `${Date.now()}-${form.image.name}`;
     const session = await client.auth.getSession();
-
     const user = session.data.session?.user.email || null;
     let photoFilename: string | null = null;
 
@@ -129,3 +126,4 @@ export const getCurrentUser = async () => {
 
     return data.session?.user.email
 }
+
