@@ -1,9 +1,8 @@
 "use client";
 
 import React from 'react'
-import { Button } from '@/components/ui/button';
 import { UserNav } from '@/src/app/components/user/nav_user';
-import { FeedbackCard } from '@/src/app/components/community/feedbackCard';
+import { UsrFeedbackCard } from '@/src/app/components/user/usrFeedbackCard';
 
 export default function CommunityFeedback () {
   return (
@@ -16,14 +15,14 @@ export default function CommunityFeedback () {
 
         <div className="mx-25">
             <div className="flex flex-wrap justify-center">
-                <FeedbackCard />
-                <FeedbackCard />
-                <FeedbackCard />
-                <FeedbackCard />
-                <FeedbackCard />
-                <FeedbackCard />
-                <FeedbackCard />
-                <FeedbackCard />
+                <UsrFeedbackCard />
+                <UsrFeedbackCard />
+                <UsrFeedbackCard />
+                <UsrFeedbackCard />
+                <UsrFeedbackCard />
+                <UsrFeedbackCard />
+                <UsrFeedbackCard />
+                <UsrFeedbackCard />
             </div>
         </div>
     </div>
