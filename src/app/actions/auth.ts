@@ -1,5 +1,6 @@
 import client from "@/src/api/client";
 import { users } from "@/src/app/lib/definitions"
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import Swal from 'sweetalert2';
 
 const successPopup = async () => {
@@ -47,7 +48,35 @@ export const registerUser = async (data: users) => {
         });
         return;
     }
-
     return successPopup();
+}
+
+export const logoutUser = async (router: AppRouterInstance) => {
+
+    Swal.fire({
+        title: "Log out?",
+        text: "Are you sure you want to log out of your account?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, log out.",
+        showLoaderOnConfirm: true
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            await client.auth.signOut();
+
+            Swal.fire({
+                title: "Logging you out..",
+                text: "Redirecting you after logging out...",
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: false,
+            });
+
+            router.push("/login"); 
+        }
+    });
+
 
 }
