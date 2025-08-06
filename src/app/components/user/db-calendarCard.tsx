@@ -95,9 +95,9 @@ export const DbCalendarCard = () => {
                 </div>
             </div> */}
             <div className="flex flex-row w-[100%]">
-                <div className="w-[80%] mt-10 mx-5">
+                <div className="w-[80%] mt-10 mx-5 bg-white p-10 rounded-2xl">
                     <FullCalendar 
-                    height='80vh' 
+                    height='70vh' 
                     plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]} 
                     headerToolbar={{left: "prev", center: "title", right: "next today"}}
                         editable={true}
@@ -161,15 +161,18 @@ export const DbCalendarCard = () => {
                     <DialogTitle>Set up a Meeting</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleAddEvent}>
-                    <input 
-                        type="text"
-                        placeholder="Meeting Header"
-                        value={newEventTitle}
-                        onChange={(e) => setNewEventTitle(e.target.value)}
-                        required
-                        className="border-black border-2" 
-                    />
-                    <Button type="submit">Submit</Button>
+                    <div className="flex-col">
+                        <input 
+                            type="text"
+                            placeholder="Meeting Header"
+                            value={newEventTitle}
+                            onChange={(e) => setNewEventTitle(e.target.value)}
+                            required
+                            className="border-black border-2" 
+                        />
+                        <Button type="submit">Submit</Button>
+                    </div>
+                    
                 </form>
                 
             </DialogContent>
