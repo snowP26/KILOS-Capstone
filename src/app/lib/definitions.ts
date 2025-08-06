@@ -1,5 +1,17 @@
 import { UUID } from "crypto";
 
+type AnnouncementType =
+    | "General"
+    | "Policy"
+    | "Public Service"
+    | "Administrative"
+    | "Electoral"
+    | "Event"
+    | "Emergency"
+    | "Financial"
+    | "Employment"
+    | "Infrastructure"
+    | "Press Release";
 
 export type u = {
     id: number;
@@ -27,8 +39,9 @@ export type announcement = {
     created_at: Date;
     header: string;
     body: string;
+    type: AnnouncementType;
     photo: string; // string = url to photo.
-    author: string;
+    author_email: string;
 };
 
 // define Meeting based on ERD

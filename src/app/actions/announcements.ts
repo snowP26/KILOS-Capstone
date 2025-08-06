@@ -2,6 +2,8 @@ import client from "@/src/api/client";
 import { FormEvent, RefObject } from "react";
 import Swal from "sweetalert2";
 
+
+
 export async function uploadFile(file: File, filename: string) {
     const { error } = await client.storage.from('users').upload(`announcements/${filename}`, file);
 
@@ -24,23 +26,34 @@ export const postAnnouncements = async (e: FormEvent<HTMLFormElement>, formRef: 
     const form = {
         title: formData.get("title") as string,
         body: formData.get("body") as string,
+        type: formData.get("type") as string,
         image: formData.get("image") as File
     };
+
+    if(form.type == null) {
+        return alert('Type should not be null');
+    }
 
     const filename = `${Date.now()}-${form.image.name}`;
     const session = await client.auth.getSession();
     const user = session.data.session?.user.email || null;
+    let photoFilename: string | null = null;
 
-
-
-
-    if (form.image.size <= 0) {
-        const { error } = await client.from("announcement").insert([{ header: form.title, body: form.body, photo: null, author_email: user }]);
-        if (error) return console.log("Error: ", error);
-    } else {
+    if (form.image && form.image.size > 0) {
         await uploadFile(form.image, filename);
-        const { error } = await client.from("announcement").insert([{ header: form.title, body: form.body, photo: filename, author_email: user }]);
-        if (error) return console.log("Error: ", error);
+        photoFilename = filename;
+    }
+
+    const { error } = await client.from("announcement").insert([{
+        header: form.title,
+        body: form.body,
+        photo: photoFilename,
+        author_email: user,
+        type: form.type
+    }]);
+
+    if (error) {
+        console.error("Failed to insert announcement:", error.message);
     }
 
 
@@ -64,7 +77,7 @@ export const getAnnouncments = async () => {
 }
 
 async function deletePhoto(filename: string) {
-    const { error } = await client.storage.from('users').remove([`announcements/TEST.jpeg`, 'DL.jpg']);
+    const { error } = await client.storage.from('users').remove([`announcements/${filename}`]);
 
     if (error) {
         console.error("Error deleting image:", error);
@@ -76,41 +89,38 @@ async function deletePhoto(filename: string) {
 
 export const deleteAnnouncements = async (id: number) => {
 
-    // const { data } = await client.from("announcement").select("photo").eq("id", id).single();
+    const { data } = await client.from("announcement").select("photo").eq("id", id).single();
 
-    // deletePhoto(data?.photo);
+    deletePhoto(data?.photo);
 
-    // const { error } = await client.from("announcement").delete().eq("id", id);
+    const { error } = await client.from("announcement").delete().eq("id", id);
 
-    // if (error) {
-    //     Swal.fire({
-    //         title: 'Error',
-    //         text: `Error deleting your announcement: ${error}`,
-    //         icon: 'warning'
-    //     })
-    //     return;
-    // }
+    if (error) {
+        Swal.fire({
+            title: 'Error',
+            text: `Error deleting your announcement: ${error}`,
+            icon: 'warning'
+        })
+        return;
+    }
 
-    // Swal.fire({
-    //     title: "Delete successful",
-    //     text: "You have successfully deleted the announcement.",
-    //     icon: "success"
-    // });
+    Swal.fire({
+        title: "Delete successful",
+        text: "You have successfully deleted the announcement.",
+        icon: "success"
+    });
 
-    deletePhoto("TEST.jpeg")
 
     return;
 }
 
-export async function testDelete() {
-    const { data, error } = await client.storage
-    .from('users')
-    .remove(['DL.jpeg', 'announcements/TEST.jpeg']);
+
+export const getCurrentUser = async () => {
+    const { data, error } = await client.auth.getSession();
 
     if (error) {
-    console.error('Delete error:', error);
-    return false;
+        console.log("getCurrentUser function error: ", error)
     }
-    console.log('Delete successful:', data);
-    return true;
+
+    return data.session?.user.email
 }
