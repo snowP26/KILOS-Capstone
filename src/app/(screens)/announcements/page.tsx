@@ -52,6 +52,7 @@ export default function Announcements() {
             await postAnnouncements(e, formRef);
             setRefresh((prev) => prev+1);
           }}>
+
           {/* Title Input */}
           <div>
             <label className="block text-sm font-medium mb-1">Title</label>
@@ -83,13 +84,16 @@ export default function Announcements() {
               type="file"
               name="image"
               accept="image/*"
+
               className=" block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700hover: file:cursor-pointer"
+
             />
           </div>
 
           <button
             type="submit"
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition cursor-pointer"
+
           >
             Add Announcement
           </button>
@@ -124,6 +128,7 @@ export default function Announcements() {
                   await testDelete();
                   setRefresh((prev) => prev + 1)
                 }}>
+
                 Delete
               </button>
             </div>
@@ -132,5 +137,6 @@ export default function Announcements() {
       </div>
     </div>
     </>
+
   );
 }
