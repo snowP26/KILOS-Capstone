@@ -109,7 +109,7 @@ export default function Announcements() {
                 <textarea
                   name="body"
                   placeholder="Write your announcement here..."
-                  className="w-full max-h-36 min-h-36 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full max-h-36 min-h-36 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 "
                   required
                 ></textarea>
               </div>
