@@ -39,7 +39,7 @@ export type announcement = {
     created_at: Date;
     header: string;
     body: string;
-
+    ispinned: boolean;
     type: AnnouncementType;
     photo: string; // string = url to photo.
     author_email: string;
