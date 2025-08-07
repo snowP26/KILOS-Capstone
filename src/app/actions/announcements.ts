@@ -126,4 +126,23 @@ export const getCurrentUser = async () => {
 
     return data.session?.user.email
 }
+// 1, false
+export const setPinned = async (id: number, is_pinned: boolean) => {
+
+    const { error } = await client.from("announcement").update({ispinned: is_pinned}).eq("id", id);
+
+    if(error){
+        return console.log("Unable to pin announcement: ", error);
+    }
+
+    Swal.fire({
+        title: is_pinned ? "Pinned announcement" : "Unpinned announcement",
+        text: is_pinned ? "The announcement has been pinned to your list." : "The announcement hast been unpinned from your list.",
+        icon: "info",
+        timer: 1250,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+    })
+    return;
+};
 
