@@ -43,7 +43,7 @@ export default function SubmitDoc() {
             <p className="font-bold text-3xl mt-8 mb-2 ml-30">Submit Document</p>
             <hr className="border-t border-black w-[90%] mx-auto my-3" />
 
-            <div className="justify-items-center">
+            <div className="justify-items-center mt-10">
                 <div className="bg-white w-[70%] px-20 rounded-[16px] py-10">
                
                     <div className="w-[70%]">
@@ -75,12 +75,12 @@ export default function SubmitDoc() {
                     </div> */}
 
                     <div className="w-55 mt-2">
-                        <Input type="file" className="cursor-pointer"/>
+                        <Input type="file" className="cursor-pointer hover:bg-gray-300"/>
                     </div>
                     
 
                     <div className="place-self-end">
-                        <Button className="bg-[#A3C4A8] text-black font-bold rounded-[16px]">
+                        <Button className="bg-[#A3C4A8] text-black font-bold rounded-[16px] cursor-pointer hover:bg-black hover:text-[#A3C4A8]">
                             Submit Document
                         </Button>
                     </div>
