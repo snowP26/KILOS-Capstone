@@ -6,7 +6,6 @@ import { ArrowLeft } from 'lucide-react'
 import { ImagePlus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Separator } from "@/components/ui/separator"
-import { Textarea } from "@/components/ui/textarea"
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -15,16 +14,6 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectGroup,
-    SelectTrigger,
-    SelectValue,
-    SelectLabel,
-} from "@/components/ui/select"
 
 export default function SubmitDoc() {
     return (
@@ -51,7 +40,7 @@ export default function SubmitDoc() {
                 </BreadcrumbList>
             </Breadcrumb>
 
-            <p className="font-bold text-3xl mt-8 mb-2 ml-30">Create Announcements</p>
+            <p className="font-bold text-3xl mt-8 mb-2 ml-30">Submit Document</p>
             <hr className="border-t border-black w-[90%] mx-auto my-3" />
 
             <div className="justify-items-center">
