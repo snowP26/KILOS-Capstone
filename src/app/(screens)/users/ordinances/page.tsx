@@ -8,7 +8,6 @@ import { OrdinancesCard } from '@/src/app/components/user/ordinances-card';
 export default function Ordinances()  {
   return (
     <div className="bg-[#E6F1FF] min-h-screen max-h-fit">
-      <UserNav />
 
       <div className="flex flex-row justify-between mt-15 mx-40">
           <p className="font-bold text-3xl">Ordinances & Resolutions</p>

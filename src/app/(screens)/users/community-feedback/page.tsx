@@ -7,7 +7,6 @@ import { UsrFeedbackCard } from '@/src/app/components/user/usrFeedbackCard';
 export default function CommunityFeedback () {
   return (
     <div className="bg-[#E6F1FF] h-vh">
-        <UserNav />
 
         <p className="mt-15 mx-40 font-bold text-3xl">Ordinances & Resolutions</p>
         <hr className="border-t border-black w-[90%] mx-auto my-3" />

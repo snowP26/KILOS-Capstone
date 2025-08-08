@@ -8,7 +8,6 @@ import { ProjectCard } from '@/src/app/components/user/project-card';
 export default function Projects()  {
   return (
     <div className="bg-[#E6F1FF] h-dvh">
-        <UserNav />
 
         <p className="font-bold text-3xl m-10">Current Projects</p>
         <div className="flex flex-wrap justify-center gap-5">

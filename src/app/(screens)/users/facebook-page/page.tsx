@@ -6,7 +6,6 @@ import { Info } from 'lucide-react'
 export default function FacebookPage () {
   return (
     <div>
-        <UserNav />
         <div className="flex flex-row">
 
             <div className="w-1/5 bg-white h-fit border-black border rounded-[10px] pt-5 mt-2 ml-3">
