@@ -15,7 +15,7 @@ export const CommunityBanner = ({ id }: CommunityBannerProps) => {
 
       <div className="rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)] w-1/5 bg-blue-100">
         <p className="m-3 mb-7 text-sm">
-          {id} is Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+          <strong>{id} </strong>is Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
           ea commodo consequat.

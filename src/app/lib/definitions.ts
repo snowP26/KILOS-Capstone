@@ -13,6 +13,9 @@ type AnnouncementType =
     | "Infrastructure"
     | "Press Release";
 
+export const locations = ["naga-city", "pili", "bula"] as const;
+
+
 export type u = {
     id: number;
     name: string;
