@@ -1,6 +1,6 @@
 "use client";
 
-import { getAnnouncments, postAnnouncements, getPhoto, deleteAnnouncements, getCurrentUser} from "../../../actions/announcements";
+import { getAnnouncments, postAnnouncements, getPhoto, deleteAnnouncements, getCurrentUser, testbutton} from "../../../actions/announcements";
 import { useEffect, useRef, useState } from "react";
 import { announcement } from "../../../lib/definitions";
 
@@ -190,6 +190,7 @@ export default function Announcements() {
                 </div>
               ))}
           </div>
+
         </main>
       </div>
   );
