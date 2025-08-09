@@ -13,8 +13,11 @@ const successPopup = async () => {
     })
 }
 
-export const registerUser = async (data: users) => {
-    const { email, password, firstName, lastName, regCode } = data;
+
+
+export const registerUser = async (regData: users, router: AppRouterInstance) => {
+    const { email, password, firstName, lastName, regCode } = regData;
+
     Swal.fire({
         title: "Signing you up...",
         toast: true,
@@ -26,6 +29,41 @@ export const registerUser = async (data: users) => {
         }
     });
 
+    const { data: posData, error: posError } = await client.from("positions").select("*").eq("registration_code", regCode);
+
+    if (posError) {
+        Swal.close();
+        return alert(`Query error: ${posError.message}`);
+    }
+    
+    if (!posData || posData.length <= 0) {
+        Swal.close();
+        return alert("Code does not exist");
+    }
+
+    if(posData[0].assigned_to != null){
+        Swal.close();
+        return console.log("This registration code has already been used.")
+    }
+
+    const { error: yoError } = await client
+        .from("youth_official")
+        .insert([
+            {
+                email: email,
+                firstname: firstName,
+                lastname: lastName,
+                position: posData[0].position_name,
+                role: posData[0].user_type
+            }
+        ]);
+
+    await client.from("positions").insert([])
+
+    if(yoError) {
+        Swal.close();
+        return alert(`Registration error: ${yoError}`)
+    }
     const { error } = await client.auth.signUp({
         email,
         password,
@@ -33,7 +71,8 @@ export const registerUser = async (data: users) => {
             data: {
                 first_name: firstName,
                 last_name: lastName,
-                registration_code: regCode,
+                position: posData[0].position_name,
+                role: posData[0].user_type
             },
             emailRedirectTo: 'http://localhost:3000/login' // replace with deployed url.
         }
@@ -46,8 +85,9 @@ export const registerUser = async (data: users) => {
             title: "Registration failed: ",
             text: error.message,
         });
-        return;
+        return console.log("error: ", error);
     }
+    router.push("/login")
     return successPopup();
 }
 
@@ -74,7 +114,7 @@ export const logoutUser = async (router: AppRouterInstance) => {
                 showConfirmButton: false,
             });
 
-            router.push("/login"); 
+            router.push("/login");
         }
     });
 
