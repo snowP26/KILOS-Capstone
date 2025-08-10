@@ -1,5 +1,5 @@
 import React from 'react'
-import Link from 'next/link'
+
 
 import { Info } from 'lucide-react'
 import { MapPin } from 'lucide-react'
@@ -15,8 +15,6 @@ import {
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
-    NavigationMenuTrigger,
-    NavigationMenuViewport,
 } from "@/components/ui/navigation-menu"
 
 export default function FacebookPage() {
