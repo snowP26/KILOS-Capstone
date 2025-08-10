@@ -14,6 +14,7 @@ import {
     NavigationMenuIndicator,
     NavigationMenuItem,
     NavigationMenuLink,
+    NavigationMenuTrigger,
     NavigationMenuList,
 } from "@/components/ui/navigation-menu"
 
