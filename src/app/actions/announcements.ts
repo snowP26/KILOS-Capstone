@@ -3,6 +3,9 @@ import client from "@/src/api/client";
 import { FormEvent, RefObject } from "react";
 import Swal from "sweetalert2";
 
+
+
+// upload photo function
 export async function uploadFile(file: File, filename: string) {
     const { error } = await client.storage.from('users').upload(`announcements/${filename}`, file);
 
@@ -20,6 +23,8 @@ export async function getPhoto(fileName: string) {
     return data.publicUrl;
 }
 
+
+// Post announcements function
 export const postAnnouncements = async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement>) => {
 
     e.preventDefault();
@@ -68,6 +73,8 @@ export const postAnnouncements = async (e: FormEvent<HTMLFormElement>, formRef: 
 
 }
 
+
+// Get Announcements Function
 export const getAnnouncments = async () => {
     const { data, error } = await client.from("announcement").select("*").order("created_at", { ascending: false })
 
@@ -78,7 +85,10 @@ export const getAnnouncments = async () => {
     return data
 }
 
-async function deletePhoto(filename: string) {
+
+// Delete Announcements Function
+export const deleteAnnouncements = async (id: number) => {
+    async function deletePhoto(filename: string) {
     const { error } = await client.storage.from('users').remove([`announcements/${filename}`]);
 
     if (error) {
@@ -88,8 +98,6 @@ async function deletePhoto(filename: string) {
 
     console.log("Image deleted successfully");
 }
-
-export const deleteAnnouncements = async (id: number) => {
 
     const { data } = await client.from("announcement").select("photo").eq("id", id).single();
 
@@ -117,6 +125,7 @@ export const deleteAnnouncements = async (id: number) => {
 }
 
 
+// Get current user function
 export const getCurrentUser = async () => {
     const { data, error } = await client.auth.getSession();
 
@@ -125,5 +134,32 @@ export const getCurrentUser = async () => {
     }
 
     return data.session?.user.email
+}
+
+
+// Set pinned announcements function
+export const setPinned = async (id: number, is_pinned: boolean) => {
+
+    const { error } = await client.from("announcement").update({ispinned: is_pinned}).eq("id", id);
+
+    if(error){
+        return console.log("Unable to pin announcement: ", error);
+    }
+
+    Swal.fire({
+        title: is_pinned ? "Pinned announcement" : "Unpinned announcement",
+        text: is_pinned ? "The announcement has been pinned to your list." : "The announcement hast been unpinned from your list.",
+        icon: "info",
+        timer: 1250,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+    })
+    return;
+};
+
+export const testbutton = async () => {
+    const { data: {user} } = await client.auth.getUser();
+
+    console.log(user?.user_metadata)
 }
 

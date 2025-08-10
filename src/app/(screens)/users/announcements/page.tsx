@@ -1,6 +1,6 @@
 "use client";
 
-import { getAnnouncments, postAnnouncements, getPhoto, deleteAnnouncements, getCurrentUser} from "../../../actions/announcements";
+import { getAnnouncments, postAnnouncements, getPhoto, deleteAnnouncements, getCurrentUser, testbutton} from "../../../actions/announcements";
 import { useEffect, useRef, useState } from "react";
 import { announcement } from "../../../lib/definitions";
 
@@ -109,7 +109,7 @@ export default function Announcements() {
                 <textarea
                   name="body"
                   placeholder="Write your announcement here..."
-                  className="w-full max-h-36 min-h-36 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full max-h-36 min-h-36 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 "
                   required
                 ></textarea>
               </div>
@@ -190,6 +190,7 @@ export default function Announcements() {
                 </div>
               ))}
           </div>
+
         </main>
       </div>
   );

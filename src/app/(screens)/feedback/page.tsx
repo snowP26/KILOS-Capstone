@@ -2,6 +2,8 @@ import { ComNav } from "../../components/community/nav"
 import { CityMuniCard } from "../../components/community/city-muniCard"
 
 export default function Feedback(){
+    const list = ["Naga City", "Bula", "Pili"]
+
     return (
         <div>
             <ComNav />
@@ -9,9 +11,9 @@ export default function Feedback(){
 
             <div className="mx-25">
                 <div className="flex flex-wrap justify-center gap-5">
-                    <CityMuniCard />
-                    <CityMuniCard />
-                    <CityMuniCard />
+                    {list.map((location) => (
+                        <CityMuniCard key={location} name={location} />
+                    ))}
                 </div>
             </div>
         </div>
