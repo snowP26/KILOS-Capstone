@@ -174,11 +174,6 @@ export const setPinned = async (id: number) => {
     return console.log('You have pinned the announcement.')
 };
 
-export const testbutton = async () => {
-    const { data: { user } } = await client.auth.getUser();
-
-    console.log(user?.user_metadata)
-}
 
 export const fetchPinned = async () => {
     const user = (await client.auth.getSession()).data.session?.user.id;
