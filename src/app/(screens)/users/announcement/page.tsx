@@ -5,10 +5,9 @@ import { Button } from '@/components/ui/button';
 import { PinnedAnnouncementCard } from '@/src/app/components/user/pinnedAnnouncementCard';
 import { announcement } from '@/src/app/lib/definitions';
 import { Pin } from 'lucide-react';
-import { getAnnouncments, getCurrentUser, getPhoto, setPinned } from '@/src/app/actions/announcements';
+import { fetchPinned, getAnnouncments, getPhoto, setPinned } from '@/src/app/actions/announcements';
 
 import { format } from 'date-fns'
-import { setRef } from '@fullcalendar/core/internal';
 
 
 
@@ -27,7 +26,7 @@ export default function Announcement() {
     "infrastructure",
     "press_release"
   ];
-  const [user, setUser] = useState<string>("");
+  const [pinnedAnnouncements, setPinnedAnnouncements] = useState<number[]>([])
   const [refresh, setRefresh] = useState(0);
   const [announcements, setAnnouncements] = useState<announcement[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -58,36 +57,18 @@ export default function Announcement() {
     }
   }
 
+  const loadPinned = async () => {
+    const announcementIds = await fetchPinned();
+    setPinnedAnnouncements(announcementIds);
 
-  const handlePin = async (id: number, is_pinned: boolean) => {
-
-
-
-    setAnnouncements((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, ispinned: !is_pinned } : item
-      )
-    );
-
-    try {
-      await setPinned(id, !is_pinned);
-    } catch (error) {
-      console.error("Failed to pin:", error);
-      setAnnouncements((prev) =>
-        prev.map((item) =>
-          item.id === id ? { ...item, ispinned: is_pinned } : item
-        )
-      );
-
-    }
-
-
-    setRefresh((prev) => prev + 1)
   }
 
+  
+
+
   useEffect(() => {
-    console.log("refresh")
     updateAnnouncements();
+    loadPinned();
   }, [refresh])
 
   return (
@@ -106,7 +87,7 @@ export default function Announcement() {
                   setSelectedCategory(type);
                 }}
                 className={`font-medium px-4 py-2 text-sm rounded-full cursor-pointer text-center mx-4 transition-all duration-300 ease-in-out
-                    ${selectedCategory === type
+                      ${selectedCategory === type
                     ? "bg-[#E6F1FF] text-blue-700 shadow-md"
                     : "text-gray-600 hover:bg-gray-200 hover:text-black"}`}
               >
@@ -138,8 +119,8 @@ export default function Announcement() {
                   <Pin
                     className="cursor-pointer"
                     size="25px"
-                    onClick={() => handlePin(data.id, data.ispinned)}
-                    fill={data.ispinned ? "black" : "none"}
+                    onClick={() => {setPinned(data.id)}}
+                    fill={pinnedAnnouncements.includes(data.id) ? "black" : "none"}
                   />
                 </div>
               </div>
@@ -171,15 +152,17 @@ export default function Announcement() {
           <div className=" bg-white rounded-[10px] pt-5 h-fit pb-5">
             <p className="text-center text-2xl font-semibold">Pinned Announcements</p>
             <div className="justify-items-center mt-5">
-              {announcements.filter((a) => a.ispinned).map((a) => (
-                <PinnedAnnouncementCard
-                  key={a.id}
-                  header={a.header}
-                  body={a.body}
-                  author={a.author_email}
-                  announcementType={a.type}
-                />
-              ))}
+              {announcements
+                .filter(a => pinnedAnnouncements.includes(a.id))
+                .map(a => (
+                  <PinnedAnnouncementCard
+                    key={a.id}
+                    header={a.header}
+                    body={a.body}
+                    author={a.author_email}
+                    announcementType={a.type}
+                  />
+                ))}
             </div>
           </div>
         </div>

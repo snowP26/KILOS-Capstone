@@ -37,7 +37,7 @@ export const postAnnouncements = async (e: FormEvent<HTMLFormElement>, formRef: 
         image: formData.get("image") as File
     };
 
-    if(form.type == null) {
+    if (form.type == null) {
         return alert('Type should not be null');
     }
 
@@ -89,15 +89,15 @@ export const getAnnouncments = async () => {
 // Delete Announcements Function
 export const deleteAnnouncements = async (id: number) => {
     async function deletePhoto(filename: string) {
-    const { error } = await client.storage.from('users').remove([`announcements/${filename}`]);
+        const { error } = await client.storage.from('users').remove([`announcements/${filename}`]);
 
-    if (error) {
-        console.error("Error deleting image:", error);
-        throw new Error(error.message);
+        if (error) {
+            console.error("Error deleting image:", error);
+            throw new Error(error.message);
+        }
+
+        console.log("Image deleted successfully");
     }
-
-    console.log("Image deleted successfully");
-}
 
     const { data } = await client.from("announcement").select("photo").eq("id", id).single();
 
@@ -138,28 +138,56 @@ export const getCurrentUser = async () => {
 
 
 // Set pinned announcements function
-export const setPinned = async (id: number, is_pinned: boolean) => {
+export const setPinned = async (id: number) => {
 
-    const { error } = await client.from("announcement").update({ispinned: is_pinned}).eq("id", id);
+    // get session data
+    const session = await client.auth.getSession();
+    const user = session?.data.session?.user.id
+    
+    // if the announcement is already pinned, unpin the announcement
+    const { data: pinExist } = await client
+        .from("pinned_announcements")
+        .select("*")
+        .eq("announcement_id", id)
+        .eq("user_id", user)
+        
 
-    if(error){
+
+    if (pinExist && pinExist.length > 0) {
+        await client
+            .from("pinned_announcements")
+            .delete()
+            .eq("announcement_id", id)
+            .eq("user_id", user);
+
+        return;
+    }
+    const { error } = await client.from("pinned_announcements").insert([{
+        user_id: user,
+        announcement_id: id,
+    }])
+    
+    if (error) {
         return console.log("Unable to pin announcement: ", error);
     }
-
-    Swal.fire({
-        title: is_pinned ? "Pinned announcement" : "Unpinned announcement",
-        text: is_pinned ? "The announcement has been pinned to your list." : "The announcement hast been unpinned from your list.",
-        icon: "info",
-        timer: 1250,
-        showConfirmButton: false,
-        allowOutsideClick: false,
-    })
-    return;
+    
+    return console.log('You have pinned the announcement.')
 };
 
 export const testbutton = async () => {
-    const { data: {user} } = await client.auth.getUser();
+    const { data: { user } } = await client.auth.getUser();
 
     console.log(user?.user_metadata)
+}
+
+export const fetchPinned = async () => {
+    const user = (await client.auth.getSession()).data.session?.user.id;
+
+    const { data } = await client.from("pinned_announcements").select("announcement_id").eq("user_id", user);
+
+    if (!data) {
+        return [];
+    }
+    return data.map(row => row.announcement_id);
 }
 
