@@ -58,7 +58,6 @@ export const registerUser = async (regData: users, router: AppRouterInstance) =>
             }
         ]);
 
-    await client.from("positions").insert([])
 
     if(yoError) {
         Swal.close();
@@ -117,6 +116,4 @@ export const logoutUser = async (router: AppRouterInstance) => {
             router.push("/login");
         }
     });
-
-
 }
