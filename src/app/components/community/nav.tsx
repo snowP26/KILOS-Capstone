@@ -12,7 +12,7 @@ export const ComNav = () => {
     return(
         <nav className="flex items-center justify-between py-5 px-20 border-b-2 sticky top-0 bg-white z-50">
             <h1 className="inline-block text-[#0073FF] font-bold text-3xl cursor-pointer" onClick={()=> {router.push("/")}}>KILOS</h1>
-            <div className="flex space-x-6">
+            <div className="flex space-x-12">
                 <Link href='/' className={pathname === "/" ? "mr-4 text-black font-bold text-lg" : "mr-4 text-gray-500 text-lg"}>
                     Home
                 </Link>

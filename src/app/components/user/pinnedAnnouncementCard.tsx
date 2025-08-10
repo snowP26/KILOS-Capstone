@@ -19,6 +19,7 @@ export const PinnedAnnouncementCard: React.FC<PinnedAnnouncementCardProps> = ({h
 
         <p className="mr-8 mb-2 text-xs truncate">
             {body}
+
         </p>
     </div>
   )

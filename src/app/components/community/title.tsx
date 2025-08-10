@@ -12,14 +12,14 @@ export const Title = () => {
             <form className="mt-4 flex flex-row gap-2 items-center min-w-[1000px]">
                 <LocationSelect />
                 <div className="relative w-[683px]">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <div className="absolute inset-y-0 left-1 pl-3 flex items-center pointer-events-none">
                         <Search />
                     </div>
                     <input
                         type="text"
                         name="Search-bar"
                         placeholder="Search for ordinances"
-                        className="pl-11 p-3 bg-[#D9D9D9] rounded-lg w-full placeholder-gray-600"
+                        className="pl-13 p-3 bg-[#D9D9D9] rounded-lg w-full placeholder-gray-600"
                     />
                 </div>
                 <button type="submit" className="cursor-pointer py-3 px-5 bg-[#5483B3] text-white rounded-lg">
