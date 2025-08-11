@@ -1,5 +1,5 @@
 import React from 'react'
-import Link from 'next/link'
+
 
 import { Info } from 'lucide-react'
 import { MapPin } from 'lucide-react'
@@ -14,9 +14,8 @@ import {
     NavigationMenuIndicator,
     NavigationMenuItem,
     NavigationMenuLink,
-    NavigationMenuList,
     NavigationMenuTrigger,
-    NavigationMenuViewport,
+    NavigationMenuList,
 } from "@/components/ui/navigation-menu"
 
 export default function FacebookPage() {
@@ -98,13 +97,13 @@ export default function FacebookPage() {
                             <p>
                                 BIG THINGS START WITH SMALL DIGS! 🌱
                                 <br/><br/>
-                                It only takes one step—and one shovel—to start something bigger. This June 25, we're not just planting trees. 
-                                We're planting hope, setting down roots, and growing a future that's greener and stronger for Bula. ✨
+                                It only takes one step—and one shovel—to start something bigger. This June 25, we&apos;re not just planting trees. 
+                                We&apos;re planting hope, setting down roots, and growing a future that&apos;s greener and stronger for Bula. ✨
                                 <br/><br/>
                                 The Bula Municipal Youth Officials invite you to move with nature, and take part in our EnviroWARRIOR: 
                                 YOUTH TREE GROWING ACTIVITY happening in LA Victoria, Bula, Camarinues Sur at 8:00 AM.
                                 <br/><br/>
-                                Let's plant today, so tomorrow can breathe better! 🍃
+                                Let&apos;s plant today, so tomorrow can breathe better! 🍃
                                 <br/><br/>
                                 🎨 : Adrian Abonita
                                 <br/>
@@ -144,5 +143,6 @@ export default function FacebookPage() {
         </div>
 
     )
+
 }
 

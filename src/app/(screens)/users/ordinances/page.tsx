@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { Button } from '@/components/ui/button';
+
 import { OrdinancesCard } from '@/src/app/components/user/ordinances-card';
 import {
   Select,
@@ -29,6 +30,7 @@ export default function Ordinances() {
 
       {/* SortBy Placeholder */}
       <div className="mr-35 place-self-end">
+
         <Select>
           <SelectTrigger className="w-[100%] bg-white cursor-pointer">
             <SelectValue className="placeholder:italic" placeholder="Sort By" />
@@ -47,7 +49,6 @@ export default function Ordinances() {
         <OrdinancesCard />
         <OrdinancesCard />
       </div>
-
     </div>
   )
 }

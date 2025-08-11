@@ -21,6 +21,7 @@
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
+    "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.52.0",
     "axios": "^1.10.0",
     "bcrypt": "^6.0.0",
@@ -28,6 +29,7 @@
     "clsx": "^2.1.1",
     "cookie": "^1.0.2",
     "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "lucide-react": "^0.535.0",
@@ -36,6 +38,7 @@
     "pg": "^8.16.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "sweetalert2": "^11.22.2",
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
