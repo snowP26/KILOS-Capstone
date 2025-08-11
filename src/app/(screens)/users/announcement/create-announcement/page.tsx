@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, ImagePlus } from 'lucide-react'
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,6 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-
 import {
     Select,
     SelectContent,
@@ -24,13 +23,31 @@ import {
     SelectValue,
     SelectLabel,
 } from "@/components/ui/select"
+import { postAnnouncements } from '@/src/app/actions/announcements';
+import { useRouter } from 'next/navigation';
 
 export default function CreateAnnouncement() {
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const announcementTypes = [
+        "general",
+        "policy",
+        "public_service",
+        "administrative",
+        "electoral",
+        "event",
+        "emergency",
+        "financial",
+        "employment",
+        "infrastructure",
+        "press_release"
+    ];
+    const formRef = useRef<HTMLFormElement>(null) as React.RefObject<HTMLFormElement>;
+    const router = useRouter();
 
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const handleClick = () => {
         fileInputRef.current?.click();
     };
+
 
     return (
         <div className="bg-[#E6F1FF] h-screen mt-10">
@@ -59,27 +76,34 @@ export default function CreateAnnouncement() {
             <p className="font-bold text-3xl mt-8 mb-2 ml-30">Create Announcements</p>
             <hr className="border-t border-black w-[90%] mx-auto my-3" />
 
-            <div className="justify-items-center mt-10">
+            <form className="justify-items-center mt-10" ref={formRef} onSubmit={async (e) => {
+                await postAnnouncements(e, formRef);
+                router.push("/users/announcement");
+            }}>
                 <div className="bg-white w-[70%] px-20 rounded-[16px] py-10">
                     <div className="flex flex-row justify-between">
                         <div className="w-100">
                             <p className="font-semibold">Announcement Header</p>
-                            <Input className="bg-[#E6F1FF] placeholder:italic" placeholder="eg. The Announcement is about KILOS" />
+                            <Input 
+                            className="bg-[#E6F1FF] placeholder:italic" placeholder="eg. The Announcement is about KILOS"
+                            name="title"
+                            />
                         </div>
                         <div className="flex flex-row items-center gap-2">
                             <p className="font-semibold">Announcement Category:</p>
-                            <Select>
+                            <Select name="type" required>
                                 <SelectTrigger className="w-[180px] bg-[#E6F1FF] cursor-pointer">
                                     <SelectValue className="placeholder:italic" placeholder="Select a Category" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-[#E6F1FF]">
                                     <SelectGroup>
-                                        <SelectLabel className="text-xs underline">Categories</SelectLabel>
-                                        <SelectItem value="general">General</SelectItem>
-                                        <SelectItem value="public safety">Public Safety</SelectItem>
-                                        <SelectItem value="events">Events</SelectItem>
-                                        <SelectItem value="project">Project</SelectItem>
-                                        <SelectItem value="other">Other</SelectItem>
+                                        {announcementTypes.map((type) => (
+                                            <SelectItem key={type} value={type}>
+                                                {type
+                                                    .replace(/_/g, " ")
+                                                    .replace(/\b\w/g, (c) => c.toUpperCase())}
+                                            </SelectItem>
+                                        ))}
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
@@ -87,7 +111,11 @@ export default function CreateAnnouncement() {
                     </div>
 
                     <p className="font-semibold pt-5">Announcement Body</p>
-                    <Textarea className="bg-[#E6F1FF] h-60 placeholder:italic" placeholder="eg. The Announcement is about KILOS" />
+                    <Textarea 
+                    className="bg-[#E6F1FF] h-60 placeholder:italic" 
+                    placeholder="eg. The Announcement is about KILOS" 
+                    name="body"
+                    />
 
                     <p className="font-semibold pt-5">Announcement Image</p>
                     <p className="text-gray-500 italic text-xs">Attach any image if needed. The image will be posted with the announcement.</p>
@@ -132,6 +160,7 @@ export default function CreateAnnouncement() {
                             type="file"
                             accept="image/jpeg,image/png"
                             className="hidden"
+                            name="image"
                         />
                     </>
 
@@ -143,7 +172,7 @@ export default function CreateAnnouncement() {
                     </div>
                 </div>
 
-            </div>
+            </form>
 
         </div>
     )

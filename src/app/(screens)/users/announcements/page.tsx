@@ -1,6 +1,6 @@
 "use client";
 
-import { getAnnouncments, postAnnouncements, getPhoto, deleteAnnouncements, getCurrentUser, testbutton} from "../../../actions/announcements";
+import { getAnnouncments, postAnnouncements, getPhoto, deleteAnnouncements, getCurrentUser } from "../../../actions/announcements";
 import { useEffect, useRef, useState } from "react";
 import { announcement } from "../../../lib/definitions";
 
@@ -25,12 +25,6 @@ export default function Announcements() {
   const [refresh, setRefresh] = useState(0)
   const [user, setUser] = useState<string>("")
   
-  const setUserFunction = async () => {
-    const currentUser = await getCurrentUser();
-    setUser(currentUser as string);
-    return  console.log("Current user:", currentUser);
-  };
-
   const updateAnnouncements = async () => {
     const updatedData = await getAnnouncments();
 
@@ -50,7 +44,6 @@ export default function Announcements() {
   };
 
   useEffect(() => {
-    setUserFunction();
     updateAnnouncements();
   }, [refresh])
 
@@ -161,7 +154,7 @@ export default function Announcements() {
                 >
                   <h3 className="text-md font-semibold">{data.header}</h3>
                   <p className="text-sm text-gray-600">{data.body}</p>
-                  <p className="text-xs italic text-gray-500">Type: {data.type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}</p>
+                  <p className="text-xs italic text-gray-500">Type: {data.type.replace(/_/g, " ").replace(/\b\w/g, (c : string) => c.toUpperCase())}</p>
                   {data.photo && (
                     <img
                       src={data.photo}
