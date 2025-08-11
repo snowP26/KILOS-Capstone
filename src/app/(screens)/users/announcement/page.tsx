@@ -27,7 +27,6 @@ export default function Announcement() {
     "press_release"
   ];
   const [pinnedAnnouncements, setPinnedAnnouncements] = useState<number[]>([])
-  const [refresh, setRefresh] = useState(0);
   const [announcements, setAnnouncements] = useState<announcement[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
@@ -63,13 +62,10 @@ export default function Announcement() {
 
   }
 
-  
-
-
   useEffect(() => {
     updateAnnouncements();
     loadPinned();
-  }, [refresh])
+  }, [])
 
   return (
     <div className="h-full">
@@ -119,7 +115,10 @@ export default function Announcement() {
                   <Pin
                     className="cursor-pointer"
                     size="25px"
-                    onClick={() => {setPinned(data.id)}}
+                    onClick={() => {
+                      setPinned(data.id)
+                  
+                    }}
                     fill={pinnedAnnouncements.includes(data.id) ? "black" : "none"}
                   />
                 </div>
