@@ -6,12 +6,13 @@ import { PinnedAnnouncementCard } from '@/src/app/components/user/pinnedAnnounce
 import { announcement } from '@/src/app/lib/definitions';
 import { Pin } from 'lucide-react';
 import { fetchPinned, getAnnouncments, getPhoto, setPinned } from '@/src/app/actions/announcements';
-
+import { useRouter } from 'next/navigation';
 import { format } from 'date-fns'
 
 
 
 export default function Announcement() {
+  const router = useRouter();
   const announcementTypes = [
     "all",
     "general",
@@ -146,7 +147,7 @@ export default function Announcement() {
 
         </div>
         <div className="w-1/5 mr-3">
-          <Button className="bg-[#052659] w-[100%] my-3">Create Announcement</Button>
+          <Button className="bg-[#052659] w-[100%] my-3 hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground cursor-pointer hover:border-1" onClick={() => router.push("/users/announcement/create-announcement")}>Create Announcement</Button>
 
           <div className=" bg-white rounded-[10px] pt-5 h-fit pb-5">
             <p className="text-center text-2xl font-semibold">Pinned Announcements</p>
