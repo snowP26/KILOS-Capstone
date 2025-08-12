@@ -22,8 +22,14 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { useParams } from 'next/navigation';
 
 export default function ViewOrdinance() {
+    const params = useParams();
+    const id = params?.id as string;
+
+    const ordinanceNum = id.replace(/^o-/, 'Ordinance ')
+
     return (
         <div className="bg-[#E6F1FF] h-screen mt-10">
             <Breadcrumb className="ml-20">
@@ -39,16 +45,16 @@ export default function ViewOrdinance() {
                     </div>
 
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/components">Ordinances & Resolutions</BreadcrumbLink>
+                        <BreadcrumbLink href="/users/ordinances/">Ordinances & Resolutions</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbPage className="font-bold">Ordinance 2021 - 022</BreadcrumbPage>
+                        <BreadcrumbPage className="font-bold">{ordinanceNum}</BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
 
-            <p className="font-bold text-3xl mt-8 mb-2 ml-30">Ordinance 2021 - 022</p>
+            <p className="font-bold text-3xl mt-8 mb-2 ml-30">{ordinanceNum}</p>
             <hr className="border-t border-black w-[90%] mx-auto mt-3 mb-2" />
             <p className="text-md mb-2 ml-30">
                 An Ordinance Institutionalizing the Bula Youth Leadership Summit and Declaring It as an Annual Municipal Activity
