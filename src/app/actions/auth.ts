@@ -13,6 +13,17 @@ const successPopup = async () => {
     })
 }
 
+export const checkCode = async (code: string) => {
+    const { data, error } = await client.from("positions").select("is_assigned").eq("registration_code", code);
+
+    if(error) {
+        return console.log("Registration code error: ", error)
+    }
+    if(data){
+        console.log(data[0].is_assigned)
+    }
+}
+
 
 
 export const registerUser = async (regData: users, router: AppRouterInstance) => {
@@ -58,7 +69,6 @@ export const registerUser = async (regData: users, router: AppRouterInstance) =>
             }
         ]);
 
-    await client.from("positions").insert([])
 
     if(yoError) {
         Swal.close();
@@ -117,6 +127,4 @@ export const logoutUser = async (router: AppRouterInstance) => {
             router.push("/login");
         }
     });
-
-
 }
