@@ -6,6 +6,7 @@ import { u } from "@/src/app/lib/definitions";
 import { useRouter } from "next/navigation";
 import { Session } from "@supabase/supabase-js";
 import { UserNav } from "../../components/user/nav_user";
+import { checkCode } from "../../actions/auth";
 
 export default function MockUsers() {
   const [newUser, setNewUser] = useState({ name: "", author_id: "" });
@@ -98,6 +99,7 @@ export default function MockUsers() {
   return (
     <>
       <UserNav />
+      <button onClick={() => checkCode("UO8KNA")}>TEST BUTTON</button>
       <div className="py-10 px-4 max-w-6xl mx-auto">
         <form
           className="mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4"

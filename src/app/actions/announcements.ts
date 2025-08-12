@@ -3,6 +3,9 @@ import client from "@/src/api/client";
 import { FormEvent, RefObject } from "react";
 import Swal from "sweetalert2";
 
+
+
+// upload photo function
 export async function uploadFile(file: File, filename: string) {
     const { error } = await client.storage.from('users').upload(`announcements/${filename}`, file);
 
@@ -20,6 +23,8 @@ export async function getPhoto(fileName: string) {
     return data.publicUrl;
 }
 
+
+// Post announcements function
 export const postAnnouncements = async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement>) => {
 
     e.preventDefault();
@@ -32,7 +37,7 @@ export const postAnnouncements = async (e: FormEvent<HTMLFormElement>, formRef: 
         image: formData.get("image") as File
     };
 
-    if(form.type == null) {
+    if (form.type == null) {
         return alert('Type should not be null');
     }
 
@@ -68,6 +73,8 @@ export const postAnnouncements = async (e: FormEvent<HTMLFormElement>, formRef: 
 
 }
 
+
+// Get Announcements Function
 export const getAnnouncments = async () => {
     const { data, error } = await client.from("announcement").select("*").order("created_at", { ascending: false })
 
@@ -78,18 +85,19 @@ export const getAnnouncments = async () => {
     return data
 }
 
-async function deletePhoto(filename: string) {
-    const { error } = await client.storage.from('users').remove([`announcements/${filename}`]);
 
-    if (error) {
-        console.error("Error deleting image:", error);
-        throw new Error(error.message);
-    }
-
-    console.log("Image deleted successfully");
-}
-
+// Delete Announcements Function
 export const deleteAnnouncements = async (id: number) => {
+    async function deletePhoto(filename: string) {
+        const { error } = await client.storage.from('users').remove([`announcements/${filename}`]);
+
+        if (error) {
+            console.error("Error deleting image:", error);
+            throw new Error(error.message);
+        }
+
+        console.log("Image deleted successfully");
+    }
 
     const { data } = await client.from("announcement").select("photo").eq("id", id).single();
 
@@ -117,6 +125,7 @@ export const deleteAnnouncements = async (id: number) => {
 }
 
 
+// Get current user function
 export const getCurrentUser = async () => {
     const { data, error } = await client.auth.getSession();
 
@@ -125,5 +134,55 @@ export const getCurrentUser = async () => {
     }
 
     return data.session?.user.email
+}
+
+
+// Set pinned announcements function
+export const setPinned = async (id: number) => {
+
+    // get session data
+    const session = await client.auth.getSession();
+    const user = session?.data.session?.user.id
+    
+    // if the announcement is already pinned, unpin the announcement
+    const { data: pinExist } = await client
+        .from("pinned_announcements")
+        .select("*")
+        .eq("announcement_id", id)
+        .eq("user_id", user)
+        
+
+
+    if (pinExist && pinExist.length > 0) {
+        await client
+            .from("pinned_announcements")
+            .delete()
+            .eq("announcement_id", id)
+            .eq("user_id", user);
+
+        return;
+    }
+    const { error } = await client.from("pinned_announcements").insert([{
+        user_id: user,
+        announcement_id: id,
+    }])
+    
+    if (error) {
+        return console.log("Unable to pin announcement: ", error);
+    }
+    
+    return console.log('You have pinned the announcement.')
+};
+
+
+export const fetchPinned = async () => {
+    const user = (await client.auth.getSession()).data.session?.user.id;
+
+    const { data } = await client.from("pinned_announcements").select("announcement_id").eq("user_id", user);
+
+    if (!data) {
+        return [];
+    }
+    return data.map(row => row.announcement_id);
 }
 

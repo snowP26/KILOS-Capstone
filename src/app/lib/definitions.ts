@@ -13,6 +13,9 @@ type AnnouncementType =
     | "Infrastructure"
     | "Press Release";
 
+export const locations = ["naga-city", "pili", "bula"] as const;
+
+
 export type u = {
     id: number;
     name: string;
@@ -39,7 +42,7 @@ export type announcement = {
     created_at: Date;
     header: string;
     body: string;
-
+    ispinned: boolean;
     type: AnnouncementType;
     photo: string; // string = url to photo.
     author_email: string;
