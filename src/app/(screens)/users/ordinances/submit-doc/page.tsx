@@ -14,15 +14,18 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { useRouter } from 'next/navigation';
 
 export default function SubmitDoc() {
+    const router = useRouter();
+
     return (
         <div className="bg-[#E6F1FF] h-screen mt-10">
             <Breadcrumb className="ml-20">
                 <BreadcrumbList>
                     <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link">
                         <ArrowLeft color="black"/>
-                        <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
+                        <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100" onClick={() => router.back()}> 
                             Return
                         </div>
                     </Button>
@@ -31,16 +34,16 @@ export default function SubmitDoc() {
                     </div>
                     
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/components">Ordinance & Resolutions</BreadcrumbLink>
+                        <BreadcrumbLink href="/users/ordinances/">Ordinance & Resolutions</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbPage className="font-bold">Submit Document</BreadcrumbPage>
+                        <BreadcrumbPage className="font-bold">Submit an Ordinance</BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
 
-            <p className="font-bold text-3xl mt-8 mb-2 ml-30">Submit Document</p>
+            <p className="font-bold text-3xl mt-8 mb-2 ml-30">Submit an Ordinance</p>
             <hr className="border-t border-black w-[90%] mx-auto my-3" />
 
             <div className="justify-items-center mt-10">
@@ -80,8 +83,8 @@ export default function SubmitDoc() {
                     
 
                     <div className="place-self-end">
-                        <Button className="bg-[#A3C4A8] text-black font-bold rounded-[16px] cursor-pointer hover:bg-black hover:text-[#A3C4A8]">
-                            Submit Document
+                        <Button className="bg-[#A3C4A8] text-black hover:font-bold rounded-[16px] cursor-pointer hover:bg-accent hover:text-accent-foreground hover:border-[#a3c4a8] hover:border-1 transition-all">
+                            Submit Ordinance/Resolution
                         </Button>
                     </div>
                 </div>
