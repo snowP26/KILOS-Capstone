@@ -1,9 +1,8 @@
 "use client";
 
-import React from 'react'
+import React, { RefObject, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
-import { ImagePlus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Separator } from "@/components/ui/separator"
 import {
@@ -15,9 +14,11 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { useRouter } from 'next/navigation';
+import { postOrdinance } from '@/src/app/actions/ordinances';
 
 export default function SubmitDoc() {
     const router = useRouter();
+    const formRef = useRef<HTMLFormElement>(null) as RefObject<HTMLFormElement>
 
     return (
         <div className="bg-[#E6F1FF] h-screen mt-10">
@@ -47,20 +48,20 @@ export default function SubmitDoc() {
             <hr className="border-t border-black w-[90%] mx-auto my-3" />
 
             <div className="justify-items-center mt-10">
-                <div className="bg-white w-[70%] px-20 rounded-[16px] py-10">
+                <form className="bg-white w-[70%] px-20 rounded-[16px] py-10" ref={formRef} onSubmit={(e) => postOrdinance(e, formRef)}>
                
                     <div className="w-[70%]">
                         <p className="font-semibold">Ordinance Title</p>
-                        <Input className="bg-[#E6F1FF] placeholder:italic" placeholder="eg. An ordinance..." />
+                        <Input className="bg-[#E6F1FF] placeholder:italic" placeholder="eg. An ordinance..." name="description"/>
                     </div>
 
                     <div className="w-100 mt-5">
                         <p className="font-semibold">Ordinance Year and Ordinance Number</p>
-                        <Input className="bg-[#E6F1FF] placeholder:italic" placeholder="eg. 2000 - 001" />
+                        <Input className="bg-[#E6F1FF] placeholder:italic" placeholder="eg. 2000 - 001" name="title"/>
                     </div>
 
                     <p className="font-semibold pt-5">Ordinance Document</p>
-                    <p className="text-gray-500 italic text-xs">Please submit the PDF of the ordinance.</p>
+                    <p className="text-gray-500 italic text-xs" >Please submit the PDF of the ordinance.</p>
 
                     {/* <div className="flex h-[150px] w-[600px] mt-3 items-center justify-center rounded-md border border-dashed border-gray-400 text-sm">
                             <div className="flex flex-row gap-2">
@@ -78,7 +79,7 @@ export default function SubmitDoc() {
                     </div> */}
 
                     <div className="w-55 mt-2">
-                        <Input type="file" className="cursor-pointer hover:bg-gray-300"/>
+                        <Input type="file" className="cursor-pointer hover:bg-gray-300" name="document"/>
                     </div>
                     
 
@@ -87,7 +88,7 @@ export default function SubmitDoc() {
                             Submit Ordinance/Resolution
                         </Button>
                     </div>
-                </div>
+                </form>
 
             </div>
 
