@@ -47,7 +47,7 @@ export default function SubmitDoc() {
             <hr className="border-t border-black w-[90%] mx-auto my-3" />
 
             <div className="justify-items-center mt-10">
-                <div className="bg-white w-[70%] px-20 rounded-[16px] py-10">
+                <div className="bg-white w-[70%] px-20 rounded-[16px] py-10 shadow-lg/30">
                
                     <div className="w-[70%]">
                         <p className="font-semibold">Ordinance Title</p>
