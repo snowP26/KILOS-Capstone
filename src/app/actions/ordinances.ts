@@ -15,7 +15,7 @@ const checkTitleDuplicates = async (uploadValue: string) => {
   return data.length > 0;
 };
 
-export const getLocationFromEmail = async (email: string) => {
+const getLocationFromEmail = async (email: string) => {
   const { data, error } = await client
     .from("youth_official")
     .select("location")
@@ -36,14 +36,11 @@ export const getLocationFromEmail = async (email: string) => {
   return locationData?.name || null;
 };
 
-export const postOrdinance = async (
-  e: FormEvent<HTMLFormElement>,
-  formRef: RefObject<HTMLFormElement>
-) => {
+export const postOrdinance = async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement>) => {
   e.preventDefault();
 
   const formdata = new FormData(e.currentTarget);
-  const title = formdata.get("title") as string;
+  const title = `${formdata.get("title-year") as string}-${formdata.get("title-number") as string}`;
   const description = formdata.get("description") as string;
   const file = formdata.get("document") as File;
 
@@ -166,3 +163,7 @@ export const uploadFile = async (ordinance_id: number, doc: File) => {
 
   console.log("Success uploading your file");
 };
+
+export const updateHearing = async () => {
+    
+}

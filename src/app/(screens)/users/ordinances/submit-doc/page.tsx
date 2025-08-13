@@ -55,9 +55,13 @@ export default function SubmitDoc() {
                         <Input className="bg-[#E6F1FF] placeholder:italic" placeholder="eg. An ordinance..." name="description"/>
                     </div>
 
-                    <div className="w-100 mt-5">
-                        <p className="font-semibold">Ordinance Year and Ordinance Number</p>
-                        <Input className="bg-[#E6F1FF] placeholder:italic" placeholder="eg. 2000 - 001" name="title"/>
+                    <div className="max-w-100 mt-5">
+                        <p className="font-semibold">Ordinance Year and Number</p>
+                        <div className='flex flex-row space-x-2'>
+                            <Input className="bg-[#E6F1FF] placeholder:italic w-[30%]" placeholder="eg. 2000" name="title-year" maxLength={4}/>
+                            <strong>-</strong>
+                            <Input className="bg-[#E6F1FF] placeholder:italic w-[25%]" placeholder="eg. 001" name="title-number" maxLength={4}/>
+                        </div>
                     </div>
 
                     <p className="font-semibold pt-5">Ordinance Document</p>
