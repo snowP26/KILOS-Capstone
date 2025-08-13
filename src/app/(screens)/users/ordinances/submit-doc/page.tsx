@@ -49,7 +49,7 @@ export default function SubmitDoc() {
 
             <div className="justify-items-center mt-10">
                 <form className="bg-white w-[70%] px-20 rounded-[16px] py-10" ref={formRef} onSubmit={(e) => postOrdinance(e, formRef)}>
-               
+
                     <div className="w-[70%]">
                         <p className="font-semibold">Ordinance Title</p>
                         <Input className="bg-[#E6F1FF] placeholder:italic" placeholder="eg. An ordinance..." name="description"/>
