@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react'
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button'
 import { Separator } from "@/components/ui/separator"
 import { ArrowLeft } from 'lucide-react';
@@ -13,12 +14,15 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
+
 export default function ViewProjDetails() {
+  const router = useRouter();
+    
     return (
         <div className="bg-[#E6F1FF] h-screen mt-10">
             <Breadcrumb className="ml-20">
                 <BreadcrumbList>
-                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link">
+                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.push("/admin/projects/[id]")}>
                         <ArrowLeft color="black" />
                         <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
                             Return
@@ -29,11 +33,11 @@ export default function ViewProjDetails() {
                     </div>
 
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/components">Proposed Projects</BreadcrumbLink>
+                        <BreadcrumbLink href="/admin/projects">Proposed Projects</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="">View Proposed Project</BreadcrumbLink>
+                        <BreadcrumbLink href="/admin/projects/[id]">View Proposed Project</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
@@ -45,7 +49,7 @@ export default function ViewProjDetails() {
             <div className="mx-25">
                 <p className="font-bold text-3xl mt-8 mb-6">Title of Proposed Project</p>
 
-                <Button className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]">View Budget Breakdown</Button>
+                <Button className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push("/admin/projects/[id]/view-budget-breakdown")}>View Budget Breakdown</Button>
 
                 <div className="flex flex-row gap-1">
                     <div className="bg-white mt-10 w-[35%] h-155 justify-items-center place-content-center">
