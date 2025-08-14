@@ -1,9 +1,6 @@
 "use client";
 
 import React from 'react'
-
-import { UserNav } from '@/src/app/components/user/nav_user';
-
 import { UsrFeedbackCard } from '@/src/app/components/user/usrFeedbackCard';
 
 export default function CommunityFeedback () {

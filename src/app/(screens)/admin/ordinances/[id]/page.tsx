@@ -1,11 +1,9 @@
 "use client";
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Separator } from "@/components/ui/separator"
-import { Input } from '@/components/ui/input';
 import { ArrowLeft, CircleCheck } from 'lucide-react';
-import { Calendar22 } from '@/src/app/components/admin/calender-picker';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -30,10 +28,20 @@ import {
     SelectGroup,
     SelectTrigger,
     SelectValue,
-    SelectLabel,
 } from "@/components/ui/select"
+import { ordinance } from '@/src/app/lib/definitions';
+import { useParams } from 'next/navigation';
 
 export default function SubmitOrdinances() {
+    const params = useParams();
+    const id = params.id as string
+    const [refresh, setRefresh] = useState(0);
+    const [ordinance, setOrdinance] = useState<ordinance>();
+
+    useEffect(() => {
+        console.log("refresh");
+    },[refresh])
+
     return (
         <div className="bg-[#E6F1FF] h-screen mt-10">
             <Breadcrumb className="ml-20">
@@ -84,11 +92,12 @@ export default function SubmitOrdinances() {
                                 <TableCell>
                                     <Select>
                                         <SelectTrigger className="w-[fit%] cursor-pointer justify-self-center">
-                                            <SelectValue className="placeholder:text-blue-500" placeholder="In Progress" />
+                                            <SelectValue className="placeholder:text-blue-500" placeholder="Pending" />
                                         </SelectTrigger>
                                         <SelectContent className="">
                                             <SelectGroup>
                                                 <SelectItem value="approved" className="text-[#28A745]">Approved</SelectItem>
+                                                <SelectItem value="in-progress" className="text-[#f3943b]">In Progress</SelectItem>
                                                 <SelectItem value="pending" className="text-[#005AC8]">Pending</SelectItem>
                                                 <SelectItem value="vetoed" className="text-[#A7282A]">Vetoed</SelectItem>
                                             </SelectGroup>
@@ -101,58 +110,6 @@ export default function SubmitOrdinances() {
                                 <TableCell className="text-center">
                                     Please collaborate with LYDO to draft the ordinance for the 2nd reading.
                                 </TableCell>
-                            </TableRow>
-                        </TableBody>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell className="w-[150px] text-center">Second Reading</TableCell>
-                                <TableCell>
-                                    <Select>
-                                        <SelectTrigger className="w-[fit%] cursor-pointer justify-self-center">
-                                            <SelectValue className="placeholder:text-blue-500" placeholder="In Progress" />
-                                        </SelectTrigger>
-                                        <SelectContent className="">
-                                            <SelectGroup>
-                                                <SelectItem value="approved" className="text-[#28A745]">Approved</SelectItem>
-                                                <SelectItem value="pending" className="text-[#005AC8]">Pending</SelectItem>
-                                                <SelectItem value="vetoed" className="text-[#A7282A]">Vetoed</SelectItem>
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                </TableCell>
-                                <TableCell className="text-center italic">January 11, 2000</TableCell>
-                                <TableCell className="justify-items-center italic">
-                                    <Calendar22 />
-                                </TableCell>
-                                <TableCell className="text-center font-semibold">Local Youth Development Office</TableCell>
-                                <TableCell className="text-center">-</TableCell>
-                            </TableRow>
-                        </TableBody>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell className="max-w-[150px] text-center">Third Reading</TableCell>
-                                <TableCell>
-                                    <Select>
-                                        <SelectTrigger className="w-[fit%] cursor-pointer justify-self-center">
-                                            <SelectValue className="placeholder:text-blue-500" placeholder="In Progress" />
-                                        </SelectTrigger>
-                                        <SelectContent className="">
-                                            <SelectGroup>
-                                                <SelectItem value="approved" className="text-[#28A745]">Approved</SelectItem>
-                                                <SelectItem value="pending" className="text-[#005AC8]">Pending</SelectItem>
-                                                <SelectItem value="vetoed" className="text-[#A7282A]">Vetoed</SelectItem>
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                </TableCell>
-                                <TableCell className="justify-items-center italic">
-                                    <Calendar22 />
-                                </TableCell>
-                                <TableCell className="justify-items-center italic">
-                                    <Calendar22 />
-                                </TableCell>
-                                <TableCell className="text-center">-</TableCell>
-                                <TableCell className="text-center">-</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
