@@ -163,7 +163,3 @@ export const uploadFile = async (ordinance_id: number, doc: File) => {
 
   console.log("Success uploading your file");
 };
-
-export const updateHearing = async () => {
-    
-}
