@@ -13,8 +13,29 @@ type AnnouncementType =
     | "Infrastructure"
     | "Press Release";
 
+type ApprovalStatus = "in progress" | "pending" | "approved" | "vetoed";
+    
+type readingData = {
+    approved: ApprovalStatus,
+    approver: string | null,
+    "start-date": string,
+    "end-date": string
+}
+
 export const locations = ["naga-city", "pili", "bula"] as const;
 
+export type ordinance = {
+    id: number,
+    title: string,
+    description: string,
+    location: string,
+    approvals:  {
+        "First Reading": readingData;
+        "Second Reading": readingData;
+        "Third Reading": readingData;
+    },
+    author: number,
+}
 
 export type u = {
     id: number;
