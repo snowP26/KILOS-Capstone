@@ -13,13 +13,13 @@ export default function Projects()  {
 
       <p className="font-bold text-3xl m-10">Proposed Projects</p>
       <div className="flex flex-wrap justify-center gap-5">
-          <div className="cursor-pointer" onClick={() => router.push("/admin/projects/[id]")}>
+          <div onClick={() => router.push("/admin/projects/[id]")}>
             <ProjectCard />
           </div>
-          <div className="cursor-pointer" onClick={() => router.push("/admin/projects/[id]")}>
+          <div onClick={() => router.push("/admin/projects/[id]")}>
             <ProjectCard />
           </div>
-          <div className="cursor-pointer" onClick={() => router.push("/admin/projects/[id]")}>
+          <div onClick={() => router.push("/admin/projects/[id]")}>
             <ProjectCard />
           </div>
           

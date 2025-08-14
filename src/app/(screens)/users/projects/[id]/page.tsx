@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react'
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react';
 import { SquarePen } from 'lucide-react';
@@ -16,11 +17,13 @@ import {
 } from "@/components/ui/breadcrumb"
 
 export default function ViewProject() {
+    const router = useRouter();
+
     return (
         <div className="bg-[#E6F1FF] h-screen mt-10">
             <Breadcrumb className="ml-20">
                 <BreadcrumbList>
-                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link">
+                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.push("/users/projects")}>
                         <ArrowLeft color="black" />
                         <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
                             Return
@@ -31,7 +34,7 @@ export default function ViewProject() {
                     </div>
 
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/components">Current Projects</BreadcrumbLink>
+                        <BreadcrumbLink href="/users/projects">Current Projects</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
@@ -44,7 +47,7 @@ export default function ViewProject() {
                 <p className="font-bold text-3xl mt-8 mb-6">Iheras: Sharing the Christmas Spirit Year 4</p>
 
                 <div className="flex flex-row gap-5 h-10">
-                    <Button className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]">View Budget Breakdown</Button>
+                    <Button className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push("/users/projects/[id]/view-project-budget")}>View Budget Breakdown</Button>
                     <p className="text-black bg-white rounded-2xl px-2 font-medium content-center">January 1, 2000</p>
                 </div>
 
