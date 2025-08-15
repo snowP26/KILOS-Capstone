@@ -16,10 +16,11 @@ type AnnouncementType =
 type ApprovalStatus = "in progress" | "pending" | "approved" | "vetoed";
     
 type readingData = {
-    approved: ApprovalStatus,
+    status: ApprovalStatus,
     approver: string | null,
     "start-date": string,
-    "end-date": string
+    "end-date": string,
+    remarks: string,
 }
 
 export const locations = ["naga-city", "pili", "bula"] as const;
@@ -77,4 +78,13 @@ export type meeting = {
     document: string;
     host: string;
     date_posted: Date;
+}
+
+export type ordinanceFiles = {
+    id: number,
+    created_at: Date,
+    ordinance_id: number,
+    file_path: string,
+    file_name: string,
+    author_id: number
 }
