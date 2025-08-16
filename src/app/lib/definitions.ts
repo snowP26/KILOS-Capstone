@@ -54,9 +54,6 @@ export type users = {
     // position_id: number;
 }
 
-// export type admin = {
-
-// }
 
 // define Announcement based on ERD
 export type announcement = {
@@ -87,4 +84,12 @@ export type ordinanceFiles = {
     file_path: string,
     file_name: string,
     author_id: number
+}
+
+export type commFeedback = {
+    id: number,
+    created_at: Date,
+    header: string,
+    body: string,
+    location: number
 }
