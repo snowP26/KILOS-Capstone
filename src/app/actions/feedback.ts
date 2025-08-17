@@ -1,6 +1,6 @@
 import client from "@/src/api/client";
 import { FormEvent, RefObject } from "react";
-import { locNameToID } from "./covert";
+import { locNameToID } from "./convert";
 
 
 export const postFeedback = async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement>, id: string) => {
