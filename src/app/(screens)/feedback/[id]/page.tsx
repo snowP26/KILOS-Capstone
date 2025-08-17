@@ -15,16 +15,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useParams, notFound } from "next/navigation";
-import { commFeedback, locations } from "@/src/app/lib/definitions";
-import { useState } from "react";
+import { locations } from "@/src/app/lib/definitions";
+import { RefObject, useRef} from "react";
+import { postFeedback } from "@/src/app/actions/feedback";
 
 export default function Page() {
   const params = useParams();
   const id = params.id as string;
-  const [feedback, setFeedback] = useState<commFeedback>();
+  const formRef = useRef<HTMLFormElement>(null) as RefObject<HTMLFormElement>;
 
   const validLocations = locations;
-  type Location = typeof validLocations[number];
+  type Location = (typeof validLocations)[number];
   function isValidLocation(value: string): value is Location {
     return (validLocations as readonly string[]).includes(value);
   }
@@ -40,6 +41,9 @@ export default function Page() {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   };
+
+
+
 
   return (
     <div>
@@ -57,33 +61,23 @@ export default function Page() {
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Submit Feedback</DialogTitle>
-              <DialogDescription>
-                Share your thoughts with the community.
-              </DialogDescription>
-            </DialogHeader>
-            <Input
-              placeholder="Enter your feedback header..."
-              value={feedback?.header}
-              onChange={}
-            />
-            <Input
-              placeholder="Enter your feedback body..."
-              value={feedback?.body}
-              onChange={}
-            />
-            <DialogFooter>
-              <Button variant="outline">Cancel</Button>
-              <Button
-                onClick={() => {
-                  console.log("Submitted feedback:", feedback);
-                  setFeedback(); 
-                }}
-              >
-                Submit
-              </Button>
-            </DialogFooter>
+            <form onSubmit={(e) => postFeedback(e, formRef, toProperCase(id.replace("-", " ")))} ref={formRef}>
+              <DialogHeader>
+                <DialogTitle>Submit Feedback</DialogTitle>
+                <DialogDescription>
+                  Share your thoughts with the community.
+                </DialogDescription>
+              </DialogHeader>
+              <Input
+                placeholder="Enter your feedback header..."
+                name="header"
+              />
+              <Input placeholder="Enter your feedback body..." name="body" />
+              <DialogFooter>
+                <Button variant="outline">Cancel</Button>
+                <Button className="cursor-pointer">Submit</Button>
+              </DialogFooter>
+            </form>
           </DialogContent>
         </Dialog>
       </div>
