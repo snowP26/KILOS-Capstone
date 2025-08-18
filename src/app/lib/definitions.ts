@@ -88,7 +88,7 @@ export type ordinanceFiles = {
 
 export type commFeedback = {
     id: number,
-    created_at: Date,
+    created_at: string,
     header: string,
     body: string,
     location: number

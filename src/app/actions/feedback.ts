@@ -25,3 +25,15 @@ export const postFeedback = async (e: FormEvent<HTMLFormElement>, formRef: RefOb
         return console.log("Error in creating your feedback: ", error)
     }
 }
+
+export const getFeedback = async(id: string) => {
+    const locationID = await locNameToID(id)
+    const { data, error } = await client.from("feedback").select("*").eq("location", locationID);
+
+    if(error || data.length == 0) {
+        console.log("Error fetching data: ", error)
+        return null;
+    }
+
+    return data;
+}
