@@ -28,7 +28,7 @@ export const postFeedback = async (e: FormEvent<HTMLFormElement>, formRef: RefOb
 
 export const getFeedback = async(id: string) => {
     const locationID = await locNameToID(id)
-    const { data, error } = await client.from("feedback").select("*").eq("location", locationID);
+    const { data, error } = await client.from("feedback").select("*").eq("location", locationID).order("created_at", { ascending: false });
 
     if(error || data.length == 0) {
         console.log("Error fetching data: ", error)
