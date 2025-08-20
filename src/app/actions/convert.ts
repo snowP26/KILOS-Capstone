@@ -13,3 +13,24 @@ export const locNameToID = async (loc: string) => {
 
     return data[0].id as number
 }
+
+export const getLocFromAuth = async () => {
+    const { data: userData, error: userError } = await client.auth.getUser();
+
+    if(!userData){
+        return console.log("No authenticated user is found.")
+    } 
+
+    if(userError){
+        return console.log("User error: ", userError)
+    }
+
+    const authEmail = userData.user.email;
+    const { data, error } = await client.from("youth_official").select("location").eq("email", authEmail).single();
+    
+    if(error){
+        return console.log("There seems to be an error with the youth official", error)
+    }
+
+    return data.location as number;
+}
