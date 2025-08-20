@@ -16,11 +16,11 @@ export const ComNav = () => {
                 <Link href='/' className={pathname === "/" ? "mr-4 text-black font-bold text-lg" : "mr-4 text-gray-500 text-lg"}>
                     Home
                 </Link>
-                <Link href='/feedback' className={pathname === "/feedback/*" ? "mr-4 text-black font-bold text-lg" : "mr-4 text-gray-500 text-lg"}>
+                <Link href='/feedback' className={pathname.startsWith("/feedback")  ? "mr-4 text-black font-bold text-lg" : "mr-4 text-gray-500 text-lg"}>
                     Share your Insights
                 </Link>
             </div>
-            <Link href='/login' className={pathname === "/login"  ? "mr-4 text-black font-bold text-md" : "mr-4 text-gray-500 text-md"}>
+            <Link href='/login' className={pathname.startsWith("/login")  ? "mr-4 text-black font-bold text-md" : "mr-4 text-gray-500 text-md"}>
                 Login as Official
             </Link>
         </nav>
