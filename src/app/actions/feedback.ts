@@ -24,6 +24,9 @@ export const postFeedback = async (e: FormEvent<HTMLFormElement>, formRef: RefOb
     if(error) {
         return console.log("Error in creating your feedback: ", error)
     }
+
+    formRef.current?.reset()
+    return console.log("Success")
 }
 
 export const getFeedback = async(id: number) => {
