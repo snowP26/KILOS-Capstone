@@ -21,25 +21,24 @@ import { getFeedback, postFeedback } from "@/src/app/actions/feedback";
 import { locNameToID } from "@/src/app/actions/convert";
 
 export default function Page() {
-  const toProperCase = (str: string) => {
-    return str
+  const [refresh, setRefresh] = useState(0);
+  const [open, setOpen] = useState(false);
+  const toProperCase = (str: string) =>
+    str
       .toLowerCase()
       .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
       .join(" ");
-  };
 
   const params = useParams();
   const id = params.id as string;
   const formRef = useRef<HTMLFormElement>(null) as RefObject<HTMLFormElement>;
   const [feedback, setFeedback] = useState<commFeedback[]>([]);
   const loc_name = toProperCase(id.replace("-", " "));
-
   const validLocations = locations;
   type Location = (typeof validLocations)[number];
-  function isValidLocation(value: string): value is Location {
-    return (validLocations as readonly string[]).includes(value);
-  }
+  const isValidLocation = (value: string): value is Location =>
+    (validLocations as readonly string[]).includes(value);
 
   if (!isValidLocation(id)) {
     notFound();
@@ -47,17 +46,12 @@ export default function Page() {
 
   useEffect(() => {
     const fetchFeedbackData = async () => {
-      const locationID = await locNameToID(loc_name) as number
+      const locationID = (await locNameToID(loc_name)) as number;
       const data = await getFeedback(locationID);
-      if (data) {
-        setFeedback(data);
-      } else {
-        setFeedback([]);
-      }
+      setFeedback(data ?? []);
     };
-
     fetchFeedbackData();
-  }, []);
+  }, [refresh, loc_name]);
 
   return (
     <div>
@@ -68,7 +62,7 @@ export default function Page() {
 
       <p className="text-4xl font-bold text-center">Community Feedback</p>
       <div className="flex justify-center mt-5">
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="bg-blue-900 cursor-pointer hover:bg-blue-200 hover:text-accent-foreground hover:border-accent-foreground hover:shadow-lg transition-all duration-200">
               Post a Feedback
@@ -76,8 +70,13 @@ export default function Page() {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <form
-              onSubmit={(e) => postFeedback(e, formRef, loc_name)}
               ref={formRef}
+              onSubmit={async (e) => {
+                await postFeedback(e, formRef, loc_name);
+                formRef.current?.reset();
+                setRefresh((prev) => prev + 1);
+                setOpen(false);
+              }}
             >
               <DialogHeader>
                 <DialogTitle>Submit Feedback</DialogTitle>
@@ -88,11 +87,24 @@ export default function Page() {
               <Input
                 placeholder="Enter your feedback header..."
                 name="header"
+                required
               />
-              <Input placeholder="Enter your feedback body..." name="body" />
+              <Input
+                placeholder="Enter your feedback body..."
+                name="body"
+                required
+              />
               <DialogFooter>
-                <Button variant="outline">Cancel</Button>
-                <Button className="cursor-pointer">Submit</Button>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => setOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button className="cursor-pointer" type="submit">
+                  Submit
+                </Button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -106,15 +118,14 @@ export default function Page() {
               key={data.id}
               header={data.header}
               body={data.body}
-              date={new Date(data.created_at)
-                .toLocaleString("en-US", {
-                  month: "long", 
-                  day: "numeric", 
-                  year: "numeric", 
-                  hour: "numeric", 
-                  minute: "2-digit", 
-                  hour12: true, 
-                })}
+              date={new Date(data.created_at).toLocaleString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true,
+              })}
             />
           ))}
         </div>
