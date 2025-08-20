@@ -47,7 +47,8 @@ export default function Page() {
 
   useEffect(() => {
     const fetchFeedbackData = async () => {
-      const data = await getFeedback(loc_name);
+      const locationID = await locNameToID(loc_name) as number
+      const data = await getFeedback(locationID);
       if (data) {
         setFeedback(data);
       } else {
