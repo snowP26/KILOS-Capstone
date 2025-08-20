@@ -69,7 +69,7 @@ export default function Announcement() {
   }, [])
 
   return (
-    <div className="h-full">
+    <div className="h-full bg-[#E6F1FF]">
       <div className="flex flex-row">
         <div className="w-1/5 bg-white h-fit rounded-[10px] pt-5 mt-2 ml-3">
           <p className="text-3xl font-semibold ml-4">Category</p>

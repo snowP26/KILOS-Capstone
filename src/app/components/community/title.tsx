@@ -1,5 +1,6 @@
 import { Search as SearchIcon } from "lucide-react";
 import LocationSelect from "./locselect";
+import { Button } from "@/components/ui/button";
 
 const Search = () => {
     return <SearchIcon size={24} />
@@ -22,9 +23,9 @@ export const Title = () => {
                         className="pl-13 p-3 bg-[#D9D9D9] rounded-lg w-full placeholder-gray-600"
                     />
                 </div>
-                <button type="submit" className="cursor-pointer py-3 px-5 bg-[#5483B3] text-white rounded-lg">
+                <Button type="submit" className="cursor-pointer h-[100%] py-3 px-5 bg-[#052659] text-white rounded-lg hover:bg-white hover:text-[#052659] hover:border-black hover:border">
                     Search
-                </button>
+                </Button>
             </form>
             
         </div>

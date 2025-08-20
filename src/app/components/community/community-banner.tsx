@@ -21,7 +21,7 @@ export const CommunityBanner = ({ id }: CommunityBannerProps) => {
           ea commodo consequat.
         </p>
         <div className="flex justify-center">
-          <Button className="bg-blue-900">View Current Youth Officials</Button>
+          <Button className="bg-[#052659] cursor-pointer hover:text-[#052659] hover:bg-white hover:border-black hover:border">View Current Youth Officials</Button>
         </div>
       </div>
     </div>

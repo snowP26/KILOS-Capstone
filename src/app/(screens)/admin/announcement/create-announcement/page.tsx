@@ -80,7 +80,7 @@ export default function CreateAnnouncement() {
                 await postAnnouncements(e, formRef);
                 router.push("/users/announcement");
             }}>
-                <div className="bg-white w-[70%] px-20 rounded-[16px] py-10">
+                <div className="bg-white w-[70%] px-20 rounded-[16px] py-10  shadow-lg/30">
                     <div className="flex flex-row justify-between">
                         <div className="w-100">
                             <p className="font-semibold">Announcement Header</p>

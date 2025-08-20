@@ -3,6 +3,7 @@
 import { ComNav } from "@/src/app/components/community/nav";
 import { CommunityBanner } from "@/src/app/components/community/community-banner";
 import { FeedbackCard } from "@/src/app/components/community/feedbackCard";
+import { PostFeedbackCard } from "@/src/app/components/community/post-feedbackCard";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 import { locations } from "@/src/app/lib/definitions";
@@ -39,7 +40,7 @@ export default function Page() {
 
       <p className="text-4xl font-bold text-center">Community Feedback</p>
       <div className="flex justify-center mt-5">
-        <Button className="bg-blue-900">Post a Feedback</Button>
+        <PostFeedbackCard/>
       </div>
 
       <div className="mx-25">
