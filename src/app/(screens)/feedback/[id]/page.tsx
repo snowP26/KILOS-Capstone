@@ -4,21 +4,10 @@ import { ComNav } from "@/src/app/components/community/nav";
 import { CommunityBanner } from "@/src/app/components/community/community-banner";
 import { FeedbackCard } from "@/src/app/components/community/feedbackCard";
 import { PostFeedbackCard } from "@/src/app/components/community/post-feedbackCard";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { useParams, notFound } from "next/navigation";
 import { commFeedback, locations } from "@/src/app/lib/definitions";
-import { RefObject, useEffect, useRef, useState } from "react";
-import { getFeedback, postFeedback } from "@/src/app/actions/feedback";
+import {  useEffect,  useState } from "react";
+import { getFeedback} from "@/src/app/actions/feedback";
 import { locNameToID } from "@/src/app/actions/convert";
 
 export default function Page() {
@@ -33,7 +22,7 @@ export default function Page() {
 
   const params = useParams();
   const id = params.id as string;
-  const formRef = useRef<HTMLFormElement>(null) as RefObject<HTMLFormElement>;
+
   const [feedback, setFeedback] = useState<commFeedback[]>([]);
   const loc_name = toProperCase(id.replace("-", " "));
   const validLocations = locations;
@@ -63,7 +52,10 @@ export default function Page() {
 
       <p className="text-4xl font-bold text-center">Community Feedback</p>
       <div className="flex justify-center mt-5">
-        <PostFeedbackCard/>
+        <PostFeedbackCard
+          loc_name={loc_name} 
+          setRefresh={setRefresh} 
+        />
       </div>
 
       <div className="mx-25">
@@ -81,6 +73,7 @@ export default function Page() {
                 minute: "2-digit",
                 hour12: true,
               })}
+              isWhite={false}
             />
           ))}
         </div>

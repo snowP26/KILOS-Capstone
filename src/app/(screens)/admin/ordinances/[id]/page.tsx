@@ -31,19 +31,21 @@ import {
 } from "@/components/ui/select";
 import { ordinance, ordinanceFiles } from "@/src/app/lib/definitions";
 import { notFound, useParams } from "next/navigation";
-import { getFilesPerOrdinance, getOrdinanceByName } from "@/src/app/actions/admin_ordinances";
+import {
+  getFilesPerOrdinance,
+  getOrdinanceByName,
+} from "@/src/app/actions/admin_ordinances";
 
 export default function SubmitOrdinances() {
   const params = useParams();
   const id = params.id as string;
   const [refresh, setRefresh] = useState(0);
   const [ordinance, setOrdinance] = useState<ordinance | null>(null);
-  const [files, setFiles] = useState<ordinanceFiles | null>(null)
+  const [files, setFiles] = useState<ordinanceFiles | null>(null);
 
   const fetchData = async () => {
     const data = await getOrdinanceByName(id);
     setOrdinance(data as ordinance);
-    
   };
 
   useEffect(() => {
@@ -89,7 +91,7 @@ export default function SubmitOrdinances() {
         <p className="text-md mb-2 ml-30">{ordinance?.description}</p>
 
         <div className="mx-20 mt-10">
-          <Table className="bg-white w-full rounded-lg overflow-hidden shadow-sm">
+          <Table className="bg-white w-full rounded-lg overflow-hidden shadow-md border">
             <TableCaption className="mt-2 text-sm text-gray-500">
               Status of Proposed Ordinance for Each Reading
             </TableCaption>
@@ -124,9 +126,12 @@ export default function SubmitOrdinances() {
                       key={index}
                       className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                     >
+                      {/* Stage */}
                       <TableCell className="text-center font-medium">
                         {stage}
                       </TableCell>
+
+                      {/* Status */}
                       <TableCell className="text-center">
                         <Select
                           defaultValue={details.status || "pending"}
@@ -151,7 +156,7 @@ export default function SubmitOrdinances() {
                             );
                           }}
                         >
-                          <SelectTrigger className="w-[150px]">
+                          <SelectTrigger className="w-[140px] mx-auto">
                             <SelectValue placeholder="Pending" />
                           </SelectTrigger>
                           <SelectContent>
@@ -166,35 +171,41 @@ export default function SubmitOrdinances() {
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell className="text-center italic">
+
+                      {/* Dates */}
+                      <TableCell className="text-center">
                         <input
                           type="date"
-                          className="p-2 border-gray-400 border-1 rounded-md"
-                          placeholder={details["start-date"] || "—"}
-                        />
-                      </TableCell>
-                      <TableCell className="text-center italic">
-                        <input
-                          type="date"
-                          className="p-2 border-gray-400 border-1 rounded-md"
-                          placeholder={details["end-date"] || "—"}
-                        />
-                      </TableCell>
-                      <TableCell className="text-center font-semibold">
-                        <input
-                          type="text"
-                          className="p-2 border-gray-400 border-1 rounded-md"
-                          placeholder={details.approver || "—"}
+                          defaultValue={details["start-date"] || ""}
+                          className="p-1.5 border border-gray-300 rounded-md text-sm w-[150px] text-center"
                         />
                       </TableCell>
                       <TableCell className="text-center">
+                        <input
+                          type="date"
+                          defaultValue={details["end-date"] || ""}
+                          className="p-1.5 border border-gray-300 rounded-md text-sm w-[150px] text-center"
+                        />
+                      </TableCell>
+
+                      {/* Approver */}
+                      <TableCell className="text-center">
+                        <input
+                          type="text"
+                          defaultValue={details.approver || ""}
+                          placeholder="—"
+                          className="p-1.5 border border-gray-300 rounded-md text-sm w-[180px] text-center"
+                        />
+                      </TableCell>
+
+                      {/* Remarks */}
+                      <TableCell className="text-center">
                         <textarea
-                          className="text-justify focus:min-h-8"
-                          defaultValue=" "
-                          placeholder={details.remarks || "-"}
-                        >
-                          {details.remarks}
-                        </textarea>
+                          defaultValue={details.remarks || ""}
+                          placeholder="—"
+                          rows={3}
+                          className="p-1.5 border border-gray-300 rounded-md text-sm w-full resize-none"
+                        />
                       </TableCell>
                     </TableRow>
                   )
@@ -231,7 +242,9 @@ export default function SubmitOrdinances() {
           </Button>
         </div>
 
-        <button onClick={() => getFilesPerOrdinance(ordinance?.id as number)}>Hello</button>
+        <button onClick={() => getFilesPerOrdinance(ordinance?.id as number)}>
+          Hello
+        </button>
       </div>
     </div>
   );

@@ -52,6 +52,7 @@ export default function CommunityFeedback() {
                     minute: "2-digit",
                     hour12: true,
                   })}
+                isWhite={true}
               />
             ))
           }
