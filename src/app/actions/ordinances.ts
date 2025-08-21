@@ -33,7 +33,7 @@ const getLocationFromEmail = async (email: string) => {
     .eq("id", data.location)
     .single();
 
-  return locationData?.name || null;
+  return (locationData?.name).trim() || null;
 };
 
 export const postOrdinance = async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement>) => {
@@ -100,8 +100,8 @@ export const postOrdinance = async (e: FormEvent<HTMLFormElement>, formRef: RefO
 
   if (!verboseLocation) return console.error("Location is not found");
 
-  const fileName = `${verboseLocation.name}_${ordinanceID}_${file.name}`;
-  const filepath = `${verboseLocation.name}/${fileName}`;
+  const fileName = `${(verboseLocation.name).trim()}_${ordinanceID}_${file.name}`;
+  const filepath = `${(verboseLocation.name).trim()}/${fileName}`;
 
   // Insert document metadata
   const { error: docError } = await client.from("ordinance_files").insert([
@@ -163,7 +163,3 @@ export const uploadFile = async (ordinance_id: number, doc: File) => {
 
   console.log("Success uploading your file");
 };
-
-export const updateHearing = async () => {
-    
-}

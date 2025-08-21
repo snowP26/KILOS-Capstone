@@ -13,8 +13,30 @@ type AnnouncementType =
     | "Infrastructure"
     | "Press Release";
 
+type ApprovalStatus = "in progress" | "pending" | "approved" | "vetoed";
+    
+type readingData = {
+    status: ApprovalStatus,
+    approver: string | null,
+    "start-date": string,
+    "end-date": string,
+    remarks: string,
+}
+
 export const locations = ["naga-city", "pili", "bula"] as const;
 
+export type ordinance = {
+    id: number,
+    title: string,
+    description: string,
+    location: string,
+    approvals:  {
+        "First Reading": readingData;
+        "Second Reading": readingData;
+        "Third Reading": readingData;
+    },
+    author: number,
+}
 
 export type u = {
     id: number;
@@ -32,9 +54,6 @@ export type users = {
     // position_id: number;
 }
 
-// export type admin = {
-
-// }
 
 // define Announcement based on ERD
 export type announcement = {
@@ -56,4 +75,21 @@ export type meeting = {
     document: string;
     host: string;
     date_posted: Date;
+}
+
+export type ordinanceFiles = {
+    id: number,
+    created_at: Date,
+    ordinance_id: number,
+    file_path: string,
+    file_name: string,
+    author_id: number
+}
+
+export type commFeedback = {
+    id: number,
+    created_at: string,
+    header: string,
+    body: string,
+    location: number
 }

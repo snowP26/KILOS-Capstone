@@ -12,9 +12,15 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog"
 
-import { Quote } from 'lucide-react';
+import { Quote } from "lucide-react";
 
-export const FeedbackCard = () => {
+type feedbackCardProps = {
+  header: string;
+  body: string;
+  date: string;
+};
+
+export const FeedbackCard = ({ header, body, date }: feedbackCardProps) => {
   return (
     <Dialog>
       <DialogTrigger className="m-10">
