@@ -3,6 +3,7 @@
 import { ComNav } from "@/src/app/components/community/nav";
 import { CommunityBanner } from "@/src/app/components/community/community-banner";
 import { FeedbackCard } from "@/src/app/components/community/feedbackCard";
+import { PostFeedbackCard } from "@/src/app/components/community/post-feedbackCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -62,53 +63,7 @@ export default function Page() {
 
       <p className="text-4xl font-bold text-center">Community Feedback</p>
       <div className="flex justify-center mt-5">
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-blue-900 cursor-pointer hover:bg-blue-200 hover:text-accent-foreground hover:border-accent-foreground hover:shadow-lg transition-all duration-200">
-              Post a Feedback
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <form
-              ref={formRef}
-              onSubmit={async (e) => {
-                await postFeedback(e, formRef, loc_name);
-                formRef.current?.reset();
-                setRefresh((prev) => prev + 1);
-                setOpen(false);
-              }}
-            >
-              <DialogHeader>
-                <DialogTitle>Submit Feedback</DialogTitle>
-                <DialogDescription>
-                  Share your thoughts with the community.
-                </DialogDescription>
-              </DialogHeader>
-              <Input
-                placeholder="Enter your feedback header..."
-                name="header"
-                required
-              />
-              <Input
-                placeholder="Enter your feedback body..."
-                name="body"
-                required
-              />
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  type="button"
-                  onClick={() => setOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button className="cursor-pointer" type="submit">
-                  Submit
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <PostFeedbackCard/>
       </div>
 
       <div className="mx-25">

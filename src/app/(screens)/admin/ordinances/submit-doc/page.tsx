@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react'
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button'
 import { Separator } from "@/components/ui/separator"
 import { Input } from '@/components/ui/input';
@@ -15,11 +16,13 @@ import {
 } from "@/components/ui/breadcrumb"
 
 export default function SubmitOrdinances() {
+    const router = useRouter();
+
     return (
         <div className="bg-[#E6F1FF] h-screen mt-10">
             <Breadcrumb className="ml-20">
                 <BreadcrumbList>
-                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link">
+                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.push("/admin/ordinances")}>
                         <ArrowLeft color="black" />
                         <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
                             Return
@@ -30,7 +33,7 @@ export default function SubmitOrdinances() {
                     </div>
 
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/components">Proposed Ordinances</BreadcrumbLink>
+                        <BreadcrumbLink href="/admin/ordinances">Proposed Ordinances</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>

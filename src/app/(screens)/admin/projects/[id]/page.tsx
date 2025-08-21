@@ -35,11 +35,13 @@ import {
 import { useRouter } from 'next/navigation';
 
 export default function ViewProposedProj() {
+  const router = useRouter();
+
     return (
         <div className="bg-[#E6F1FF] h-screen mt-10">
             <Breadcrumb className="ml-20">
                 <BreadcrumbList>
-                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link">
+                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.push("/admin/projects")}>
                         <ArrowLeft color="black" />
                         <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
                             Return
@@ -50,7 +52,7 @@ export default function ViewProposedProj() {
                     </div>
 
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/components">Proposed Projects</BreadcrumbLink>
+                        <BreadcrumbLink href="/admin/projects">Proposed Projects</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
@@ -62,7 +64,7 @@ export default function ViewProposedProj() {
             <div className="mx-25">
                 <p className="font-bold text-3xl mt-8 mb-6">Title of Proposed Project</p>
 
-                <Button className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]">View Budget Breakdown</Button>
+                <Button className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push("/admin/projects/[id]/view-budget-breakdown")}>View Budget Breakdown</Button>
 
                 <div className="flex flex-row gap-1">
                     <div className="bg-white mt-10 w-[35%] h-155 justify-items-center place-content-center">
@@ -276,7 +278,7 @@ export default function ViewProposedProj() {
 
                             <div className="h-[10%]">
                                 <div className="flex flex-row gap-2 justify-end">
-                                    <Button className="bg-[#E6F1FF] text-black cursor-pointer hover:bg-black hover:text-[#E6F1FF]">View Project Details</Button>
+                                    <Button className="bg-[#E6F1FF] text-black cursor-pointer hover:bg-black hover:text-[#E6F1FF]" onClick={() => router.push("/admin/projects/[id]/view-project-details")}>View Project Details</Button>
                                     <Button className="bg-[#A3C4A8] text-black cursor-pointer hover:bg-black hover:text-[#A3C4A8]">Mark as Approved</Button>
                                 </div>
 
