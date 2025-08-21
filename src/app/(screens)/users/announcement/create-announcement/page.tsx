@@ -53,7 +53,7 @@ export default function CreateAnnouncement() {
         <div className="bg-[#E6F1FF] h-screen mt-10">
             <Breadcrumb className="ml-20">
                 <BreadcrumbList>
-                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link">
+                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.push("/users/announcement")}>
                         <ArrowLeft color="black" />
                         <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
                             Return
@@ -80,7 +80,7 @@ export default function CreateAnnouncement() {
                 await postAnnouncements(e, formRef);
                 router.push("/users/announcement");
             }}>
-                <div className="bg-white w-[70%] px-20 rounded-[16px] py-10">
+                <div className="bg-white w-[70%] px-20 rounded-[16px] py-10 shadow-lg/30">
                     <div className="flex flex-row justify-between">
                         <div className="w-100">
                             <p className="font-semibold">Announcement Header</p>

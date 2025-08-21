@@ -13,16 +13,19 @@ import {
   SelectValue,
   SelectLabel,
 } from "@/components/ui/select"
+import { useRouter } from 'next/navigation';
 
 export default function Ordinances() {
+  const router = useRouter();
+
   return (
     <div className="bg-[#E6F1FF] min-h-screen max-h-fit">
       <div className="flex flex-row justify-between mt-15 mx-40">
         <p className="font-bold text-3xl">Ordinances & Resolutions</p>
 
         <div className="flex flex-row gap-2">
-          <Button className="bg-white text-[#052659] border-[1px] border-black cursor-pointer hover:bg-[#052659] hover:text-white">View Pending</Button>
-          <Button className="bg-[#052659] text-white cursor-pointer hover:bg-white hover:text-[#052659]">Submit Document</Button>
+          <Button className="bg-white text-[#052659] border-[1px] border-black cursor-pointer hover:bg-[#052659] hover:text-white" onClick={() => router.push("/users/ordinances/view-pending")}>View Pending</Button>
+          <Button className="bg-[#052659] text-white cursor-pointer hover:bg-white hover:text-[#052659]" onClick={() => router.push("/users/ordinances/submit-doc")}>Submit Ordinance</Button>
         </div>
       </div>
 
