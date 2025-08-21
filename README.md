@@ -46,7 +46,6 @@ This project leverages a modern tech stack to ensure a robust and scalable appli
 - **Supabase**: An open-source Firebase alternative that provides backend services.
 - **Tailwind CSS**: A utility-first CSS framework for rapid UI development.
 - **Meta API**: For integrating social media functionalities.
-- **Google API**: To incorporate various Google services.
 - **Vercel**: For seamless deployment and hosting of our application.
 
 ## 👥 Team Members
