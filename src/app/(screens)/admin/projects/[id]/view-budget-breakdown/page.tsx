@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react'
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button'
 import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, SquarePen, Image } from 'lucide-react';
@@ -30,11 +31,13 @@ import {
 } from "@/components/ui/table"
 
 export default function ViewBudgetBrkdwn() {
+    const router = useRouter();
+
     return (
         <div className="bg-[#E6F1FF] h-screen mt-10">
             <Breadcrumb className="ml-20">
                 <BreadcrumbList>
-                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link">
+                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.push("/admin/projects/[id]")}>
                         <ArrowLeft color="black" />
                         <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
                             Return
@@ -45,11 +48,11 @@ export default function ViewBudgetBrkdwn() {
                     </div>
 
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/components">Proposed Projects</BreadcrumbLink>
+                        <BreadcrumbLink href="/admin/projects">Proposed Projects</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="">View Proposed Project</BreadcrumbLink>
+                        <BreadcrumbLink href="/admin/projects/[id]">View Proposed Project</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>

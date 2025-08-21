@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react'
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react';
 import { Image } from 'lucide-react';
@@ -25,11 +26,13 @@ import {
 } from "@/components/ui/table"
 
 export default function ViewProject() {
+    const router = useRouter();
+
     return (
         <div className="bg-[#E6F1FF] h-screen mt-10">
             <Breadcrumb className="ml-20">
                 <BreadcrumbList>
-                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link">
+                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.push("/users/projects/[id]")}>
                         <ArrowLeft color="black" />
                         <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
                             Return
@@ -40,11 +43,11 @@ export default function ViewProject() {
                     </div>
 
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/components">Current Projects</BreadcrumbLink>
+                        <BreadcrumbLink href="/users/projects">Current Projects</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/components">View Project</BreadcrumbLink>
+                        <BreadcrumbLink href="/users/projects/[id]">View Project</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
@@ -57,7 +60,7 @@ export default function ViewProject() {
                 <p className="font-bold text-3xl mt-8 mb-6">Iheras: Sharing the Christmas Spirit Year 4</p>
 
                 <div className="flex flex-row gap-5 h-10 justify-between">
-                    <Button className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]">View Project Details</Button>
+                    <Button className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push("/users/projects/[id]")}>View Project Details</Button>
                     <div className="flex flex-row gap-2">
                         <p className="text-black font-medium content-center">Set Budget for Project:</p>
                         <p className="text-[#28A745] text-xl font-medium content-center">&#8369;999,999,999.00</p>
