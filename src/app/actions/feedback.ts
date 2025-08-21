@@ -3,7 +3,7 @@ import { FormEvent, RefObject } from "react";
 import { locNameToID } from "./convert";
 
 
-export const postFeedback = async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement>, id: string) => {
+export const postFeedback = async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement | null>, id: string) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
