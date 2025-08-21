@@ -26,17 +26,12 @@ export const FeedbackCard = ({ header, body, date }: feedbackCardProps) => {
       <DialogTrigger className="m-10">
         <div className="cursor-pointer p-5 h-100 w-100 bg-[#E6F1FF] rounded-md shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
           <Quote fill='black' />
-          <p className="m-5 font-semibold text-4xl">The new project was great!</p>
+          <p className="m-5 font-semibold text-4xl">{header}</p>
 
-          <p className="m-5 text-gray-500 text-sm">
-            Naga City is Lorem ipsum dolor sit amet,
-            consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-            labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-          </p>
+          <p className="m-5 text-gray-500 text-sm">{body}</p>
 
           <div className="flex flex-row justify-end">
-            <p className="font-thin text-xs mr-5 content-center">Jan 1, 2000</p>
+            <p className="font-thin text-xs mr-5 content-center">{date}</p>
             <Quote fill='black' />
           </div>
         </div>
@@ -44,17 +39,11 @@ export const FeedbackCard = ({ header, body, date }: feedbackCardProps) => {
       <DialogContent className="bg-[#E6F1FF]">
         <DialogHeader>
           <Quote fill='black' size="40px"/>
-          <DialogTitle className="text-3xl text-center">Amo na po ading Bula?</DialogTitle>
-          <p className="text-justify mt-5">
-            Bula is Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-            nisi ut aliquip ex ea commodo consequat.
-          </p>
+          <DialogTitle className="text-3xl text-center">{header}</DialogTitle>
+          <p className="text-justify mt-5">{body}</p>
           <div className="flex flex-row text-xs gap-2 mt-5 mb-5 justify-end">
             <p>Posted:</p>
-            <p>January 1, 2000</p>
-            <p>12:00 PM</p>
+            <p>{date}</p>
           </div>
           <hr className="border-t border-black w-[100%] mx-auto my-3" />
 
