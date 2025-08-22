@@ -160,7 +160,10 @@ export const updateApproval = async (
     return updatedApproval;
 };
 
-// ================== FILE HANDLING ================== //
+
+// ====================================================== //
+// ================== FILE HANDLING ===================== // 
+// ====================================================== //
 
 // Upload a file (only if not null)
 export const uploadOrdinanceFile = async (
@@ -169,13 +172,13 @@ export const uploadOrdinanceFile = async (
 ) => {
     if (!file) {
         console.log("No file provided, skipping upload.");
-        return null; // ✅ Do not upload if null
+        return null; 
     }
 
     const filePath = `ordinances/${ordinanceId}/${file.name}`;
 
     const { data, error } = await client.storage
-        .from("ordinance_files_bucket") // <-- replace with your actual bucket name
+        .from("ordinances-pending") 
         .upload(filePath, file, {
             upsert: true, // overwrite if same filename
         });
