@@ -25,18 +25,7 @@ type readingData = {
 
 export const locations = ["naga-city", "pili", "bula"] as const;
 
-export type ordinance = {
-    id: number,
-    title: string,
-    description: string,
-    location: string,
-    approvals:  {
-        "First Reading": readingData;
-        "Second Reading": readingData;
-        "Third Reading": readingData;
-    },
-    author: number,
-}
+
 
 export type u = {
     id: number;
@@ -75,6 +64,27 @@ export type meeting = {
     document: string;
     host: string;
     date_posted: Date;
+}
+
+export type ordinance = {
+    id: number,
+    title: string,
+    description: string,
+    location: string,
+    author: number,
+    status: string,
+}
+
+export type ordinance_approvals = { 
+    id: number,
+    ordinance_id: number,
+    stage: string,
+    status: string,
+    start_date: string,
+    end_date: string,
+    approver: string,
+    remarks: string,
+    locked: boolean,
 }
 
 export type ordinanceFiles = {

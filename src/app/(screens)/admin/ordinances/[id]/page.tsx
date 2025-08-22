@@ -25,16 +25,23 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectGroup,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ordinance, ordinanceFiles } from "@/src/app/lib/definitions";
-import { notFound, useParams } from "next/navigation";
 import {
+  ordinance,
+  ordinance_approvals,
+  ordinanceFiles,
+} from "@/src/app/lib/definitions";
+import { useParams } from "next/navigation";
+import {
+  getApprovalPerOrdinance,
   getFilesPerOrdinance,
   getOrdinanceByName,
+  updateApproval,
 } from "@/src/app/actions/admin_ordinances";
+import { Input } from "@/components/ui/input";
+import Swal from "sweetalert2";
 
 export default function SubmitOrdinances() {
   const params = useParams();
@@ -42,9 +49,51 @@ export default function SubmitOrdinances() {
   const [refresh, setRefresh] = useState(0);
   const [ordinance, setOrdinance] = useState<ordinance | null>(null);
   const [files, setFiles] = useState<ordinanceFiles | null>(null);
+  const [approval, setApproval] = useState<ordinance_approvals[]>([]);
+
+  const [editingRow, setEditingRow] = useState<number | null>(null);
+  const [formData, setFormData] = useState<Partial<ordinance_approvals>>({});
+
+  const handleEdit = (row: ordinance_approvals) => {
+    setEditingRow(row.id);
+    setFormData(row);
+  };
+
+  const handleChange = (field: keyof ordinance_approvals, value: any) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSave = async () => {
+    if (!editingRow) return;
+
+    // Check if setting final status
+    if (
+      formData.status === "approved" ||
+      formData.status === "vetoed"
+    ) {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: `Once marked as ${formData.status?.toUpperCase()}, this cannot be undone.`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, confirm",
+        cancelButtonText: "Cancel",
+      });
+
+      if (!result.isConfirmed) {
+        return; // do not save
+      }
+    }
+
+    await updateApproval(editingRow, formData);
+    setEditingRow(null);
+    setRefresh((prev) => prev + 1);
+  };
 
   const fetchData = async () => {
     const data = await getOrdinanceByName(id);
+    const ordinanceStatus = await getApprovalPerOrdinance(data?.id);
+    setApproval(ordinanceStatus);
     setOrdinance(data as ordinance);
   };
 
@@ -115,111 +164,133 @@ export default function SubmitOrdinances() {
                 <TableHead className="w-[300px] text-center font-semibold">
                   Remarks
                 </TableHead>
+                <TableHead className="text-center font-semibold">
+                  Action
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {ordinance?.approvals &&
-              typeof ordinance.approvals === "object" ? (
-                Object.entries(ordinance.approvals).map(
-                  ([stage, details], index) => (
-                    <TableRow
-                      key={index}
-                      className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                    >
-                      {/* Stage */}
-                      <TableCell className="text-center font-medium">
-                        {stage}
-                      </TableCell>
+              {approval.map((a) => (
+                <TableRow key={a.id}>
+                  <TableCell className="text-center">{a.stage}</TableCell>
 
-                      {/* Status */}
-                      <TableCell className="text-center">
-                        <Select
-                          defaultValue={details.status || "pending"}
-                          onValueChange={(value) => {
-                            setOrdinance((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    approvals: {
-                                      ...prev.approvals,
-                                      [stage]: {
-                                        ...details,
-                                        status: value as
-                                          | "in progress"
-                                          | "pending"
-                                          | "approved"
-                                          | "vetoed",
-                                      },
-                                    },
-                                  }
-                                : prev
-                            );
-                          }}
+                  {/* Status */}
+                  <TableCell className="text-center">
+                    {editingRow === a.id ? (
+                      <Select
+                        value={formData.status}
+                        onValueChange={(val) => handleChange("status", val)}
+                      >
+                        <SelectTrigger className="w-[140px]">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="in progress">In Progress</SelectItem>
+                          <SelectItem value="approved">Approved</SelectItem>
+                          <SelectItem value="vetoed">Vetoed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${a.status === "pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : a.status === "in progress"
+                              ? "bg-blue-100 text-blue-800"
+                              : a.status === "approved"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                          }`}
+                      >
+                        {a.status.toUpperCase()}
+                      </span>
+                    )}
+                  </TableCell>
+
+                  {/* Dates */}
+                  <TableCell className="text-center">
+                    {editingRow === a.id ? (
+                      <Input
+                        type="date"
+                        value={formData.start_date ?? ""}
+                        onChange={(e) =>
+                          handleChange("start_date", e.target.value)
+                        }
+                      />
+                    ) : (
+                      a.start_date ?? "-"
+                    )}
+                  </TableCell>
+
+                  <TableCell className="text-center">
+                    {editingRow === a.id ? (
+                      <Input
+                        type="date"
+                        value={formData.end_date ?? ""}
+                        onChange={(e) =>
+                          handleChange("end_date", e.target.value)
+                        }
+                      />
+                    ) : (
+                      a.end_date ?? "-"
+                    )}
+                  </TableCell>
+
+                  {/* Approver */}
+                  <TableCell className="text-center">
+                    {editingRow === a.id ? (
+                      <Input
+                        value={formData.approver ?? ""}
+                        onChange={(e) =>
+                          handleChange("approver", e.target.value)
+                        }
+                      />
+                    ) : (
+                      a.approver ?? "-"
+                    )}
+                  </TableCell>
+
+                  {/* Remarks */}
+                  <TableCell className="text-center">
+                    {editingRow === a.id ? (
+                      <Input
+                        value={formData.remarks ?? ""}
+                        onChange={(e) =>
+                          handleChange("remarks", e.target.value)
+                        }
+                      />
+                    ) : (
+                      a.remarks ?? "-"
+                    )}
+                  </TableCell>
+
+                  {/* Actions */}
+                  <TableCell className="text-center">
+                    {editingRow === a.id ? (
+                      <div className="flex gap-2">
+                        <Button size="sm" onClick={handleSave}>
+                          Save
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setEditingRow(null)}
                         >
-                          <SelectTrigger className="w-[140px] mx-auto">
-                            <SelectValue placeholder="Pending" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectItem value="pending">Pending</SelectItem>
-                              <SelectItem value="in progress">
-                                In Progress
-                              </SelectItem>
-                              <SelectItem value="approved">Approved</SelectItem>
-                              <SelectItem value="vetoed">Vetoed</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-
-                      {/* Dates */}
-                      <TableCell className="text-center">
-                        <input
-                          type="date"
-                          defaultValue={details["start-date"] || ""}
-                          className="p-1.5 border border-gray-300 rounded-md text-sm w-[150px] text-center"
-                        />
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <input
-                          type="date"
-                          defaultValue={details["end-date"] || ""}
-                          className="p-1.5 border border-gray-300 rounded-md text-sm w-[150px] text-center"
-                        />
-                      </TableCell>
-
-                      {/* Approver */}
-                      <TableCell className="text-center">
-                        <input
-                          type="text"
-                          defaultValue={details.approver || ""}
-                          placeholder="—"
-                          className="p-1.5 border border-gray-300 rounded-md text-sm w-[180px] text-center"
-                        />
-                      </TableCell>
-
-                      {/* Remarks */}
-                      <TableCell className="text-center">
-                        <textarea
-                          defaultValue={details.remarks || ""}
-                          placeholder="—"
-                          rows={3}
-                          className="p-1.5 border border-gray-300 rounded-md text-sm w-full resize-none"
-                        />
-                      </TableCell>
-                    </TableRow>
-                  )
-                )
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={6}
-                    className="text-center italic text-gray-500 py-4"
-                  >
-                    No approval data found
+                          Cancel
+                        </Button>
+                      </div>
+                    ) : a.status === "approved" || a.status === "vetoed" ? (
+                      <span className="text-gray-400 text-sm">
+                        Finalized
+                      </span>
+                    ) : (
+                      <Button size="sm" onClick={() => handleEdit(a)}>
+                        Edit
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
-              )}
+              ))}
             </TableBody>
           </Table>
         </div>
@@ -230,18 +301,6 @@ export default function SubmitOrdinances() {
             <p>Submitted File Placeholder</p>
           </div>
         </div>
-        <div className="mx-20 mt-6 flex justify-end gap-4">
-          <Button
-            variant="outline"
-            className="text-gray-700 border-gray-400 hover:bg-gray-100"
-          >
-            Cancel
-          </Button>
-          <Button className="bg-[#052659] text-white hover:bg-[#073b88] transition-colors">
-            Submit
-          </Button>
-        </div>
-
         <button onClick={() => getFilesPerOrdinance(ordinance?.id as number)}>
           Hello
         </button>
