@@ -1,11 +1,30 @@
+'use client';
+
+import { useEffect, useState } from "react";
 import LocationSelect from "./components/community/locselect";
 import { ComNav } from "./components/community/nav";
 import { OrdinancesLandingCard } from "./components/community/ordinances-landingCard";
 import { Title } from "./components/community/title";
 import { UpcomingEventCard } from "./components/community/upcoming-eventCard";
+import { ordinance } from "./lib/definitions";
+import { getAllOrdinances } from "./actions/landingpage";
+import { authorIDtoName } from "./actions/convert";
 
 
 export default function Home() {
+  const [refresh, setRefresh] = useState(0);
+  const [author, setAuthor] = useState("Loading...");
+  const [ordinances, setOrdinances] = useState<ordinance[]>([])
+  useEffect(() => {
+    const fetchData = async () => {
+      const ordinancesData = await getAllOrdinances();
+      setOrdinances(ordinancesData);
+    };
+    
+
+    fetchData();
+  }, [refresh])
+
   return (
     <div>
       <ComNav />
@@ -39,10 +58,11 @@ export default function Home() {
 
         <div className="flex flex-row justify-center gap-10 mx-40">
           <div className="mt-10 grid grid-cols-2 grid-rows-2 gap-5 w-[100%]">
-            <OrdinancesLandingCard />
-            <OrdinancesLandingCard />
-            <OrdinancesLandingCard />
-            <OrdinancesLandingCard />
+            {
+              ordinances.map((data) => (
+                <OrdinancesLandingCard key={data.id} title={data.title} description={data.description} author={data.author} />
+              ))
+            }
           </div>
         </div>
         <p className="underline text-xl mx-40 my-5 text-end">See All</p>
