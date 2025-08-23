@@ -15,7 +15,7 @@ const emailToUserID = async (email: string) => {
 
 // Get all ordinances (pending or otherwise)
 export const getPendingOrdinances = async () => {
-    const { data, error } = await client.from("ordinances").select("*");
+    const { data, error } = await client.from("ordinances").select("*").order("id", { ascending: false }).eq("status", "Pending");
 
     if (error) {
         console.log("Error fetching data: ", error);
@@ -87,7 +87,7 @@ export const getApprovalPerOrdinance = async (id?: number) => {
     const { data, error } = await client
         .from("ordinance_approvals")
         .select("*")
-        .eq("ordinance_id", id) 
+        .eq("ordinance_id", id)
         .order("id", { ascending: false });
 
     if (error) {
@@ -163,16 +163,16 @@ export const updateApproval = async (
 
 
 export const updatedNowByID = async (ordinanceId: number) => {
-  const { error } = await client
-    .from("ordinances")
-    .update({ updated_at: new Date().toISOString() }) 
-    .eq("id", ordinanceId);
+    const { error } = await client
+        .from("ordinances")
+        .update({ updated_at: new Date().toISOString() })
+        .eq("id", ordinanceId);
 
-  if (error) {
-    console.error("Error updating updated_at:", error);
-    return false;
-  }
-  return true;
+    if (error) {
+        console.error("Error updating updated_at:", error);
+        return false;
+    }
+    return true;
 };
 
 
@@ -187,13 +187,13 @@ export const uploadOrdinanceFile = async (
 ) => {
     if (!file) {
         console.log("No file provided, skipping upload.");
-        return null; 
+        return null;
     }
 
     const filePath = `ordinances/${ordinanceId}/${file.name}`;
 
     const { data, error } = await client.storage
-        .from("ordinances-pending") 
+        .from("ordinances-pending")
         .upload(filePath, file, {
             upsert: true, // overwrite if same filename
         });

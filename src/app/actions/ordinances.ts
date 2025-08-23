@@ -1,7 +1,7 @@
 import client from "@/src/api/client";
 import { FormEvent, RefObject } from "react";
 import Swal from "sweetalert2";
-import { getLocFromAuth } from "./convert";
+import { getLocFromAuth, getUserID } from "./convert";
 
 const checkTitleDuplicates = async (uploadValue: string) => {
   const { data, error } = await client
@@ -136,9 +136,8 @@ export const postOrdinance = async (
 
   // Handle file only if it exists
   if (file && file.name) {
-    const fileName = `${verboseLocation.name.trim()}_${ordinanceID}_${
-      file.name
-    }`;
+    const fileName = `${verboseLocation.name.trim()}_${ordinanceID}_${file.name
+      }`;
     const filepath = `${verboseLocation.name.trim()}/${fileName}`;
 
     // Insert document metadata
@@ -228,17 +227,39 @@ export const uploadFile = async (ordinance_id: number, doc: File) => {
 
 export const getOrdinancesByLocID = async () => {
   const locID = await getLocFromAuth();
-  const { data, error } = await client.from("ordinances").select("*").eq("location", locID).eq("status", "uploaded");
+  const { data, error } = await client.from("ordinances").select("*").eq("location", locID).eq("status", "Uploaded");
 
-  if(error){
+  if (error) {
     Swal.fire({
       title: `Error loading ordinances`,
       text: `Error: : ${error}`,
       icon: "error",
     })
-    
+
     return [];
   }
 
-  return data 
+  return data
+}
+
+export const getPendingOrdinances = async () => {
+  const locID = await getLocFromAuth();
+  const userID = await getUserID();
+  const { data, error } = await client.from("ordinances").select("*").eq("location", locID).eq("status", "Pending").eq("author", userID);
+
+  if (error) {
+    Swal.fire({
+      title: `Error loading ordinances`,
+      text: `Error: : ${error}`,
+      icon: "error",
+    })
+
+    return [];
+  }
+
+  return data
+}
+
+export const getPendingOrdinanceStatus = async (id: number) => {
+  
 }
