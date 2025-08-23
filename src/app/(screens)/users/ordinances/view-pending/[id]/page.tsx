@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -23,12 +23,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useParams } from "next/navigation";
+import { ordinance, ordinance_approvals } from "@/src/app/lib/definitions";
 
 export default function ViewOrdinance() {
   const params = useParams();
   const id = params?.id as string;
+  const [ordinance, setOrdinance] = useState<ordinance[]>([]);
+  const [ordinanceApprovals, setOrdinanceApprovals] = useState<ordinance_approvals[]>([])
 
-  const ordinanceNum = id.replace(/^o-/, "Ordinance ");
+  // useEffect(() => (
+
+  // ), [])
+
 
   return (
     <div className="bg-[#E6F1FF] h-screen mt-10">
@@ -55,13 +61,13 @@ export default function ViewOrdinance() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbPage className="font-bold">
-              {ordinanceNum}
+              Ordinance {id}
             </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
 
-      <p className="font-bold text-3xl mt-8 mb-2 ml-30">{ordinanceNum}</p>
+      <p className="font-bold text-3xl mt-8 mb-2 ml-30">Ordinance {id}</p>
       <hr className="border-t border-black w-[90%] mx-auto mt-3 mb-2" />
       <p className="text-md mb-2 ml-30">
         An Ordinance Institutionalizing the Bula Youth Leadership Summit and
@@ -104,48 +110,6 @@ export default function ViewOrdinance() {
                 Please collaborate with LYDO to draft the ordinance for the 2nd
                 reading.
               </TableCell>
-            </TableRow>
-          </TableBody>
-          <TableBody>
-            <TableRow>
-              <TableCell className="w-[150px] text-center">
-                Second Reading
-              </TableCell>
-              <TableCell>
-                <p className="text-center font-medium bg-[#052659] rounded-2xl text-white ">
-                  In Progress
-                </p>
-              </TableCell>
-              <TableCell className="text-center italic">
-                January 11, 2000
-              </TableCell>
-              <TableCell className="text-center italic">
-                March 10, 2000
-              </TableCell>
-              <TableCell className="text-center">
-                Local Youth Development Office
-              </TableCell>
-              <TableCell className="text-center">-</TableCell>
-            </TableRow>
-          </TableBody>
-          <TableBody>
-            <TableRow>
-              <TableCell className="max-w-[150px] text-center">
-                Third Reading
-              </TableCell>
-              <TableCell>
-                <p className="text-center font-medium bg-[#052659] rounded-2xl text-white ">
-                  Pending
-                </p>
-              </TableCell>
-              <TableCell className="text-center italic">
-                March 11, 2000
-              </TableCell>
-              <TableCell className="text-center italic">
-                April 1, 2000
-              </TableCell>
-              <TableCell className="text-center">-</TableCell>
-              <TableCell className="text-center">-</TableCell>
             </TableRow>
           </TableBody>
         </Table>
