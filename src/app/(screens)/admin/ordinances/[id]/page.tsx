@@ -48,7 +48,7 @@ export default function SubmitOrdinances() {
   const id = params.id as string;
   const [refresh, setRefresh] = useState(0);
   const [ordinance, setOrdinance] = useState<ordinance | null>(null);
-  const [files, setFiles] = useState<ordinanceFiles | null>(null);
+  const [files, setFiles] = useState<ordinanceFiles | null>(null); // fix logic for files
   const [approval, setApproval] = useState<ordinance_approvals[]>([]);
 
   const [editingRow, setEditingRow] = useState<number | null>(null);

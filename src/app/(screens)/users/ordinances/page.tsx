@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/select"
 import { useRouter } from 'next/navigation';
 import { ordinance } from '@/src/app/lib/definitions';
-import { getOrdinanceByLocation } from '@/src/app/actions/landingpage';
 import { getOrdinancesByLocID } from '@/src/app/actions/ordinances';
 
 export default function Ordinances() {
