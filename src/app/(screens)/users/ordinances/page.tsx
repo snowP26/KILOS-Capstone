@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button';
 
 import { OrdinancesCard } from '@/src/app/components/user/ordinances-card';
@@ -11,12 +11,25 @@ import {
   SelectGroup,
   SelectTrigger,
   SelectValue,
-  SelectLabel,
+
 } from "@/components/ui/select"
 import { useRouter } from 'next/navigation';
+import { ordinance } from '@/src/app/lib/definitions';
+import { getOrdinanceByLocation } from '@/src/app/actions/landingpage';
+import { getOrdinancesByLocID } from '@/src/app/actions/ordinances';
 
 export default function Ordinances() {
+  const [ordinances, setOrdinances] = useState<ordinance[]>([])
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getOrdinancesByLocID()
+      setOrdinances(data)
+    }
+
+    fetchData();
+  }, [])
 
   return (
     <div className="bg-[#E6F1FF] min-h-screen max-h-fit">
@@ -49,8 +62,11 @@ export default function Ordinances() {
       </div>
 
       <div className="pb-5">
-        <OrdinancesCard />
-        <OrdinancesCard />
+        {
+          ordinances.map((data) => (
+            <OrdinancesCard key={data.id} title={data.title} description={data.description} author={data.author} submit_date={data.created_at} />
+          ))
+        }
       </div>
     </div>
   )

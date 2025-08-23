@@ -66,7 +66,7 @@ export default function SubmitOrdinances() {
   const handleSave = async () => {
     if (!editingRow) return;
 
-    // Check if setting final status
+
     if (formData.status === "approved" || formData.status === "vetoed") {
       const result = await Swal.fire({
         title: "Are you sure?",

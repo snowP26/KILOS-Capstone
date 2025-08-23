@@ -31,7 +31,7 @@ export default function CommunityFeedback() {
     <div className="bg-[#E6F1FF] h-vh">
 
 
-      <p className="mt-15 mx-40 font-bold text-3xl">Ordinances & Resolutions</p>
+      <p className="mt-15 mx-40 font-bold text-3xl">Community Feedback</p>
       <hr className="border-t border-black w-[90%] mx-auto my-3" />
       <p className="text-gray-400 font-thin ml-45">Click on a card to add your comments.</p>
 
