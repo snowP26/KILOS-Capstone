@@ -49,3 +49,28 @@ export const authorIDtoName = async (id: number) => {
 
     return null;
 };
+
+export const getUserID = async (): Promise<string> => {
+    const { data: sessionData, error: sessionError } = await client.auth.getSession();
+
+    if (sessionError) {
+        console.error("Authentication error: ", sessionError);
+        return "";
+    }
+
+    const email = sessionData?.session?.user?.email;
+    if (!email) {
+        console.error("No user email found in session");
+        return "";
+    }
+
+
+    const { data: userData, error: userError } = await client.from("youth_official").select("id").eq("email", email).single();
+
+    if (userError) {
+        console.error("Error fetching user ID: ", userError);
+        return "";
+    }
+
+    return userData?.id ?? "";
+};
