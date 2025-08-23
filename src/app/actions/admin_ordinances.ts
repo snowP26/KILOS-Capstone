@@ -87,7 +87,8 @@ export const getApprovalPerOrdinance = async (id?: number) => {
     const { data, error } = await client
         .from("ordinance_approvals")
         .select("*")
-        .eq("ordinance_id", id);
+        .eq("ordinance_id", id) 
+        .order("id", { ascending: false });
 
     if (error) {
         console.log("Error getApprovalPerOrdinance: ", error);
@@ -158,6 +159,20 @@ export const updateApproval = async (
     }
 
     return updatedApproval;
+};
+
+
+export const updatedNowByID = async (ordinanceId: number) => {
+  const { error } = await client
+    .from("ordinances")
+    .update({ updated_at: new Date().toISOString() }) 
+    .eq("id", ordinanceId);
+
+  if (error) {
+    console.error("Error updating updated_at:", error);
+    return false;
+  }
+  return true;
 };
 
 

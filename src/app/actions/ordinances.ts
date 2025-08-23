@@ -1,5 +1,7 @@
 import client from "@/src/api/client";
 import { FormEvent, RefObject } from "react";
+import Swal from "sweetalert2";
+import { getLocFromAuth } from "./convert";
 
 const checkTitleDuplicates = async (uploadValue: string) => {
   const { data, error } = await client
@@ -8,7 +10,7 @@ const checkTitleDuplicates = async (uploadValue: string) => {
     .eq("title", uploadValue);
 
   if (error) {
-    console.log("Error checking the duplicates");
+    console.error("Error checking the duplicates:", error);
     return false;
   }
 
@@ -23,7 +25,7 @@ const getLocationFromEmail = async (email: string) => {
     .single();
 
   if (error || !data) {
-    console.log("Error: ", error || "No data found");
+    console.error("Error retrieving location:", error || "No data found");
     return null;
   }
 
@@ -33,25 +35,38 @@ const getLocationFromEmail = async (email: string) => {
     .eq("id", data.location)
     .single();
 
-  return (locationData?.name).trim() || null;
+  return locationData?.name?.trim() || null;
 };
 
-export const postOrdinance = async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement>) => {
+export const postOrdinance = async (
+  e: FormEvent<HTMLFormElement>,
+  formRef: RefObject<HTMLFormElement>
+) => {
   e.preventDefault();
 
   const formdata = new FormData(e.currentTarget);
-  const title = `${formdata.get("title-year") as string}-${formdata.get("title-number") as string}`;
+  const title = `${formdata.get("title-year") as string}-${formdata.get(
+    "title-number"
+  ) as string}`;
   const description = formdata.get("description") as string;
   const file = formdata.get("document") as File;
 
   if (await checkTitleDuplicates(title)) {
-    return console.log("There is a duplicate ordinance");
+    Swal.fire({
+      title: "Duplicate Ordinance",
+      text: "An ordinance with this title already exists.",
+      icon: "warning",
+    });
+    return;
   }
 
   // Get current user's email
   const { data: sessionData } = await client.auth.getSession();
   const email = sessionData.session?.user.email;
-  if (!email) return console.error("No logged-in user found");
+  if (!email) {
+    console.error("No logged-in user found");
+    return;
+  }
 
   // Get user data
   const { data: userData, error: userDataError } = await client
@@ -65,31 +80,43 @@ export const postOrdinance = async (e: FormEvent<HTMLFormElement>, formRef: RefO
     return;
   }
 
-  // Insert ordinance
-  const { error: insertError } = await client.from("ordinances").insert([
-    {
-      title,
-      description,
-      location: userData.location,
-      author: userData.id,
-      updated_at: new Date().toISOString(),
+  // Show loader
+  Swal.fire({
+    title: "Posting Ordinance...",
+    text: "Please wait while we save your ordinance.",
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    didOpen: () => {
+      Swal.showLoading();
     },
-  ]);
+  });
 
-  if (insertError) {
+  // Insert ordinance
+  const { data: insertedOrdinance, error: insertError } = await client
+    .from("ordinances")
+    .insert([
+      {
+        title,
+        description,
+        location: userData.location,
+        author: userData.id,
+        updated_at: new Date().toISOString(),
+      },
+    ])
+    .select("id")
+    .single();
+
+  if (insertError || !insertedOrdinance) {
     console.error("Error posting ordinance:", insertError);
+    Swal.fire({
+      title: "Error",
+      text: "Something went wrong while posting the ordinance.",
+      icon: "error",
+    });
     return;
   }
 
-  // Get ordinance ID in one query
-  const { data: ordinanceRow } = await client
-    .from("ordinances")
-    .select("id")
-    .eq("title", title)
-    .single();
-
-  const ordinanceID = ordinanceRow?.id;
-  if (!ordinanceID) return console.error("Ordinance ID not found");
+  const ordinanceID = insertedOrdinance.id;
 
   // Get verbose location once
   const { data: verboseLocation } = await client
@@ -98,33 +125,66 @@ export const postOrdinance = async (e: FormEvent<HTMLFormElement>, formRef: RefO
     .eq("id", userData.location)
     .single();
 
-  if (!verboseLocation) return console.error("Location is not found");
-
-  const fileName = `${(verboseLocation.name).trim()}_${ordinanceID}_${file.name}`;
-  const filepath = `${(verboseLocation.name).trim()}/${fileName}`;
-
-  // Insert document metadata
-  const { error: docError } = await client.from("ordinance_files").insert([
-    {
-      ordinance_id: ordinanceID,
-      file_path: filepath,
-      file_name: fileName,
-      author: userData.id,
-    },
-  ]);
-
-  if (docError) {
-    return console.error("Error uploading document: ", docError);
+  if (!verboseLocation) {
+    Swal.fire({
+      title: "Error",
+      text: "Location not found.",
+      icon: "error",
+    });
+    return;
   }
 
-  // Upload to storage bucket
-  const { error: bucketError } = await client.storage
-    .from("ordinances-pending")
-    .upload(filepath, file);
+  // Handle file only if it exists
+  if (file && file.name) {
+    const fileName = `${verboseLocation.name.trim()}_${ordinanceID}_${
+      file.name
+    }`;
+    const filepath = `${verboseLocation.name.trim()}/${fileName}`;
 
-  if (bucketError) {
-    return console.error("Bucket error: ", bucketError);
+    // Insert document metadata
+    const { error: docError } = await client.from("ordinance_files").insert([
+      {
+        ordinance_id: ordinanceID,
+        file_path: filepath,
+        file_name: fileName,
+        author: userData.id,
+      },
+    ]);
+
+    if (docError) {
+      console.error("Error uploading document metadata: ", docError);
+      Swal.fire({
+        title: "Error",
+        text: "Failed to save document metadata.",
+        icon: "error",
+      });
+      return;
+    }
+
+    // Upload to storage bucket
+    const { error: bucketError } = await client.storage
+      .from("ordinances-pending")
+      .upload(filepath, file);
+
+    if (bucketError) {
+      console.error("Bucket error: ", bucketError);
+      Swal.fire({
+        title: "Error",
+        text: "Failed to upload document to storage.",
+        icon: "error",
+      });
+      return;
+    }
   }
+
+
+  setTimeout(() => {
+    Swal.fire({
+      title: "Ordinance Successfully posted!",
+      text: "Please contact your official counterpart for ordinance posting approval.",
+      icon: "success",
+    });
+  }, 1350)
 
   formRef.current?.reset();
 };
@@ -158,8 +218,27 @@ export const uploadFile = async (ordinance_id: number, doc: File) => {
   ]);
 
   if (error) {
-    return console.log("Error saving your document: ", error);
+    console.error("Error saving your document: ", error);
+    return;
   }
 
   console.log("Success uploading your file");
 };
+
+
+export const getOrdinancesByLocID = async () => {
+  const locID = await getLocFromAuth();
+  const { data, error } = await client.from("ordinances").select("*").eq("location", locID).eq("status", "uploaded");
+
+  if(error){
+    Swal.fire({
+      title: `Error loading ordinances`,
+      text: `Error: : ${error}`,
+      icon: "error",
+    })
+    
+    return [];
+  }
+
+  return data 
+}

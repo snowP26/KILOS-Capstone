@@ -73,6 +73,7 @@ export type ordinance = {
     location: string,
     author: number,
     status: string,
+    created_at: string
 }
 
 export type ordinance_approvals = { 
