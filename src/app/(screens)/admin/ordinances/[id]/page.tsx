@@ -59,7 +59,7 @@ export default function SubmitOrdinances() {
     setFormData(row);
   };
 
-  const handleChange = (field: keyof ordinance_approvals, value: any) => {
+  const handleChange = <K extends keyof ordinance_approvals>(field: K, value: ordinance_approvals[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -67,10 +67,7 @@ export default function SubmitOrdinances() {
     if (!editingRow) return;
 
     // Check if setting final status
-    if (
-      formData.status === "approved" ||
-      formData.status === "vetoed"
-    ) {
+    if (formData.status === "approved" || formData.status === "vetoed") {
       const result = await Swal.fire({
         title: "Are you sure?",
         text: `Once marked as ${formData.status?.toUpperCase()}, this cannot be undone.`,
@@ -186,21 +183,24 @@ export default function SubmitOrdinances() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="in progress">In Progress</SelectItem>
+                          <SelectItem value="in progress">
+                            In Progress
+                          </SelectItem>
                           <SelectItem value="approved">Approved</SelectItem>
                           <SelectItem value="vetoed">Vetoed</SelectItem>
                         </SelectContent>
                       </Select>
                     ) : (
                       <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${a.status === "pending"
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          a.status === "pending"
                             ? "bg-yellow-100 text-yellow-800"
                             : a.status === "in progress"
-                              ? "bg-blue-100 text-blue-800"
-                              : a.status === "approved"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
-                          }`}
+                            ? "bg-blue-100 text-blue-800"
+                            : a.status === "approved"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
                       >
                         {a.status.toUpperCase()}
                       </span>
@@ -280,9 +280,7 @@ export default function SubmitOrdinances() {
                         </Button>
                       </div>
                     ) : a.status === "approved" || a.status === "vetoed" ? (
-                      <span className="text-gray-400 text-sm">
-                        Finalized
-                      </span>
+                      <span className="text-gray-400 text-sm">Finalized</span>
                     ) : (
                       <Button size="sm" onClick={() => handleEdit(a)}>
                         Edit
