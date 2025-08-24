@@ -260,6 +260,24 @@ export const getPendingOrdinances = async () => {
   return data
 }
 
+export const getOrdinanceByTitle = async (id: string) => {
+  const { data, error } = await client.from("ordinances").select("*").eq("title", id);
+
+  if (error) {
+    console.log("Error retrieving your data: ", error)
+    return []
+  }
+
+  return data ?? [];
+}
+
 export const getPendingOrdinanceStatus = async (id: number) => {
-  
+  const { data, error } = await client.from("ordinance_approvals").select("*").eq("ordinance_id", id).order("id", {ascending: true});
+
+  if (error) {
+    console.log("Error retrieving your data: ", error)
+    return []
+  }
+
+  return data ?? [];
 }

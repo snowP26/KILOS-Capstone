@@ -88,7 +88,7 @@ export const getApprovalPerOrdinance = async (id?: number) => {
         .from("ordinance_approvals")
         .select("*")
         .eq("ordinance_id", id)
-        .order("id", { ascending: false });
+        .order("id", { ascending: true });
 
     if (error) {
         console.log("Error getApprovalPerOrdinance: ", error);
