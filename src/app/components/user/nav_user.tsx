@@ -21,7 +21,7 @@ export const UserNav = () => {
             <Link href='/users/ordinances' className={pathname.startsWith('/users/ordinances') ? 'p-4 bg-white text-[#052659] rounded-md font-bold' : "text-white"}>
                 Ordinances
             </Link>
-            <Link href='/users/announcements' className={pathname.startsWith('/users/announcements') ? 'p-4 bg-white text-[#052659] rounded-md font-bold' : "text-white"}>
+            <Link href='/users/announcement' className={pathname.startsWith('/users/announcement') ? 'p-4 bg-white text-[#052659] rounded-md font-bold' : "text-white"}>
                 Announcement
             </Link>
             <Link href='/users/facebook-page' className={pathname.startsWith('/users/facebook') ? 'p-4 bg-white text-[#052659] rounded-md font-bold' : "text-white"}>

@@ -48,12 +48,12 @@ export default function ViewPending() {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbPage className="font-bold">Pending Ordinances & Resolutions</BreadcrumbPage>
+                        <BreadcrumbPage className="font-bold">My Pending Ordinances & Resolutions</BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
 
-            <p className="font-bold text-3xl mt-8 mb-2 ml-30">Pending Ordinances & Resolutions</p>
+            <p className="font-bold text-3xl mt-8 mb-2 ml-30">My Pending Ordinances & Resolutions</p>
             <hr className="border-t border-black w-[90%] mx-auto mt-3 mb-10" />
 
             {ordinances.map((data) => (
@@ -64,9 +64,7 @@ export default function ViewPending() {
                     </p>
                 </div>
 
-            ))
-
-            }
+            ))}
 
         </div>
     )

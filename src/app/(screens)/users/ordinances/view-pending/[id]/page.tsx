@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/table";
 import { useParams } from "next/navigation";
 import { ordinance, ordinance_approvals } from "@/src/app/lib/definitions";
+import { getOrdinanceByTitle, getPendingOrdinanceStatus } from "@/src/app/actions/ordinances";
 
 export default function ViewOrdinance() {
   const params = useParams();
@@ -31,9 +32,20 @@ export default function ViewOrdinance() {
   const [ordinance, setOrdinance] = useState<ordinance[]>([]);
   const [ordinanceApprovals, setOrdinanceApprovals] = useState<ordinance_approvals[]>([])
 
-  // useEffect(() => (
+  useEffect(() => {
+    const setData = async () => {
+      const data = await getOrdinanceByTitle(id)
+      setOrdinance(data)
 
-  // ), [])
+      if (data && data.length > 0) {
+        const approvals = await getPendingOrdinanceStatus(data[0].id);
+        setOrdinanceApprovals(approvals);
+      }
+    }
+
+
+    setData();
+  }, [id])
 
 
   return (
@@ -60,19 +72,29 @@ export default function ViewOrdinance() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
+            <BreadcrumbLink href="/users/ordinances/view-pending">
+              My Pending Ordinances & Resolutions
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
             <BreadcrumbPage className="font-bold">
               Ordinance {id}
             </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-
-      <p className="font-bold text-3xl mt-8 mb-2 ml-30">Ordinance {id}</p>
-      <hr className="border-t border-black w-[90%] mx-auto mt-3 mb-2" />
-      <p className="text-md mb-2 ml-30">
-        An Ordinance Institutionalizing the Bula Youth Leadership Summit and
-        Declaring It as an Annual Municipal Activity
-      </p>
+      {
+        ordinance.map((data) => (
+          <div key={data.id}>
+            <p className="font-bold text-3xl mt-8 mb-2 ml-30">Ordinance {data.title}</p>
+            <hr className="border-t border-black w-[90%] mx-auto mt-3 mb-2" />
+            <p className="text-md mb-2 ml-30">
+              {data.description}
+            </p>
+          </div>
+        ))
+      }
 
       <div className="mx-20 mt-10">
         <Table className="bg-white w-[100%]">
@@ -90,27 +112,43 @@ export default function ViewOrdinance() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell className="max-w-[150px] text-center">
-                First Reading
-              </TableCell>
-              <TableCell>
-                <p className="text-center font-medium bg-[#052659] rounded-2xl text-white w-auto">
-                  Approved
-                </p>
-              </TableCell>
-              <TableCell className="text-center italic">
-                January 1, 2000
-              </TableCell>
-              <TableCell className="text-center italic">
-                January 10, 2000
-              </TableCell>
-              <TableCell className="text-center">Sangguniang Bayan</TableCell>
-              <TableCell className="text-center">
-                Please collaborate with LYDO to draft the ordinance for the 2nd
-                reading.
-              </TableCell>
-            </TableRow>
+            {ordinanceApprovals.map((data) => (
+              <TableRow key={data.id}>
+                <TableCell className="max-w-[150px] text-center">
+                  {data.stage}
+                </TableCell>
+                <TableCell className="text-center">
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${data.status === "pending"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : data.status === "in progress"
+                        ? "bg-blue-100 text-blue-800"
+                        : data.status === "approved"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                  >
+                    {data.status.toUpperCase()}
+                  </span>
+                </TableCell>
+                <TableCell className="text-center italic">
+                  {data.start_date ? new Date(data.start_date).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "2-digit",
+                    year: "numeric",
+                  }) : "-"}
+                </TableCell>
+                <TableCell className="text-center italic">
+                  {data.end_date ? new Date(data.end_date).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "2-digit",
+                    year: "numeric",
+                  }) : "-"}
+                </TableCell>
+                <TableCell className="text-center">{data.approver}</TableCell>
+                <TableCell className="text-center">{data.remarks}</TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </div>

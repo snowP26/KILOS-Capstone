@@ -218,7 +218,11 @@ export default function SubmitOrdinances() {
                         }
                       />
                     ) : (
-                      a.start_date ?? "-"
+                      a.start_date ? new Date(a.start_date).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "2-digit",
+                        year: "numeric",
+                      }) : "-"
                     )}
                   </TableCell>
 
@@ -232,7 +236,11 @@ export default function SubmitOrdinances() {
                         }
                       />
                     ) : (
-                      a.end_date ?? "-"
+                      a.end_date ? new Date(a.end_date).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "2-digit",
+                        year: "numeric",
+                      }) : "-"
                     )}
                   </TableCell>
 
@@ -268,13 +276,14 @@ export default function SubmitOrdinances() {
                   <TableCell className="text-center">
                     {editingRow === a.id ? (
                       <div className="flex gap-2">
-                        <Button size="sm" onClick={handleSave}>
+                        <Button size="sm" onClick={handleSave} className="cursor-pointer transition-all">
                           Save
                         </Button>
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => setEditingRow(null)}
+                          className="cursor-pointer transition-all"
                         >
                           Cancel
                         </Button>
@@ -282,7 +291,7 @@ export default function SubmitOrdinances() {
                     ) : a.status === "approved" || a.status === "vetoed" ? (
                       <span className="text-gray-400 text-sm">Finalized</span>
                     ) : (
-                      <Button size="sm" onClick={() => handleEdit(a)}>
+                      <Button className="cursor-pointer transition-all" size="sm" onClick={() => handleEdit(a)}>
                         Edit
                       </Button>
                     )}

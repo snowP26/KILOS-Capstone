@@ -21,7 +21,7 @@ export const AdminNav = () => {
             <Link href='/admin/ordinances' className={pathname.startsWith(`/admin/ordinances`) ? 'p-4 bg-white text-[#052659] rounded-md font-bold' : "text-white"}>
                 Ordinances
             </Link>
-            <Link href='/admin/announcements' className={pathname.startsWith('/admin/announcements') ? 'p-4 bg-white text-[#052659] rounded-md font-bold' : "text-white"}>
+            <Link href='/admin/announcement' className={pathname.startsWith('/admin/announcement') ? 'p-4 bg-white text-[#052659] rounded-md font-bold' : "text-white"}>
                 Announcement
             </Link>
             <Link href='/admin/community-feedback' className={pathname.startsWith('/admin/feedback') ? 'p-4 bg-white text-[#052659] rounded-md font-bold' : "text-white"}>  
