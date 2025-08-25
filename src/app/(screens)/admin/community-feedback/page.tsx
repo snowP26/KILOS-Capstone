@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from 'react'
-import { AdmnFeedbackCard } from '@/src/app/components/admin/admnFeedbackCard';
 import { commFeedback } from '@/src/app/lib/definitions';
 import { getLocFromAuth } from '@/src/app/actions/convert';
 import { getFeedback } from '@/src/app/actions/feedback';
