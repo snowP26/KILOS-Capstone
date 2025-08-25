@@ -2,13 +2,13 @@
 
 import { ComNav } from "@/src/app/components/community/nav";
 import { CommunityBanner } from "@/src/app/components/community/community-banner";
-import { FeedbackCard } from "@/src/app/components/community/feedbackCard";
 import { PostFeedbackCard } from "@/src/app/components/community/post-feedbackCard";
 import { useParams, notFound } from "next/navigation";
 import { commFeedback, locations } from "@/src/app/lib/definitions";
 import {  useEffect,  useState } from "react";
 import { getFeedback} from "@/src/app/actions/feedback";
 import { locNameToID } from "@/src/app/actions/convert";
+import { FeedbackCard } from "@/src/app/components/user/feedbackCard_user";
 
 export default function Page() {
   const [refresh, setRefresh] = useState(0);
@@ -63,6 +63,7 @@ export default function Page() {
           {feedback.map((data) => (
             <FeedbackCard
               key={data.id}
+              feedbackID={data.id}
               header={data.header}
               body={data.body}
               date={new Date(data.created_at).toLocaleString("en-US", {
