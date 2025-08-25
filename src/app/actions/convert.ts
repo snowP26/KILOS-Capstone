@@ -40,7 +40,7 @@ export const authorIDtoName = async (id: number) => {
 
     if (error) {
         console.error("Error fetching author name:", error);
-        return null; // or throw error if you want stricter handling
+        return null;
     }
 
     if (data) {

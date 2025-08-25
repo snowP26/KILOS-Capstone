@@ -1,6 +1,6 @@
 import client from "@/src/api/client";
 import { FormEvent, RefObject } from "react";
-import { locNameToID } from "./convert";
+import { getUserID, locNameToID } from "./convert";
 
 
 export const postFeedback = async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement | null>, id: string) => {
@@ -38,4 +38,34 @@ export const getFeedback = async(id: number) => {
     }
 
     return data;
+}
+
+export const getComments = async (id: number) => {
+    const { data, error } = await client.from("feedback_comments").select("*").eq("feedback_id", id);
+
+    if(error){
+        console.log("Error fetching comments: ", error);
+        return []
+    }
+
+    console.log("Successfully retrieved comments!")
+    return data ?? []
+}
+
+export const postComment =  async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement | null>, id: number) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const body = formData.get("comment") as string;
+    const userID = await getUserID();
+
+
+    const { error } = await client.from("feedback_comments").insert([{
+        feedback_id: id,
+        author_id: userID,
+        content: body
+    }])
+
+    if(error){
+        return console.log("Error posting your announcement: ", error)
+    }
 }

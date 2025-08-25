@@ -104,3 +104,11 @@ export type commFeedback = {
     body: string,
     location: number
 }
+
+export type feedbackComment = {
+    id: number,
+    created_at: string,
+    feedback_id: number,
+    author_id: number,
+    content: string,
+}
