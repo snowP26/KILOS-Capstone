@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { commFeedback } from '@/src/app/lib/definitions';
-import { FeedbackCard } from '@/src/app/components/community/feedbackCard';
+import { FeedbackCard } from '@/src/app/components/user/feedbackCard_user';
 import { getFeedback } from '@/src/app/actions/feedback';
 import { getLocFromAuth } from '@/src/app/actions/convert';
 
@@ -24,7 +24,6 @@ export default function CommunityFeedback() {
 
     fetchFeedbackData();
 
-
   }, [])
 
   return (
@@ -41,6 +40,7 @@ export default function CommunityFeedback() {
             feedback?.map((data) => (
               <FeedbackCard
                 key={data.id}
+                feedbackID={data.id}
                 header={data.header}
                 body={data.body}
                 date={new Date(data.created_at)
