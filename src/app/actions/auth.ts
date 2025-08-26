@@ -13,6 +13,7 @@ const successPopup = async () => {
   });
 };
 
+// create code checker
 export const checkCode = async (code: string) => {
   const { data, error } = await client
     .from("positions")
