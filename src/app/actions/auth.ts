@@ -13,26 +13,43 @@ const successPopup = async () => {
   });
 };
 
+
+export const getCodeData = async (code: string) => {
+  const{ data, error } = await client.from("position").select("*").eq("registration_code", code).single();
+
+  if(error){
+    console.log("Error fetching code data: ", error);
+    return null;
+  }
+
+  if(data){
+    console.log("Successfully fetched registration code data.");
+    return data.user_type;
+  }
+}
+
 // create code checker
 export const checkCode = async (code: string) => {
   const { data, error } = await client
     .from("positions")
-    .select("is_assigned")
+    .select("*")
     .eq("registration_code", code);
 
   if (error) {
     return console.log("Registration code error: ", error);
   }
   if (data) {
-    console.log(data[0].is_assigned);
+    return data[0]
   }
 };
+
 
 export const registerUser = async (
   regData: users,
   router: AppRouterInstance
 ) => {
   const { email, password, firstName, lastName, regCode } = regData;
+  const userType = checkCode(regCode);
 
   Swal.fire({
     title: "Signing you up...",
@@ -64,7 +81,6 @@ export const registerUser = async (
     Swal.close();
     return console.log("This registration code has already been used.");
   }
-
   const { error: yoError } = await client.from("youth_official").insert([
     {
       email: email,
@@ -91,8 +107,9 @@ export const registerUser = async (
         role: posData[0].user_type,
         location: posData[0].location_id,
       },
-      emailRedirectTo: "http://localhost:3000/login", // replace with deployed url.
+      emailRedirectTo: "http://localhost:3000/login", 
     },
+    
   });
 
   Swal.close();
