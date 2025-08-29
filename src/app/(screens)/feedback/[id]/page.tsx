@@ -8,7 +8,8 @@ import { commFeedback, locations } from "@/src/app/lib/definitions";
 import {  useEffect,  useState } from "react";
 import { getFeedback} from "@/src/app/actions/feedback";
 import { locNameToID } from "@/src/app/actions/convert";
-import { FeedbackCard } from "@/src/app/components/user/feedbackCard_user";
+import { FeedbackCard } from "@/src/app/components/community/feedbackCard";
+
 
 export default function Page() {
   const [refresh, setRefresh] = useState(0);

@@ -31,14 +31,6 @@ export default function Announcement() {
   const [announcements, setAnnouncements] = useState<announcement[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  // use this for create announcment feature
-  // |
-  // v
-  // const setUserFunction = async () => {
-  //   const currentUser = await getCurrentUser();
-  //   setUser(currentUser as string);
-  //   return console.log("Current user:", currentUser);
-  // };
 
   const updateAnnouncements = async () => {
     const updatedData = await getAnnouncments();

@@ -100,7 +100,7 @@ export default function CreateAnnouncement() {
                 <div className="bg-white w-[70%] px-20 rounded-[16px] py-10 shadow-lg/30">
                     <div className="flex flex-row justify-between">
                         <div className="w-100">
-                            <p className="font-semibold">Announcement Header</p>
+                            <p className="font-semibold">Header</p>
                             <Input 
                                 className="bg-[#E6F1FF] placeholder:italic" 
                                 placeholder="eg. The Announcement is about KILOS"
@@ -108,7 +108,7 @@ export default function CreateAnnouncement() {
                             />
                         </div>
                         <div className="flex flex-row items-center gap-2">
-                            <p className="font-semibold">Announcement Category:</p>
+                            <p className="font-semibold">Category:</p>
                             <Select name="type" required>
                                 <SelectTrigger className="w-[180px] bg-[#E6F1FF] cursor-pointer">
                                     <SelectValue className="placeholder:italic" placeholder="Select a Category" />
@@ -128,14 +128,14 @@ export default function CreateAnnouncement() {
                         </div>
                     </div>
 
-                    <p className="font-semibold pt-5">Announcement Body</p>
+                    <p className="font-semibold pt-5">Body</p>
                     <Textarea 
                         className="bg-[#E6F1FF] h-60 placeholder:italic" 
                         placeholder="eg. The Announcement is about KILOS" 
                         name="body"
                     />
 
-                    <p className="font-semibold pt-5">Announcement Image</p>
+                    <p className="font-semibold pt-5">Image</p>
                     <p className="text-gray-500 italic text-xs">Attach any image if needed. The image will be posted with the announcement.</p>
                     
                     {!selectedFile && (
@@ -196,7 +196,7 @@ export default function CreateAnnouncement() {
 
                     <div className="place-self-end mt-6">
                         <Button className="bg-[#A3C4A8] text-black font-bold rounded-[16px] cursor-pointer hover:bg-black hover:text-[#A3C4A8]">
-                            Submit Document
+                            Submit Announcement
                         </Button>
                     </div>
                 </div>

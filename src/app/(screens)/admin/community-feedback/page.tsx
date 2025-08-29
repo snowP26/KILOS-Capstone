@@ -38,6 +38,7 @@ export default function CommunityFeedback() {
           {feedback?.map((data) => (
               <FeedbackCard
                 key={data.id}
+                feedbackID={data.id}
                 header={data.header}
                 body={data.body}
                 date={new Date(data.created_at)
