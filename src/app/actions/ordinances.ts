@@ -134,6 +134,7 @@ export const postOrdinance = async (
     return;
   }
 
+
   // Handle file only if it exists
   if (file && file.name) {
     const fileName = `${verboseLocation.name.trim()}_${ordinanceID}_${file.name
@@ -162,7 +163,7 @@ export const postOrdinance = async (
 
     // Upload to storage bucket
     const { error: bucketError } = await client.storage
-      .from("ordinances-pending")
+      .from("ordinances")
       .upload(filepath, file);
 
     if (bucketError) {
@@ -188,41 +189,46 @@ export const postOrdinance = async (
   formRef.current?.reset();
 };
 
-export const uploadFile = async (ordinance_id: number, doc: File) => {
-  const { data: sessionData } = await client.auth.getSession();
-  const email = sessionData.session?.user.email;
-  if (!email) return console.error("No logged-in user found");
+// export const uploadFile = async (ordinance_id: number, doc: File) => {
+//   if(!doc){
+//     console.log("No File detected, skipping upload.")
+//     return;
+//   }
 
-  const locationName = await getLocationFromEmail(email);
-  if (!locationName) return console.error("Location not found");
+//   const { data: sessionData } = await client.auth.getSession();
+//   const email = sessionData.session?.user.email;
+//   if (!email) return console.error("No logged-in user found");
 
-  const { data: userData } = await client
-    .from("youth_official")
-    .select("id")
-    .eq("email", email)
-    .single();
+//   const locationName = await getLocationFromEmail(email);
+//   if (!locationName) return console.error("Location not found");
 
-  if (!userData) return console.error("User not found");
+//   const { data: userData } = await client
+//     .from("youth_official")
+//     .select("id")
+//     .eq("email", email)
+//     .single();
 
-  const filename = `${locationName}_${ordinance_id}_${doc.name}`;
-  const filepath = `${locationName}/${filename}`;
+//   if (!userData) return console.error("User not found");
 
-  const { error } = await client.from("ordinance_files").insert([
-    {
-      ordinance_id,
-      file_path: filepath,
-      file_name: filename,
-      author: userData.id,
-    },
-  ]);
+//   const filename = `${locationName}_${ordinance_id}_${doc.name}`;
+//   const filepath = `${locationName}/${filename}`;
 
-  if (error) {
-    console.error("Error saving your document: ", error);
-    return;
-  }
+//   const { error } = await client.from("ordinance_files").insert([
+//     {
+//       ordinance_id,
+//       file_path: filepath,
+//       file_name: filename,
+//       author: userData.id,
+//     },
+//   ]);
 
-  console.log("Success uploading your file");
-};
+//   if (error) {
+//     console.error("Error saving your document: ", error);
+//     return;
+//   }
+
+//   console.log("Success uploading your file");
+// };
 
 
 export const getOrdinancesByLocID = async () => {
@@ -281,3 +287,30 @@ export const getPendingOrdinanceStatus = async (id: number) => {
 
   return data ?? [];
 }
+
+
+
+
+export const openOrdinancePDF = async (ordinanceID: number) => {
+  const { data: ordinancefile, error: ordinanceFileError } = await client.from("ordinance_files").select("file_path").eq("ordinance_id", ordinanceID).single()  
+
+  if(ordinanceFileError){
+    console.log("error reading ordinance");
+    return;
+  }
+
+  console.log("ordinance file url: ", ordinancefile.file_path)
+
+
+
+  const { data: url } = await client.storage.from("ordinances").getPublicUrl(ordinancefile.file_path);
+
+  // Open in a new tab
+  if (url?.publicUrl) {
+    window.open(url.publicUrl, "_blank");
+    return
+  }
+
+  console.log("File does not exist.");
+  return url?.publicUrl || null;
+} 
