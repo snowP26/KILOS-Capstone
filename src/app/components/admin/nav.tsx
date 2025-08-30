@@ -24,7 +24,7 @@ export const AdminNav = () => {
             <Link href='/admin/announcement' className={pathname.startsWith('/admin/announcement') ? 'p-4 bg-white text-[#052659] rounded-md font-bold' : "text-white"}>
                 Announcement
             </Link>
-            <Link href='/admin/community-feedback' className={pathname.startsWith('/admin/feedback') ? 'p-4 bg-white text-[#052659] rounded-md font-bold' : "text-white"}>  
+            <Link href='/admin/community-feedback' className={pathname.startsWith('/admin/community-feedback') ? 'p-4 bg-white text-[#052659] rounded-md font-bold' : "text-white"}>  
                 Community Feedback
             </Link>
             <a className="text-black bg-white p-5 cursor-pointer" onClick={() => logoutUser(router)}>

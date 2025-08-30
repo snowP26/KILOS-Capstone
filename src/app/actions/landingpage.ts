@@ -27,3 +27,21 @@ export const getOrdinanceByLocation = async (locationID: number) => {
     console.log("Data retrieval successful!", data);
     return data
 }
+
+
+// =====================================================================================================================
+// ================================================= Search Function ===================================================
+// =====================================================================================================================
+
+export const searchData = async(query: string) => {
+    if (!query) return [];
+
+    const { data, error } = await client.from("ordinances").select("*").or(`title.ilike.%${query}%, description.ilike.%${query}%`);
+
+    if(error){
+        console.log("Error fetching data: ", error)
+        return []
+    }
+
+    return data;
+}

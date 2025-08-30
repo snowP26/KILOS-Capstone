@@ -54,7 +54,9 @@ export type announcement = {
     type: AnnouncementType;
     photo: string; // string = url to photo.
     author_email: string;
-
+    authorName: string;
+    authorPosition: string;
+    authorRole: string;
 };
 
 // define Meeting based on ERD
@@ -111,4 +113,10 @@ export type feedbackComment = {
     feedback_id: number,
     author_id: number,
     content: string,
+}
+
+export type homeFeedback = {
+    id: number,
+    header: string,
+    created_at: string,
 }

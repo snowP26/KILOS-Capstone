@@ -183,7 +183,7 @@ export const postOrdinance = async (
       text: "Please contact your official counterpart for ordinance posting approval.",
       icon: "success",
     });
-  }, 1350)
+  }, 750)
 
   formRef.current?.reset();
 };

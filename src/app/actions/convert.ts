@@ -18,18 +18,21 @@ export const getLocFromAuth = async () => {
     const { data: userData, error: userError } = await client.auth.getUser();
 
     if (!userData) {
-        return console.log("No authenticated user is found.")
+        console.log("No authenticated user is found.")
+        return 0 
     }
 
     if (userError) {
-        return console.log("User error: ", userError)
+        console.log("User error: ", userError)
+        return 0
     }
 
     const authEmail = userData.user.email;
     const { data, error } = await client.from("youth_official").select("location").eq("email", authEmail).single();
 
     if (error) {
-        return console.log("There seems to be an error with the youth official", error)
+        console.log("There seems to be an error with the youth official", error)
+        return 0
     }
 
     return data.location as number;
@@ -48,6 +51,25 @@ export const authorIDtoName = async (id: number) => {
     }
 
     return null;
+};
+
+export const authorEmailToInfo = async (email: string) => {
+  const { data, error } = await client
+    .from("youth_official") // adjust table name if different
+    .select("firstname, lastname, position, role")
+    .eq("email", email)
+    .single();
+
+  if (error || !data) {
+    console.error("Error fetching author info:", error);
+    return { name: "Unknown Author", position: "N/A", role: "N/A" };
+  }
+
+  return {
+    name: data.firstname + data.lastname,
+    position: data.position,
+    role: data.role,
+  };
 };
 
 export const getUserID = async (): Promise<string> => {
