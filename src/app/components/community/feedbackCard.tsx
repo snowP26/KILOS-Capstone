@@ -89,36 +89,42 @@ export const FeedbackCard = ({
           </div>
           <hr className="border-t border-black w-[100%] mx-auto my-3" />
 
-          {comments.map((data) => {
-            const name = authorNames[data.author_id] ?? "Loading...";
-            return (
-              <div
-                key={data.id}
-                className="flex flex-row items-start gap-3 mb-4"
-              >
-                {/* Avatar */}
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
-                    {name !== "Loading..." ? getInitials(name) : "?"}
+          {comments.length === 0 ? (
+            <div className="w-full py-10 flex items-center justify-center bg-gray-100 rounded-lg">
+              <p className="text-gray-500 italic">No comments yet.</p>
+            </div>
+          ) : (
+            comments.map((data) => {
+              const name = authorNames[data.author_id] ?? "Loading...";
+              return (
+                <div
+                  key={data.id}
+                  className="flex flex-row items-start gap-3 mb-4"
+                >
+                  {/* Avatar */}
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
+                      {name !== "Loading..." ? getInitials(name) : "?"}
+                    </div>
                   </div>
-                </div>
 
-                {/* Comment content */}
-                <div className="flex-1 bg-white rounded-xl p-3 text-black shadow">
-                  <div className="flex justify-between items-center mb-1">
-                    <p className="text-sm font-semibold">{name}</p>
-                    <p className="text-xs text-gray-400">
-                      {new Date(data.created_at).toLocaleString("en-US", {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })}
-                    </p>
+                  {/* Comment content */}
+                  <div className="flex-1 bg-white rounded-xl p-3 text-black shadow">
+                    <div className="flex justify-between items-center mb-1">
+                      <p className="text-sm font-semibold">{name}</p>
+                      <p className="text-xs text-gray-400">
+                        {new Date(data.created_at).toLocaleString("en-US", {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })}
+                      </p>
+                    </div>
+                    <p className="text-sm text-gray-700">{data.content}</p>
                   </div>
-                  <p className="text-sm text-gray-700">{data.content}</p>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
           {/* end of Comments */}
           <Quote fill="black" size="40px" className="self-end mt-5" />
         </DialogHeader>
