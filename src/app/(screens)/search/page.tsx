@@ -1,53 +1,55 @@
 "use client";
 
-import { useState } from "react";
 import { searchData } from "@/src/app/actions/landingpage";
+import { OrdinancesLandingCard } from "@/src/app/components/community/ordinances-landingCard";
 import { ordinance } from "@/src/app/lib/definitions";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState, use } from "react";
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { OrdinancesLandingCard } from "../../components/community/ordinances-landingCard";
-
-export default function OrdinanceSearch() {
-  const [query, setQuery] = useState("");
+export default function SearchPage() {
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q") || "";
+  const locationID = searchParams.get("loc");
+  const loc = locationID ? parseInt(locationID, 10) : undefined;
   const [results, setResults] = useState<ordinance[]>([]);
-  const [loading, setLoading] = useState(false);
 
-  const handleSearch = async () => {
-    setLoading(true);
-    const data = await searchData(query);
-    setResults(data);
-    setLoading(false);
+  const setData = async () => {
+    if (!query && !locationID) {
+      setResults([]);
+      return;
+    }
+
+    setResults(await searchData(query, loc));
   };
 
-  return (
-    <div className="w-full max-w-2xl mx-auto mt-10">
-      <div className="flex gap-2 mb-4">
-        <Input
-          type="text"
-          placeholder="Search ordinances..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <Button onClick={handleSearch} disabled={loading}>
-          {loading ? "Searching..." : "Search"}
-        </Button>
-      </div>
+  useEffect(() => {
+    const fetchData = async () => {
+      await setData();
+    };
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {results.length > 0 ? (
-          results.map((ord) => (
+    fetchData();
+  }, []);
+
+  return (
+    <div className="w-full max-w-5xl mx-auto mt-10">
+      <h1 className="text-2xl font-bold mb-6">
+        Search Results for: <span className="text-blue-600">{query}</span>
+      </h1>
+
+      {results.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {results.map((ord) => (
             <OrdinancesLandingCard
               key={ord.id}
               title={ord.title}
               description={ord.description}
               author={ord.author}
             />
-          ))
-        ) : (
-          <p className="text-gray-500">No ordinances found.</p>
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-gray-500">No ordinances found.</p>
+      )}
     </div>
   );
 }
