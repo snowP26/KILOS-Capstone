@@ -5,7 +5,7 @@ import client from "@/src/api/client"
 // =====================================================================================================================
 
 export const getAllOrdinances = async () => {
-    const { data, error } = await client.from("ordinances").select("*").eq("status", "Vetoed"); // change it to approved.
+    const { data, error } = await client.from("ordinances").select("*").eq("status", "Uploaded"); // change it to approved.
 
     if (error) {
         console.log("Error retrieving ordinances: ", error)
@@ -33,15 +33,29 @@ export const getOrdinanceByLocation = async (locationID: number) => {
 // ================================================= Search Function ===================================================
 // =====================================================================================================================
 
-export const searchData = async(query: string) => {
-    if (!query) return [];
+export const searchData = async (query?: string, location?: number) => {
+  if (!query) return [];
 
-    const { data, error } = await client.from("ordinances").select("*").or(`title.ilike.%${query}%, description.ilike.%${query}%`);
+  let searchQuery = client
+    .from("ordinances")
+    .select("*")
 
-    if(error){
-        console.log("Error fetching data: ", error)
-        return []
+
+    if(query){
+    searchQuery.or(`title.ilike.%${query}%,description.ilike.%${query}%`);
     }
 
-    return data;
-}
+  if (location) {
+    searchQuery = searchQuery.eq("location", location);
+    console.log("the location is added", searchQuery)
+  }
+
+  const { data, error } = await searchQuery;
+
+  if (error) {
+    console.log("Error fetching data: ", error);
+    return [];
+  }
+
+  return data;
+};
