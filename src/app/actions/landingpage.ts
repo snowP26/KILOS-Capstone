@@ -47,7 +47,6 @@ export const searchData = async (query?: string, location?: number) => {
 
   if (location) {
     searchQuery = searchQuery.eq("location", location);
-    console.log("the location is added", searchQuery)
   }
 
   const { data, error } = await searchQuery;
