@@ -16,32 +16,34 @@ export default function Home() {
   const router = useRouter();
 
   const [refresh, setRefresh] = useState(0);
-  const [author, setAuthor] = useState("Loading...");
+
   const [searchLoc, setSearchLoc] = useState<string | null>(null);
   const [projLoc, setProjLoc] = useState<string | null>(null);
   const [ordinanceLoc, setOrdinanceLoc] = useState<string | null>(null);
   const [ordinances, setOrdinances] = useState<ordinance[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const ordinancesData = await getAllOrdinances();
-      setOrdinances(ordinancesData);
-    };
-
-    fetchData();
-  }, [refresh]);
+  const [seeOrdinances, setSeeOrdinances] = useState("All");
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     const queryParams = new URLSearchParams();
     queryParams.set("q", searchQuery);
     if (searchLoc) queryParams.set("loc", searchLoc);
-
+    
     router.push(`/search/?${queryParams.toString()}`);
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      const ordinancesData = await getAllOrdinances(ordinanceLoc ?? "");
+      setOrdinances(ordinancesData);
+    };
 
+    console.log(ordinances)
+
+    fetchData();
+  }, [refresh, ordinanceLoc]); 
+  
   return (
     <div>
       <ComNav />

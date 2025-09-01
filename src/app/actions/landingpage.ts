@@ -1,11 +1,20 @@
 import client from "@/src/api/client"
+import { locNameToID } from "./convert";
+import { spec } from "node:test/reporters";
 
 // =====================================================================================================================
 // =================================================== Ordinances ======================================================
 // =====================================================================================================================
 
-export const getAllOrdinances = async () => {
-    const { data, error } = await client.from("ordinances").select("*").eq("status", "Uploaded"); // change it to approved.
+export const getAllOrdinances = async (location: string) => {
+    let dbQuery = client.from("ordinances").select("*").eq("status", "Uploaded")
+    
+    if(location && location !== ""){
+        const locID = await locNameToID(location as string)
+        dbQuery = dbQuery.eq("location", locID)
+    }
+
+    const { data, error } = await dbQuery.limit(4); // change it to approved.
 
     if (error) {
         console.log("Error retrieving ordinances: ", error)
