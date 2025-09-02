@@ -14,7 +14,10 @@ import {
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { ordinance } from "@/src/app/lib/definitions";
-import { getOrdinancesByLocID, openOrdinancePDF } from "@/src/app/actions/ordinances";
+import {
+  getOrdinancesByLocID,
+  openOrdinancePDF,
+} from "@/src/app/actions/ordinances";
 
 export default function Ordinances() {
   const [ordinances, setOrdinances] = useState<ordinance[]>([]);
@@ -58,7 +61,7 @@ export default function Ordinances() {
           <SelectTrigger className="w-[100%] bg-white cursor-pointer">
             <SelectValue className="placeholder:italic" placeholder="Sort By" />
           </SelectTrigger>
-          <SelectContent className="">
+          <SelectContent>
             <SelectGroup>
               <SelectItem value="newest ordinance">Newest Ordinance</SelectItem>
               <SelectItem value="oldest ordinance">Oldest Ordinance</SelectItem>
@@ -68,10 +71,15 @@ export default function Ordinances() {
         </Select>
       </div>
 
+      {/* Ordinances List */}
       {ordinances.map((data) => (
-        <div key={data.id} className="pb-5 cursor-pointer" onClick={async () => await openOrdinancePDF(data.id)}>
+        <div
+          key={data.id}
+          className="pb-5 cursor-pointer"
+          onClick={async () => await openOrdinancePDF(data.id)}
+        >
           <OrdinancesCard
-            
+            className="transition-transform duration-300 hover:-translate-y-1 rounded-xl"
             title={data.title}
             description={data.description}
             author={data.author}
