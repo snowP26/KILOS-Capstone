@@ -1,7 +1,7 @@
 import client from "@/src/api/client";
 import { FormEvent, RefObject } from "react";
 import Swal from "sweetalert2";
-import { getLocFromAuth, getUserID } from "./convert";
+import { getLocFromAuth, getUserID, locIDtoName } from "./convert";
 
 const checkTitleDuplicates = async (uploadValue: string) => {
   const { data, error } = await client
@@ -45,9 +45,9 @@ export const postOrdinance = async (
   e.preventDefault();
 
   const formdata = new FormData(e.currentTarget);
-  const title = `${formdata.get("title-year") as string}-${formdata.get(
-    "title-number"
-  ) as string}`;
+  const title = `${formdata.get("title-year") as string}-${
+    formdata.get("title-number") as string
+  }`;
   const description = formdata.get("description") as string;
   const file = formdata.get("document") as File;
 
@@ -134,11 +134,11 @@ export const postOrdinance = async (
     return;
   }
 
-
   // Handle file only if it exists
   if (file && file.name) {
-    const fileName = `${verboseLocation.name.trim()}_${ordinanceID}_${file.name
-      }`;
+    const fileName = `${verboseLocation.name.trim()}_${ordinanceID}_${
+      file.name
+    }`;
     const filepath = `${verboseLocation.name.trim()}/${fileName}`;
 
     // Insert document metadata
@@ -177,140 +177,272 @@ export const postOrdinance = async (
     }
   }
 
-
   setTimeout(() => {
     Swal.fire({
       title: "Ordinance Successfully posted!",
       text: "Please contact your official counterpart for ordinance posting approval.",
       icon: "success",
     });
-  }, 750)
+  }, 750);
 
   formRef.current?.reset();
 };
 
-// export const uploadFile = async (ordinance_id: number, doc: File) => {
-//   if(!doc){
-//     console.log("No File detected, skipping upload.")
-//     return;
-//   }
+export const uploadFile = async (ordinance_id: number, doc: File) => {
+  if (!doc) {
+    console.log("No File detected, skipping upload.");
+    return;
+  }
 
-//   const { data: sessionData } = await client.auth.getSession();
-//   const email = sessionData.session?.user.email;
-//   if (!email) return console.error("No logged-in user found");
+  const { data: sessionData } = await client.auth.getSession();
+  const email = sessionData.session?.user.email;
+  if (!email) return console.error("No logged-in user found");
 
-//   const locationName = await getLocationFromEmail(email);
-//   if (!locationName) return console.error("Location not found");
+  const locationName = await getLocationFromEmail(email);
+  if (!locationName) return console.error("Location not found");
 
-//   const { data: userData } = await client
-//     .from("youth_official")
-//     .select("id")
-//     .eq("email", email)
-//     .single();
+  const { data: userData } = await client
+    .from("youth_official")
+    .select("id")
+    .eq("email", email)
+    .single();
 
-//   if (!userData) return console.error("User not found");
+  if (!userData) return console.error("User not found");
 
-//   const filename = `${locationName}_${ordinance_id}_${doc.name}`;
-//   const filepath = `${locationName}/${filename}`;
+  const filename = `${locationName}_${ordinance_id}_${doc.name}`;
+  const filepath = `${locationName}/${filename}`;
 
-//   const { error } = await client.from("ordinance_files").insert([
-//     {
-//       ordinance_id,
-//       file_path: filepath,
-//       file_name: filename,
-//       author: userData.id,
-//     },
-//   ]);
+  const { error } = await client.from("ordinance_files").insert([
+    {
+      ordinance_id,
+      file_path: filepath,
+      file_name: filename,
+      author: userData.id,
+    },
+  ]);
 
-//   if (error) {
-//     console.error("Error saving your document: ", error);
-//     return;
-//   }
+  if (error) {
+    console.error("Error saving your document: ", error);
+    return;
+  }
 
-//   console.log("Success uploading your file");
-// };
-
+  console.log("Success uploading your file");
+};
 
 export const getOrdinancesByLocID = async () => {
   const locID = await getLocFromAuth();
-  const { data, error } = await client.from("ordinances").select("*").eq("location", locID).eq("status", "Uploaded");
+  const { data, error } = await client
+    .from("ordinances")
+    .select("*")
+    .eq("location", locID)
+    .eq("status", "Uploaded");
 
   if (error) {
     Swal.fire({
       title: `Error loading ordinances`,
       text: `Error: : ${error}`,
       icon: "error",
-    })
+    });
 
     return [];
   }
 
-  return data
-}
+  return data;
+};
 
 export const getPendingOrdinances = async () => {
   const locID = await getLocFromAuth();
   const userID = await getUserID();
-  const { data, error } = await client.from("ordinances").select("*").eq("location", locID).eq("status", "Pending").eq("author", userID);
+  const { data, error } = await client
+    .from("ordinances")
+    .select("*")
+    .eq("location", locID)
+    .eq("status", "Pending")
+    .eq("author", userID);
 
   if (error) {
     Swal.fire({
       title: `Error loading ordinances`,
       text: `Error: : ${error}`,
       icon: "error",
-    })
+    });
 
     return [];
   }
 
-  return data
-}
+  return data;
+};
 
 export const getOrdinanceByTitle = async (id: string) => {
-  const { data, error } = await client.from("ordinances").select("*").eq("title", id);
+  const { data, error } = await client
+    .from("ordinances")
+    .select("*")
+    .eq("title", id);
 
   if (error) {
-    console.log("Error retrieving your data: ", error)
-    return []
+    console.log("Error retrieving your data: ", error);
+    return [];
   }
 
   return data ?? [];
-}
+};
 
 export const getPendingOrdinanceStatus = async (id: number) => {
-  const { data, error } = await client.from("ordinance_approvals").select("*").eq("ordinance_id", id).order("id", {ascending: true});
+  const { data, error } = await client
+    .from("ordinance_approvals")
+    .select("*")
+    .eq("ordinance_id", id)
+    .order("id", { ascending: true });
 
   if (error) {
-    console.log("Error retrieving your data: ", error)
-    return []
+    console.log("Error retrieving your data: ", error);
+    return [];
   }
 
   return data ?? [];
-}
-
-
-
+};
 
 export const openOrdinancePDF = async (ordinanceID: number) => {
-  const { data: ordinancefile, error: ordinanceFileError } = await client.from("ordinance_files").select("file_path").eq("ordinance_id", ordinanceID).single()  
+  const { data: ordinancefile, error: ordinanceFileError } = await client
+    .from("ordinance_files")
+    .select("file_path")
+    .eq("ordinance_id", ordinanceID)
+    .single();
 
-  if(ordinanceFileError){
+  if (ordinanceFileError) {
     console.log("error reading ordinance");
     return;
   }
 
-  console.log("ordinance file url: ", ordinancefile.file_path)
+  console.log("ordinance file url: ", ordinancefile.file_path);
 
-
-
-  const { data: url } = await client.storage.from("ordinances").getPublicUrl(ordinancefile.file_path);
+  const { data: url } = await client.storage
+    .from("ordinances")
+    .getPublicUrl(ordinancefile.file_path);
 
   // Open in a new tab
   if (url?.publicUrl) {
     window.open(url.publicUrl, "_blank");
-    return
+    return;
   }
 
   console.log("File does not exist.");
   return url?.publicUrl || null;
-} 
+};
+
+export const getPendingOrdinanceFile = async (ordinanceID: number) => {
+  const { data: ordinanceFileData, error: fileError } = await client
+    .from("ordinance_files")
+    .select("file_path")
+    .eq("ordinance_id", ordinanceID)
+    .single();
+
+  if (fileError || !ordinanceFileData?.file_path) {
+    console.log("No file path found for this ordinance.");
+    return null;
+  }
+
+  const { data } = client.storage
+    .from("ordinances")
+    .getPublicUrl(ordinanceFileData.file_path);
+
+  if (data?.publicUrl) {
+    const pathParts = ordinanceFileData.file_path.split("/");
+    const name = pathParts[pathParts.length - 1];
+    const type = name.split(".").pop() || "unknown";
+
+    return { url: data.publicUrl, name, type };
+  }
+
+  return null;
+};
+
+export const deletePendingOrdinanceFile = async (ordinanceID: number) => {
+  const filepath = await client
+    .from("ordinance_files")
+    .select("file_path")
+    .eq("ordinance_id", ordinanceID)
+    .single();
+
+  const { error: bucketError } = await client.storage
+    .from("ordinances")
+    .remove([filepath.data?.file_path]);
+
+  if (bucketError) {
+    Swal.fire({
+      title: "Error deleting the file.",
+      text: `Try deleting again later, Error: ${bucketError}`,
+      icon: "error",
+    });
+
+    return console.log("bucket error: ", bucketError);
+  }
+
+  const { error: dbError } = await client
+    .from("ordinance_files")
+    .delete()
+    .eq("file_path", filepath.data?.file_path);
+
+  if (dbError) {
+    Swal.fire({
+      title: "Error deleting the file.",
+      text: `Try deleting again later, Error: ${dbError}`,
+      icon: "error",
+    });
+
+    return console.log("db error: ", dbError);
+  }
+
+  return console.log("deletion success");
+};
+
+export const uploadOrdinanceFile = async (file: File, ordinanceID: number) => {
+  try {
+    if (!file) throw new Error("No file was provided.");
+
+    const { data: authData } = await client.auth.getSession();
+
+    const { data, error: dbError } = await client
+      .from("ordinances")
+      .select("location")
+      .eq("id", ordinanceID)
+      .single();
+
+    if (dbError || !data) {
+      throw new Error("No data was found: ", dbError);
+    }
+
+    const loc = await locIDtoName(data?.location as string);
+    const filename = `${loc}/${loc}_${ordinanceID}_${file.name}`;
+
+    const upload = await client.storage
+      .from("ordinances")
+      .upload(filename, file, { upsert: true });
+    if (!upload) throw new Error("Error uploading the file, try again.");
+
+    const { data: userData, error: userError } = await client
+      .from("youth_official")
+      .select("id")
+      .eq("email", authData.session?.user.email)
+      .single();
+
+    if (userError || !userData) {
+      throw new Error("Could not find user in youth_officials table.");
+    }
+
+    const authorID = userData.id;
+
+    const { error: insertError } = await client.from("ordinance_files").insert({
+      ordinance_id: ordinanceID,
+      file_path: filename,
+      file_name: `${loc}_${ordinanceID}_${file.name}`,
+      author: authorID,
+    });
+
+    if (insertError) {
+      throw new Error(
+        `Error inserting into ordinance_files: ${insertError.message}`
+      );
+    }
+  } catch (error) {}
+};
