@@ -91,12 +91,9 @@ export type ordinance_approvals = {
 }
 
 export type ordinanceFiles = {
-    id: number,
-    created_at: Date,
-    ordinance_id: number,
-    file_path: string,
-    file_name: string,
-    author_id: number
+  url: string;
+  name: string;
+  type: string;
 }
 
 export type commFeedback = {
