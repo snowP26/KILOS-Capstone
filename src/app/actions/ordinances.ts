@@ -318,19 +318,19 @@ export const openOrdinancePDF = async (ordinanceID: number) => {
 
   const { data: url } = await client.storage
     .from("ordinances")
-    .getPublicUrl(ordinancefile.file_path);
+    .createSignedUrl(ordinancefile.file_path, 3600);
 
   // Open in a new tab
-  if (url?.publicUrl) {
-    window.open(url.publicUrl, "_blank");
+  if (url?.signedUrl) {
+    window.open(url.signedUrl, "_blank");
     return;
   }
 
   console.log("File does not exist.");
-  return url?.publicUrl || null;
+  return url?.signedUrl || null;
 };
 
-export const getPendingOrdinanceFile = async (ordinanceID: number) => {
+export const getPendingOrdinanceFile = async (ordinanceID: number | undefined) => {
   const { data: ordinanceFileData, error: fileError } = await client
     .from("ordinance_files")
     .select("file_path")
@@ -342,16 +342,16 @@ export const getPendingOrdinanceFile = async (ordinanceID: number) => {
     return null;
   }
 
-  const { data } = client.storage
+  const { data } = await client.storage
     .from("ordinances")
-    .getPublicUrl(ordinanceFileData.file_path);
+    .createSignedUrl(ordinanceFileData.file_path, 3600);
 
-  if (data?.publicUrl) {
+  if (data?.signedUrl) {
     const pathParts = ordinanceFileData.file_path.split("/");
     const name = pathParts[pathParts.length - 1];
     const type = name.split(".").pop() || "unknown";
 
-    return { url: data.publicUrl, name, type };
+    return { url: data.signedUrl, name, type };
   }
 
   return null;

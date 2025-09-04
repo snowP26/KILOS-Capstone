@@ -23,7 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useParams } from "next/navigation";
-import { ordinance, ordinance_approvals } from "@/src/app/lib/definitions";
+import { ordinance, ordinance_approvals, ordinanceFiles } from "@/src/app/lib/definitions";
 import {
   deletePendingOrdinanceFile,
   getOrdinanceByTitle,
@@ -32,18 +32,13 @@ import {
   uploadOrdinanceFile,
 } from "@/src/app/actions/ordinances";
 import Swal from "sweetalert2";
-
-type OrdinanceFile = {
-  url: string;
-  name: string;
-  type: string;
-};
+import { getDisplayName } from "@/src/app/actions/convert";
 
 export default function ViewOrdinance() {
   const params = useParams();
   const id = params?.id as string;
   const [ordinance, setOrdinance] = useState<ordinance[]>([]);
-  const [ordinanceFile, setOrdinanceFile] = useState<OrdinanceFile | null>(
+  const [ordinanceFile, setOrdinanceFile] = useState<ordinanceFiles | null>(
     null
   );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -93,10 +88,7 @@ export default function ViewOrdinance() {
     }
   };
 
-  const getDisplayName = (fileName: string) => {
-    const parts = fileName.split("_");
-    return parts.length > 2 ? parts.slice(2).join("_") : fileName;
-  };
+
 
   const handleDelete = async () => {
     const result = await Swal.fire({

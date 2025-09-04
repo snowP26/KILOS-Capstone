@@ -42,13 +42,15 @@ import {
 } from "@/src/app/actions/admin_ordinances";
 import { Input } from "@/components/ui/input";
 import Swal from "sweetalert2";
+import { getPendingOrdinanceFile } from "@/src/app/actions/ordinances";
+import { getDisplayName } from "@/src/app/actions/convert";
 
 export default function SubmitOrdinances() {
   const params = useParams();
   const id = params.id as string;
   const [refresh, setRefresh] = useState(0);
   const [ordinance, setOrdinance] = useState<ordinance | null>(null);
-  const [files, setFiles] = useState<ordinanceFiles | null>(null); // fix logic for files
+  const [files, setFiles] = useState<ordinanceFiles | null>(null);
   const [approval, setApproval] = useState<ordinance_approvals[]>([]);
 
   const [editingRow, setEditingRow] = useState<number | null>(null);
@@ -59,13 +61,15 @@ export default function SubmitOrdinances() {
     setFormData(row);
   };
 
-  const handleChange = <K extends keyof ordinance_approvals>(field: K, value: ordinance_approvals[K]) => {
+  const handleChange = <K extends keyof ordinance_approvals>(
+    field: K,
+    value: ordinance_approvals[K]
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = async () => {
     if (!editingRow) return;
-
 
     if (formData.status === "approved" || formData.status === "vetoed") {
       const result = await Swal.fire({
@@ -90,8 +94,10 @@ export default function SubmitOrdinances() {
   const fetchData = async () => {
     const data = await getOrdinanceByName(id);
     const ordinanceStatus = await getApprovalPerOrdinance(data?.id);
+    const pendingFile = await getPendingOrdinanceFile(data?.id);
     setApproval(ordinanceStatus);
     setOrdinance(data as ordinance);
+    setFiles(pendingFile);
   };
 
   useEffect(() => {
@@ -217,12 +223,14 @@ export default function SubmitOrdinances() {
                           handleChange("start_date", e.target.value)
                         }
                       />
-                    ) : (
-                      a.start_date ? new Date(a.start_date).toLocaleDateString("en-US", {
+                    ) : a.start_date ? (
+                      new Date(a.start_date).toLocaleDateString("en-US", {
                         month: "long",
                         day: "2-digit",
                         year: "numeric",
-                      }) : "-"
+                      })
+                    ) : (
+                      "-"
                     )}
                   </TableCell>
 
@@ -235,12 +243,14 @@ export default function SubmitOrdinances() {
                           handleChange("end_date", e.target.value)
                         }
                       />
-                    ) : (
-                      a.end_date ? new Date(a.end_date).toLocaleDateString("en-US", {
+                    ) : a.end_date ? (
+                      new Date(a.end_date).toLocaleDateString("en-US", {
                         month: "long",
                         day: "2-digit",
                         year: "numeric",
-                      }) : "-"
+                      })
+                    ) : (
+                      "-"
                     )}
                   </TableCell>
 
@@ -276,7 +286,11 @@ export default function SubmitOrdinances() {
                   <TableCell className="text-center">
                     {editingRow === a.id ? (
                       <div className="flex gap-2">
-                        <Button size="sm" onClick={handleSave} className="cursor-pointer transition-all">
+                        <Button
+                          size="sm"
+                          onClick={handleSave}
+                          className="cursor-pointer transition-all"
+                        >
                           Save
                         </Button>
                         <Button
@@ -291,7 +305,11 @@ export default function SubmitOrdinances() {
                     ) : a.status === "approved" || a.status === "vetoed" ? (
                       <span className="text-gray-400 text-sm">Finalized</span>
                     ) : (
-                      <Button className="cursor-pointer transition-all" size="sm" onClick={() => handleEdit(a)}>
+                      <Button
+                        className="cursor-pointer transition-all"
+                        size="sm"
+                        onClick={() => handleEdit(a)}
+                      >
                         Edit
                       </Button>
                     )}
@@ -301,16 +319,28 @@ export default function SubmitOrdinances() {
             </TableBody>
           </Table>
         </div>
-
-        <div className="mx-20 mt-10">
-          <div className="bg-white py-2 px-10 w-fit mt-2 flex flex-row gap-2 rounded-[8px]">
-            <CircleCheck fill="#A3C4A8" size="18" className="self-center" />
-            <p>Submitted File Placeholder</p>
+        {files ? (
+          <div className="mx-20 mt-10">
+            <div
+              className="bg-white py-2 px-10 w-fit mt-2 flex flex-row gap-2 rounded-[8px]"
+              onClick={() => {
+                window.open(files.url, "_blank")
+              }}
+            >
+              <CircleCheck fill="#A3C4A8" size="18" className="self-center" />
+              <p>{getDisplayName(files.name)}</p>
+              <p>{files.type.toUpperCase()}</p>
+            </div>
           </div>
-        </div>
-        <button onClick={() => getFilesPerOrdinance(ordinance?.id as number)}>
+        ) : (
+          <div>
+            <h1>No files</h1>
+          </div>
+        )}
+
+        {/* <button onClick={() => getFilesPerOrdinance(ordinance?.id as number)}>
           Hello
-        </button>
+        </button> */}
       </div>
     </div>
   );

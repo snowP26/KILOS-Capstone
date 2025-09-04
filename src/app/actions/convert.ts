@@ -120,3 +120,8 @@ export const getUserID = async (): Promise<string> => {
 
   return userData?.id ?? "";
 };
+
+export const getDisplayName = (fileName: string) => {
+    const parts = fileName.split("_");
+    return parts.length > 2 ? parts.slice(2).join("_") : fileName;
+  };
