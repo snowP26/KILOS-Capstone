@@ -10,7 +10,6 @@ import { useRouter } from 'next/navigation';
 import { format } from 'date-fns'
 
 
-
 export default function Announcement() {
   const router = useRouter();
   const announcementTypes = [
