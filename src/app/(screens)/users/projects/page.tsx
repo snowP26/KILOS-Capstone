@@ -1,13 +1,16 @@
 "use client";
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { ProjectCard } from '@/src/app/components/user/project-card';
 import { Button } from '@/components/ui/button';
 import { ProposedProjCard } from '@/src/app/components/user/proposed-projCard';
 import { useRouter } from 'next/navigation';
+import { project } from '@/src/app/lib/definitions';
+import { getProjects } from '@/src/app/actions/projects';
 
 export default function Practice() {
     const router = useRouter();
+    const [projects, setProjects] = useState<project[] | null>(null);
 
     const Legislatives = false;
     const Executives = true;
@@ -15,24 +18,28 @@ export default function Practice() {
 
     let content;
 
+    useEffect(() => {
+        const getData = async () => {
+            const data = await getProjects();
+            setProjects(data ?? null)
+        }
+
+        getData()
+    }, [])
+
     if (Legislatives) {
         content = (
             <div className="bg-[#E6F1FF] min-h-screen max-h-full">
 
                 <p className="font-bold text-3xl m-10">Current Projects</p>
                 <div className="flex flex-wrap justify-center gap-5">
-                    <div onClick={() => router.push("/users/projects/[id]")}>
-                        <ProjectCard />
-                    </div>
-                    <div onClick={() => router.push("/users/projects/[id]")}>
-                        <ProjectCard />
-                    </div>
-                    <div onClick={() => router.push("/users/projects/[id]")}>
-                        <ProjectCard />
-                    </div>
-                    <div onClick={() => router.push("/users/projects/[id]")}>
-                        <ProjectCard />
-                    </div>
+                    {projects?.map((data) => (
+                        <div onClick={() => router.push(`/users/projects/${data.title}`)} key={data.id}>
+                            <ProjectCard title={data.title} status={data.status} date={data.target_date} imgURL={data.photo}/>
+                        </div>
+                    ))
+                    }
+
                 </div>
 
             </div>
@@ -43,15 +50,12 @@ export default function Practice() {
                 <div className="w-[80%] ">
                     <p className="font-bold text-3xl m-10">Current Projects</p>
                     <div className="flex flex-wrap justify-center gap-5">
-                        <div onClick={() => router.push("/users/projects/[id]")}>
-                            <ProjectCard />
-                        </div>
-                        <div onClick={() => router.push("/users/projects/[id]")}>
-                            <ProjectCard />
-                        </div>
-                        <div onClick={() => router.push("/users/projects/[id]")}>
-                            <ProjectCard />
-                        </div>
+                        {projects?.map((data) => (
+                            <div onClick={() => router.push(`/users/projects/${data.title}`)} key={data.id}>
+                                <ProjectCard title={data.title} status={data.status} date={data.target_date} imgURL={data.photo}/>
+                            </div>
+                        ))
+                        }
                     </div>
                 </div>
                 <div className="w-[20%] mr-5 mb-10">
@@ -59,9 +63,9 @@ export default function Practice() {
                     <div className="bg-white min-h-[85%] rounded-[8px] py-6">
                         <p className="font-bold text-2xl text-center mb-4">Proposed Projects</p>
                         <div className="justify-items-center">
-                            <ProposedProjCard/>
-                            <ProposedProjCard/>
-                            <ProposedProjCard/>
+                            <ProposedProjCard />
+                            <ProposedProjCard />
+                            <ProposedProjCard />
                         </div>
                     </div>
                 </div>
