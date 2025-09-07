@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 interface PinnedAnnouncementCardProps {
   header: string;
@@ -7,20 +7,25 @@ interface PinnedAnnouncementCardProps {
   announcementType: string;
 }
 
-export const PinnedAnnouncementCard: React.FC<PinnedAnnouncementCardProps> = ({header, body, author, announcementType}) => {
+export const PinnedAnnouncementCard: React.FC<PinnedAnnouncementCardProps> = ({
+  header,
+  body,
+  author,
+  announcementType,
+}) => {
   return (
-    <div className="bg-[#E6F1FF] rounded-[8px] my-2 pl-5 w-70 py-2">
-        <p className="font-semibold text-md">{header}</p>
+    <div className="bg-[#E6F1FF] rounded-xl shadow-sm hover:shadow-md transition p-4 w-[95%] mx-auto cursor-pointer">
+      <p className="font-semibold text-sm text-gray-800 line-clamp-1">{header}</p>
 
-        <div className="flex flex-row place-items-center gap-3 mb-2">
-            <p className="text-white bg-[#58AEFF] rounded-2xl text-center w-15 text-xs">{announcementType.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}</p>
-            <p className="font-thin">{author}</p>
-        </div>
-
-        <p className="mr-8 mb-2 text-xs truncate">
-            {body}
-
-        </p>
+      <div className="flex items-center gap-2 mt-2">
+        <span className="px-2 py-0.5 text-[10px] font-medium bg-[#58AEFF] text-white rounded-full">
+          {announcementType
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (char) => char.toUpperCase())}
+        </span>
+        <p className="text-xs text-gray-600 truncate">{author}</p>
+      </div>
+      <p className="mt-2 text-xs text-gray-700 line-clamp-2 text-justify">{body}</p>
     </div>
-  )
-}
+  );
+};
