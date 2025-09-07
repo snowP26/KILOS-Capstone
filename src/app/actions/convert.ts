@@ -77,8 +77,8 @@ export const authorEmailToInfo = async (email: string) => {
   const { data, error } = await client
     .from("youth_official") // adjust table name if different
     .select("firstname, lastname, position, role")
-    .eq("email", email)
-    .single();
+    .eq("email", email.trim())
+    .maybeSingle()
 
   if (error || !data) {
     console.error("Error fetching author info:", error);
@@ -86,7 +86,7 @@ export const authorEmailToInfo = async (email: string) => {
   }
 
   return {
-    name: data.firstname + data.lastname,
+    name: `${data.firstname}  ${data.lastname}`,
     position: data.position,
     role: data.role,
   };

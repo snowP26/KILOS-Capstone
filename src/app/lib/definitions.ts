@@ -14,7 +14,7 @@ type AnnouncementType =
     | "Press Release";
 
 type ApprovalStatus = "in progress" | "pending" | "approved" | "vetoed";
-    
+
 type readingData = {
     status: ApprovalStatus,
     approver: string | null,
@@ -78,7 +78,7 @@ export type ordinance = {
     created_at: string
 }
 
-export type ordinance_approvals = { 
+export type ordinance_approvals = {
     id: number,
     ordinance_id: number,
     stage: string,
@@ -91,9 +91,9 @@ export type ordinance_approvals = {
 }
 
 export type ordinanceFiles = {
-  url: string;
-  name: string;
-  type: string;
+    url: string;
+    name: string;
+    type: string;
 }
 
 export type commFeedback = {
@@ -116,4 +116,16 @@ export type homeFeedback = {
     id: number,
     header: string,
     created_at: string,
+}
+
+export type project = {
+    id: number,
+    location_id: number,
+    author: number,
+    created_at: string,
+    title: string,
+    description: string,
+    target_date: string,
+    status: string,
+    photo: string,
 }
