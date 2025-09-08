@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { TextIcon } from "../text-logo";
 import { logoutUser } from "../../actions/auth";
@@ -76,3 +75,4 @@ export const UserNav = () => {
 
     )
 }
+

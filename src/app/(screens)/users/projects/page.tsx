@@ -1,43 +1,58 @@
 "use client";
 
-import React from 'react'
-import { ProjectCard } from '@/src/app/components/user/project-card';
-import { Button } from '@/components/ui/button';
-import { ProposedProjCard } from '@/src/app/components/user/proposed-projCard';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from "react";
+import { ProjectCard } from "@/src/app/components/user/project-card";
+import { Button } from "@/components/ui/button";
+import { ProposedProjCard } from "@/src/app/components/user/proposed-projCard";
+import { useRouter } from "next/navigation";
+import { project } from "@/src/app/lib/definitions";
+import { getProjects } from "@/src/app/actions/projects";
+import { useUserRole } from "@/src/app/actions/role";
 
 export default function Practice() {
     const router = useRouter();
+    const [projects, setProjects] = useState<project[] | null>(null);
 
-    const Legislatives = false;
-    const Executives = true;
-    const Treasurer = false;
+    const { role, loading } = useUserRole();
+    const normalizedRole = role?.trim().toLowerCase();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await getProjects();
+            setProjects(data ?? null);
+        };
+
+        fetchData();
+    }, []);
+
+    if (loading) {
+        return <p className="p-5">Loading...</p>; 
+    }
 
     let content;
 
-    if (Legislatives) {
+    if (normalizedRole === "legislative" || normalizedRole === "treasurer") {
         content = (
             <div className="bg-[#E6F1FF] min-h-screen max-h-full">
-
                 <p className="font-bold text-3xl m-10">Current Projects</p>
                 <div className="flex flex-wrap justify-center gap-5">
-                    <div onClick={() => router.push("/users/projects/[id]")}>
-                        <ProjectCard />
-                    </div>
-                    <div onClick={() => router.push("/users/projects/[id]")}>
-                        <ProjectCard />
-                    </div>
-                    <div onClick={() => router.push("/users/projects/[id]")}>
-                        <ProjectCard />
-                    </div>
-                    <div onClick={() => router.push("/users/projects/[id]")}>
-                        <ProjectCard />
-                    </div>
+                    {projects?.map((data) => (
+                        <div
+                            onClick={() => router.push(`/users/projects/${data.title}`)}
+                            key={data.id}
+                        >
+                            <ProjectCard
+                                title={data.title}
+                                status={data.status}
+                                date={data.target_date}
+                                imgURL={data.photo}
+                            />
+                        </div>
+                    ))}
                 </div>
-
             </div>
         );
-    } else if (Executives) {
+    } else if (normalizedRole === "executive") {
         content = (
             <div className="flex flex-col xl:flex-row bg-[#E6F1FF] min-h-screen max-h-full">
                 <div className="w-full xl:w-[80%] flex flex-col items-center xl:items-start">
@@ -60,15 +75,19 @@ export default function Practice() {
 
                     <div className="w-[80%] my-4">
                         <div className="flex flex-wrap justify-center gap-5">
-                            <div onClick={() => router.push("/users/projects/[id]")}>
-                                <ProjectCard />
-                            </div>
-                            <div onClick={() => router.push("/users/projects/[id]")}>
-                                <ProjectCard />
-                            </div>
-                            <div onClick={() => router.push("/users/projects/[id]")}>
-                                <ProjectCard />
-                            </div>
+                            {projects?.map((data) => (
+                                <div
+                                    onClick={() => router.push(`/users/projects/${data.title}`)}
+                                    key={data.id}
+                                >
+                                    <ProjectCard
+                                        title={data.title}
+                                        status={data.status}
+                                        date={data.target_date}
+                                        imgURL={data.photo}
+                                    />
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -88,28 +107,7 @@ export default function Practice() {
                 </div>
             </div>
         );
-    } else if (Treasurer) {
-        content = (
-            <div className="bg-[#E6F1FF] min-h-screen max-h-full">
-
-                <p className="font-bold text-3xl m-10">Current Projects</p>
-                <div className="flex flex-wrap justify-center gap-5">
-                    <div onClick={() => router.push("/users/projects/[id]")}>
-                        <ProjectCard />
-                    </div>
-                    <div onClick={() => router.push("/users/projects/[id]")}>
-                        <ProjectCard />
-                    </div>
-                    <div onClick={() => router.push("/users/projects/[id]")}>
-                        <ProjectCard />
-                    </div>
-                    <div onClick={() => router.push("/users/projects/[id]")}>
-                        <ProjectCard />
-                    </div>
-                </div>
-
-            </div>
-        );
     }
+
     return <main>{content}</main>;
 }

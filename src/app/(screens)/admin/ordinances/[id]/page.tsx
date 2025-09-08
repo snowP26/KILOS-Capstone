@@ -25,25 +25,79 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectGroup,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ordinance, ordinanceFiles } from "@/src/app/lib/definitions";
-import { notFound, useParams } from "next/navigation";
-import { getFilesPerOrdinance, getOrdinanceByName } from "@/src/app/actions/admin_ordinances";
+import {
+  ordinance,
+  ordinance_approvals,
+  ordinanceFiles,
+} from "@/src/app/lib/definitions";
+import { useParams } from "next/navigation";
+import {
+  getApprovalPerOrdinance,
+  getFilesPerOrdinance,
+  getOrdinanceByName,
+  updateApproval,
+} from "@/src/app/actions/admin_ordinances";
+import { Input } from "@/components/ui/input";
+import Swal from "sweetalert2";
+import { getPendingOrdinanceFile } from "@/src/app/actions/ordinances";
+import { getDisplayName } from "@/src/app/actions/convert";
 
 export default function SubmitOrdinances() {
   const params = useParams();
   const id = params.id as string;
   const [refresh, setRefresh] = useState(0);
   const [ordinance, setOrdinance] = useState<ordinance | null>(null);
-  const [files, setFiles] = useState<ordinanceFiles | null>(null)
+  const [files, setFiles] = useState<ordinanceFiles | null>(null);
+  const [approval, setApproval] = useState<ordinance_approvals[]>([]);
+
+  const [editingRow, setEditingRow] = useState<number | null>(null);
+  const [formData, setFormData] = useState<Partial<ordinance_approvals>>({});
+
+  const handleEdit = (row: ordinance_approvals) => {
+    setEditingRow(row.id);
+    setFormData(row);
+  };
+
+  const handleChange = <K extends keyof ordinance_approvals>(
+    field: K,
+    value: ordinance_approvals[K]
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSave = async () => {
+    if (!editingRow) return;
+
+    if (formData.status === "approved" || formData.status === "vetoed") {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: `Once marked as ${formData.status?.toUpperCase()}, this cannot be undone.`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, confirm",
+        cancelButtonText: "Cancel",
+      });
+
+      if (!result.isConfirmed) {
+        return; // do not save
+      }
+    }
+
+    await updateApproval(editingRow, formData);
+    setEditingRow(null);
+    setRefresh((prev) => prev + 1);
+  };
 
   const fetchData = async () => {
     const data = await getOrdinanceByName(id);
+    const ordinanceStatus = await getApprovalPerOrdinance(data?.id);
+    const pendingFile = await getPendingOrdinanceFile(data?.id);
+    setApproval(ordinanceStatus);
     setOrdinance(data as ordinance);
-    
+    setFiles(pendingFile);
   };
 
   useEffect(() => {
@@ -89,7 +143,7 @@ export default function SubmitOrdinances() {
         <p className="text-md mb-2 ml-30">{ordinance?.description}</p>
 
         <div className="mx-20 mt-10">
-          <Table className="bg-white w-full rounded-lg overflow-hidden shadow-sm">
+          <Table className="bg-white w-full rounded-lg overflow-hidden shadow-md border">
             <TableCaption className="mt-2 text-sm text-gray-500">
               Status of Proposed Ordinance for Each Reading
             </TableCaption>
@@ -113,125 +167,180 @@ export default function SubmitOrdinances() {
                 <TableHead className="w-[300px] text-center font-semibold">
                   Remarks
                 </TableHead>
+                <TableHead className="text-center font-semibold">
+                  Action
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {ordinance?.approvals &&
-              typeof ordinance.approvals === "object" ? (
-                Object.entries(ordinance.approvals).map(
-                  ([stage, details], index) => (
-                    <TableRow
-                      key={index}
-                      className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                    >
-                      <TableCell className="text-center font-medium">
-                        {stage}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Select
-                          defaultValue={details.status || "pending"}
-                          onValueChange={(value) => {
-                            setOrdinance((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    approvals: {
-                                      ...prev.approvals,
-                                      [stage]: {
-                                        ...details,
-                                        status: value as
-                                          | "in progress"
-                                          | "pending"
-                                          | "approved"
-                                          | "vetoed",
-                                      },
-                                    },
-                                  }
-                                : prev
-                            );
-                          }}
+              {approval.map((a) => (
+                <TableRow key={a.id}>
+                  <TableCell className="text-center">{a.stage}</TableCell>
+
+                  {/* Status */}
+                  <TableCell className="text-center">
+                    {editingRow === a.id ? (
+                      <Select
+                        value={formData.status}
+                        onValueChange={(val) => handleChange("status", val)}
+                      >
+                        <SelectTrigger className="w-[140px]">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="in progress">
+                            In Progress
+                          </SelectItem>
+                          <SelectItem value="approved">Approved</SelectItem>
+                          <SelectItem value="vetoed">Vetoed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          a.status === "pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : a.status === "in progress"
+                            ? "bg-blue-100 text-blue-800"
+                            : a.status === "approved"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {a.status.toUpperCase()}
+                      </span>
+                    )}
+                  </TableCell>
+
+                  {/* Dates */}
+                  <TableCell className="text-center">
+                    {editingRow === a.id ? (
+                      <Input
+                        type="date"
+                        value={formData.start_date ?? ""}
+                        onChange={(e) =>
+                          handleChange("start_date", e.target.value)
+                        }
+                      />
+                    ) : a.start_date ? (
+                      new Date(a.start_date).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "2-digit",
+                        year: "numeric",
+                      })
+                    ) : (
+                      "-"
+                    )}
+                  </TableCell>
+
+                  <TableCell className="text-center">
+                    {editingRow === a.id ? (
+                      <Input
+                        type="date"
+                        value={formData.end_date ?? ""}
+                        onChange={(e) =>
+                          handleChange("end_date", e.target.value)
+                        }
+                      />
+                    ) : a.end_date ? (
+                      new Date(a.end_date).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "2-digit",
+                        year: "numeric",
+                      })
+                    ) : (
+                      "-"
+                    )}
+                  </TableCell>
+
+                  {/* Approver */}
+                  <TableCell className="text-center">
+                    {editingRow === a.id ? (
+                      <Input
+                        value={formData.approver ?? ""}
+                        onChange={(e) =>
+                          handleChange("approver", e.target.value)
+                        }
+                      />
+                    ) : (
+                      a.approver ?? "-"
+                    )}
+                  </TableCell>
+
+                  {/* Remarks */}
+                  <TableCell className="text-center">
+                    {editingRow === a.id ? (
+                      <Input
+                        value={formData.remarks ?? ""}
+                        onChange={(e) =>
+                          handleChange("remarks", e.target.value)
+                        }
+                      />
+                    ) : (
+                      a.remarks ?? "-"
+                    )}
+                  </TableCell>
+
+                  {/* Actions */}
+                  <TableCell className="text-center">
+                    {editingRow === a.id ? (
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          onClick={handleSave}
+                          className="cursor-pointer transition-all"
                         >
-                          <SelectTrigger className="w-[150px]">
-                            <SelectValue placeholder="Pending" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectItem value="pending">Pending</SelectItem>
-                              <SelectItem value="in progress">
-                                In Progress
-                              </SelectItem>
-                              <SelectItem value="approved">Approved</SelectItem>
-                              <SelectItem value="vetoed">Vetoed</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell className="text-center italic">
-                        <input
-                          type="date"
-                          className="p-2 border-gray-400 border-1 rounded-md"
-                          placeholder={details["start-date"] || "—"}
-                        />
-                      </TableCell>
-                      <TableCell className="text-center italic">
-                        <input
-                          type="date"
-                          className="p-2 border-gray-400 border-1 rounded-md"
-                          placeholder={details["end-date"] || "—"}
-                        />
-                      </TableCell>
-                      <TableCell className="text-center font-semibold">
-                        <input
-                          type="text"
-                          className="p-2 border-gray-400 border-1 rounded-md"
-                          placeholder={details.approver || "—"}
-                        />
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <textarea
-                          className="text-justify focus:min-h-8"
-                          defaultValue=" "
-                          placeholder={details.remarks || "-"}
+                          Save
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setEditingRow(null)}
+                          className="cursor-pointer transition-all"
                         >
-                          {details.remarks}
-                        </textarea>
-                      </TableCell>
-                    </TableRow>
-                  )
-                )
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={6}
-                    className="text-center italic text-gray-500 py-4"
-                  >
-                    No approval data found
+                          Cancel
+                        </Button>
+                      </div>
+                    ) : a.status === "approved" || a.status === "vetoed" ? (
+                      <span className="text-gray-400 text-sm">Finalized</span>
+                    ) : (
+                      <Button
+                        className="cursor-pointer transition-all"
+                        size="sm"
+                        onClick={() => handleEdit(a)}
+                      >
+                        Edit
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
-              )}
+              ))}
             </TableBody>
           </Table>
         </div>
-
-        <div className="mx-20 mt-10">
-          <div className="bg-white py-2 px-10 w-fit mt-2 flex flex-row gap-2 rounded-[8px]">
-            <CircleCheck fill="#A3C4A8" size="18" className="self-center" />
-            <p>Submitted File Placeholder</p>
+        {files ? (
+          <div className="mx-20 mt-10">
+            <div
+              className="bg-white py-2 px-10 w-fit mt-2 flex flex-row gap-2 rounded-[8px]"
+              onClick={() => {
+                window.open(files.url, "_blank")
+              }}
+            >
+              <CircleCheck fill="#A3C4A8" size="18" className="self-center" />
+              <p>{getDisplayName(files.name)}</p>
+              <p>{files.type.toUpperCase()}</p>
+            </div>
           </div>
-        </div>
-        <div className="mx-20 mt-6 flex justify-end gap-4">
-          <Button
-            variant="outline"
-            className="text-gray-700 border-gray-400 hover:bg-gray-100"
-          >
-            Cancel
-          </Button>
-          <Button className="bg-[#052659] text-white hover:bg-[#073b88] transition-colors">
-            Submit
-          </Button>
-        </div>
+        ) : (
+          <div>
+            <h1>No files</h1>
+          </div>
+        )}
 
-        <button onClick={() => getFilesPerOrdinance(ordinance?.id as number)}>Hello</button>
+        {/* <button onClick={() => getFilesPerOrdinance(ordinance?.id as number)}>
+          Hello
+        </button> */}
       </div>
     </div>
   );

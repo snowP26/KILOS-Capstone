@@ -1,13 +1,18 @@
 "use client";
 
-import React, { useEffect, useState } from 'react'
-import { Button } from '@/components/ui/button';
-import { PinnedAnnouncementCard } from '@/src/app/components/user/pinnedAnnouncementCard';
-import { announcement } from '@/src/app/lib/definitions';
-import { Pin, ArrowRightLeft } from 'lucide-react';
-import { fetchPinned, getAnnouncments, getPhoto, setPinned } from '@/src/app/actions/announcements';
-import { useRouter } from 'next/navigation';
-import { format } from 'date-fns'
+import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { PinnedAnnouncementCard } from "@/src/app/components/user/pinnedAnnouncementCard";
+import { announcement } from "@/src/app/lib/definitions";
+import { Pin } from "lucide-react";
+import {
+  fetchPinned,
+  getAnnouncments,
+  getPhoto,
+  setPinned,
+} from "@/src/app/actions/announcements";
+import { useRouter } from "next/navigation";
+import { format } from "date-fns";
 import {
   Select,
   SelectContent,
@@ -16,8 +21,7 @@ import {
   SelectValue,
   SelectGroup,
   SelectLabel,
-} from "@/components/ui/select"
-import { Arrow } from '@radix-ui/react-popover';
+} from "@/components/ui/select";
 
 export default function Announcement() {
   const router = useRouter();
@@ -33,73 +37,78 @@ export default function Announcement() {
     "financial",
     "employment",
     "infrastructure",
-    "press_release"
+    "press_release",
   ];
-  const [pinnedAnnouncements, setPinnedAnnouncements] = useState<number[]>([])
+  const [pinnedAnnouncements, setPinnedAnnouncements] = useState<number[]>([]);
   const [announcements, setAnnouncements] = useState<announcement[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-
-  // use this for create announcment feature
-  // |
-  // v
-  // const setUserFunction = async () => {
-  //   const currentUser = await getCurrentUser();
-  //   setUser(currentUser as string);
-  //   return console.log("Current user:", currentUser);
-  // };
 
   const updateAnnouncements = async () => {
     const updatedData = await getAnnouncments();
 
     if (updatedData) {
-      const processed = await Promise.all(updatedData.map(async (item) => {
-        if (item.photo) {
-          const publicUrl = await getPhoto(item.photo)
-          return { ...item, photo: publicUrl }
-        } else {
-          return { ...item, photo: null }
-        }
-      }))
-
+      const processed = await Promise.all(
+        updatedData.map(async (item) => {
+          if (item.photo) {
+            const publicUrl = await getPhoto(item.photo);
+            return { ...item, photo: publicUrl };
+          } else {
+            return { ...item, photo: null };
+          }
+        })
+      );
       setAnnouncements(processed);
     }
-  }
+  };
 
   const loadPinned = async () => {
     const announcementIds = await fetchPinned();
     setPinnedAnnouncements(announcementIds);
-
-  }
+  };
 
   useEffect(() => {
     updateAnnouncements();
     loadPinned();
-  }, [])
+  }, []);
 
   return (
     <div className="min-h-screen max-h-full xl:mx-20 bg-[#E6F1FF]">
-      <p className="font-bold text-2xl mt-10 mx-10 sm:text-3xl">Announcements</p>
+      {/* Title */}
+      <p className="font-bold text-2xl mt-10 mx-10 sm:text-3xl">
+        Announcements
+      </p>
       <hr className="border-t border-black w-[90%] lg:w-[95%] mx-auto mt-3" />
 
-
       <div className="flex flex-col lg:flex-row">
+        {/* Left Section */}
         <div className="lg:w-[70%] xl:w-4/5 lg:my-2 lg:mx-3">
-          <Button className="lg:hidden bg-[#052659] w-[90%] flex justify-self-center my-3 hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground cursor-pointer hover:border-1" onClick={() => router.push("/users/announcement/create-announcement")}>Create Announcement</Button>
+          {/* Mobile create button */}
+          <Button
+            className="lg:hidden bg-[#052659] w-[90%] flex justify-self-center my-3 hover:bg-accent hover:text-accent-foreground cursor-pointer"
+            onClick={() =>
+              router.push("/users/announcement/create-announcement")
+            }
+          >
+            Create Announcement
+          </Button>
 
+          {/* Tabs + Filter */}
           <div className="flex flex-col mx-5 xl:flex-row xl:justify-between xl:ml-50 xl:mr-10 2xl:ml-100 2xl:mr-15">
             <div className="flex flex-row gap-0.5 my-3 justify-center text-center">
-              <div className="bg-[#052659] text-white shadow-md shadow-gray-400 text-xs lg:text-lg p-2 rounded-tl-2xl rounded-bl-2xl">
+              <div className="bg-[#052659] text-white shadow-md shadow-gray-400 text-xs lg:text-lg p-2 rounded-tl-2xl rounded-bl-2xl cursor-pointer">
                 <p>Uploaded Announcements</p>
               </div>
-              <div className="bg-[#052659] opacity-60 text-gray-400 shadow-lg shadow-blue-800/40 text-xs lg:text-lg p-2 lg:hidden">
+              <div className="bg-[#052659] opacity-60 text-gray-400 shadow-lg shadow-blue-800/40 text-xs lg:text-lg p-2 lg:hidden cursor-pointer">
                 <p>Pinned Announcements</p>
               </div>
-              <div className="bg-[#052659] opacity-60 text-gray-400 shadow-lg shadow-blue-800/40 text-xs lg:text-lg p-2 rounded-tr-2xl rounded-br-2xl">
+              <div className="bg-[#052659] opacity-60 text-gray-400 shadow-lg shadow-blue-800/40 text-xs lg:text-lg p-2 rounded-tr-2xl rounded-br-2xl cursor-pointer">
                 <p>My Announcements</p>
               </div>
             </div>
+
+            {/* Category Filter */}
             <div className="mb-5 lg:mb-2 self-center">
-              <Select>
+              <Select onValueChange={(val) => setSelectedCategory(val)}>
                 <SelectTrigger className="cursor-pointer place-self-center min-w-[100px]">
                   <SelectValue placeholder="Select a Category" />
                 </SelectTrigger>
@@ -119,66 +128,86 @@ export default function Announcement() {
             </div>
           </div>
 
+          {/* Announcement List */}
+          {announcements
+            .filter(
+              (a) => selectedCategory === "all" || a.type === selectedCategory
+            )
+            .map((data) => (
+              <div
+                key={data.id}
+                className="bg-white rounded-2xl w-[90%] place-self-center px-5 lg:w-full lg:pl-10 lg:pr-10 pb-2 mb-2"
+              >
+                {/* Top Section */}
+                <div className="flex flex-row justify-between">
+                  <div className="flex flex-col">
+                    <p className="font-semibold text-sm lg:text-xl mt-5">
+                      {data.author_email}
+                    </p>
 
+                    <div className="flex flex-row gap-2 lg:gap-5">
+                      {/* Replace with actual author role if needed */}
+                      <p className="text-xs lg:text-sm font-thin">
+                        Local Municipal Youth Developmental Officer
+                      </p>
+                      <p className="text-xs lg:text-sm font-thin">
+                        {format(new Date(data.created_at), "MMMM d, yyyy h:mm a")}
+                      </p>
+                    </div>
+                  </div>
 
-          {/* list of announcements */}
-          {announcements.filter((a) => selectedCategory === "all" || a.type === selectedCategory).map((data) => (
-            <div key={data.id} className="bg-white rounded-2xl w-[90%] place-self-center px-5 lg:w-full lg:pl-10 lg:pr-10 pb-2 mb-2">
-              {/* top section */}
-              <div className="flex flex-row justify-between">
-                <div className="flex flex-col">
-                  <p className="font-semibold text-sm lg:text-xl mt-5">{data.author_email}</p>
-
-                  <div className="flex flex-row gap-2 lg:gap-5">
-                    {/* apply author position/title in the db */}
-                    <p className="text-xs lg:text-sm font-thin">Local Municipal Youth Developmental Officer</p>
-                    <p className="text-xs lg:text-sm font-thin">{format(new Date(data.created_at), "MMMM d, yyyy h:mm a")}</p>
+                  <div className="self-center">
+                    <Pin
+                      className="cursor-pointer hover:text-blue-600"
+                      size="25px"
+                      onClick={() => setPinned(data.id)}
+                      fill={pinnedAnnouncements.includes(data.id) ? "black" : "none"}
+                    />
                   </div>
                 </div>
 
-                <div className="self-center">
-                  <Pin
-                    className="cursor-pointer"
-                    size="25px"
-                    onClick={() => {
-                      setPinned(data.id)
-
-                    }}
-                    fill={pinnedAnnouncements.includes(data.id) ? "black" : "none"}
-                  />
+                {/* Body Section */}
+                <div className="mt-7 mb-10 flex flex-col xl:flex-row justify-between">
+                  <div className="flex flex-col">
+                    <p className="font-semibold text-xl">{data.header}</p>
+                    <p className="mb-3 text-white bg-[#58AEFF] rounded-2xl text-center min-w-15 max-w-fit px-2 text-xs">
+                      {data.type
+                        .replace(/_/g, " ")
+                        .replace(/\b\w/g, (c) => c.toUpperCase())}
+                    </p>
+                    <p className="pb-3 lg:pb-0 lg:w-150">{data.body}</p>
+                  </div>
+                  {data.photo && (
+                    <img
+                      alt="Announcement image"
+                      className="bg-black self-center max-w-50 max-h-50 hover:opacity-90 transition"
+                      src={data.photo}
+                    />
+                  )}
                 </div>
               </div>
-              {/* end of top section */}
-
-              <div className="mt-7 mb-10 flex flex-col xl:flex-row justify-between">
-                <div className="flex flex-col">
-                  <p className="font-semibold text-xl">{data.header}</p>
-                  <p className="mb-3 text-white bg-[#58AEFF] rounded-2xl text-center min-w-15 max-w-fit px-2 text-xs">
-                    {data.type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
-                  </p>
-                  <p className="pb-3 lg:pb-0 lg:w-150">
-                    {data.body}
-                  </p>
-                </div>
-                {data.photo && (
-                  <img alt="Announcement image" className="bg-black self-center max-w-50 max-h-50" src={data.photo} />
-                )}
-
-              </div>
-
-            </div>
-          ))}
-
+            ))}
         </div>
+
+        {/* Right Section (Pinned Sidebar) */}
         <div className="hidden lg:block lg:w-[30%] xl:w-1/5 mr-3">
-          <Button className="bg-[#052659] w-[100%] my-3 hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground cursor-pointer hover:border-1" onClick={() => router.push("/users/announcement/create-announcement")}>Create Announcement</Button>
+          <Button
+            className="bg-[#052659] w-[100%] my-3 hover:bg-accent hover:text-accent-foreground cursor-pointer"
+            onClick={() =>
+              router.push("/users/announcement/create-announcement")
+            }
+          >
+            Create Announcement
+          </Button>
 
           <div className="bg-white rounded-[10px] pt-5 h-fit pb-5">
-            <p className="text-center text-2xl font-semibold">Pinned Announcements</p>
+            <p className="text-center text-2xl font-semibold">
+              Pinned Announcements
+            </p>
             <div className="flex flex-col mt-5 items-center">
               {announcements
-                .filter(a => pinnedAnnouncements.includes(a.id))
-                .map(a => (
+                .filter((a) => pinnedAnnouncements.includes(a.id))
+                .map((a) => (
                   <PinnedAnnouncementCard
                     key={a.id}
                     header={a.header}
@@ -187,12 +216,16 @@ export default function Announcement() {
                     announcementType={a.type}
                   />
                 ))}
+              {announcements.filter((a) => pinnedAnnouncements.includes(a.id))
+                .length === 0 && (
+                <p className="text-sm text-gray-500 text-center italic">
+                  No pinned announcements
+                </p>
+              )}
             </div>
           </div>
         </div>
-
       </div>
     </div>
-  )
+  );
 }
-

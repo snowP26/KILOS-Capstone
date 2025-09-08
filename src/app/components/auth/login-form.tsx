@@ -5,6 +5,7 @@ import { Label } from "./ui/label"
 import { useRouter } from "next/navigation"
 import { ChangeEvent, FormEvent, useState } from "react"
 import client from "@/src/api/client"
+import { handleLogin } from "../../actions/auth"
 
 export function LoginForm({
   className,
@@ -29,24 +30,8 @@ export function LoginForm({
       return console.log("Invalid Email address.");
     })
   } 
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const { error } = await client.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if(error) {
-      return console.log("Error signing you in: ", error)
-    }
-
-    router.push('/users/announcements')
-  }
-
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props} onSubmit={handleSubmit}>
+    <form className={cn("flex flex-col gap-6", className)} {...props} onSubmit={async (e) => handleLogin(e, router)}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
@@ -57,7 +42,7 @@ export function LoginForm({
         <div className="grid gap-3">
           <Label htmlFor="email">Email</Label>
           <Input 
-            id="email" 
+            name="email" 
             type="email" 
             placeholder="m@example.com" 
             required 
@@ -72,8 +57,8 @@ export function LoginForm({
             </a>
           </div>
           <Input 
-            id="password" 
             type="password" 
+            name="password"
             required 
             onChange={updatePassword()}
           />

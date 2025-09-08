@@ -1,32 +1,61 @@
 "use client";
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { commFeedback } from '@/src/app/lib/definitions';
+import { getLocFromAuth } from '@/src/app/actions/convert';
+import { getFeedback } from '@/src/app/actions/feedback';
+import { FeedbackCard } from '@/src/app/components/community/feedbackCard';
 
-import { UserNav } from '@/src/app/components/user/nav_user';
+export default function CommunityFeedback() {
+  const [feedback, setFeedback] = useState<commFeedback[]>()
 
-import { AdmnFeedbackCard } from '@/src/app/components/admin/admnFeedbackCard';
+  useEffect(() => {
+    const fetchFeedbackData = async () => {
+      const location = await getLocFromAuth() as number;
+      const data = await getFeedback(location)
+      if (data) {
+        setFeedback(data)
+      } else {
+        setFeedback([])
+      }
+    }
 
-export default function CommunityFeedback () {
+    fetchFeedbackData();
+
+
+  }, [])
+
   return (
     <div className="bg-[#E6F1FF] h-vh">
 
 
-        <p className="mt-15 mx-40 font-bold text-3xl">Community Feedback</p>
-        <hr className="border-t border-black w-[90%] mx-auto my-3" />
-        <p className="text-gray-400 font-thin ml-45">Click on a card to view the feedback and its comments.</p>
+      <p className="mt-15 mx-40 font-bold text-3xl">Community Feedback</p>
+      <hr className="border-t border-black w-[90%] mx-auto my-3" />
+      <p className="text-gray-400 font-thin ml-45">Click on a card to view the feedback and its comments.</p>
 
-        <div className="mx-25">
-            <div className="flex flex-wrap justify-center">
-                <AdmnFeedbackCard />
-                <AdmnFeedbackCard />
-                <AdmnFeedbackCard />
-                <AdmnFeedbackCard />
-                <AdmnFeedbackCard />
-                <AdmnFeedbackCard />
-                <AdmnFeedbackCard />
-                <AdmnFeedbackCard />
-            </div>
+      <div className="mx-25">
+        <div className="flex flex-wrap justify-center">
+          {feedback?.map((data) => (
+              <FeedbackCard
+                key={data.id}
+                feedbackID={data.id}
+                header={data.header}
+                body={data.body}
+                date={new Date(data.created_at)
+                  .toLocaleString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
+                isWhite={true}
+              />
+            ))
+          }
         </div>
+      </div>
 
     </div>
   )
