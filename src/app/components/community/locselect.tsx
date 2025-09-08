@@ -13,11 +13,11 @@ export default function LocationSelect() {
     const [selected, setSelected] = useState<null | typeof locations[0]>(null)
 
     return (
-        <div className="min-w-[130px]">
+        <div>
             <Listbox value={selected} onChange={setSelected}>
                 {({ open }) => (
                     <div className="relative">
-                        <Listbox.Button className="min-h-[48px] relative w-full cursor-default rounded-lg bg-[#D9D9D9] py-2 px-3 pr-8 text-center shadow-md focus:outline-none focus:ring-2 focus:ring-[#0073FF]">
+                        <Listbox.Button className="min-h-[48px] relative min-w-40 cursor-default rounded-lg bg-[#D9D9D9] py-2 px-3 pr-8 text-center shadow-md focus:outline-none focus:ring-2 focus:ring-[#0073FF]">
                             <span className={`${selected ? 'text-black' : 'text-gray-500'}`}>
                                 {selected ? selected.name : 'Location'}
                             </span>
@@ -28,7 +28,7 @@ export default function LocationSelect() {
                                 ▼
                             </span>
                         </Listbox.Button>
-                        <Listbox.Options className="absolute mt-2 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <Listbox.Options className="absolute top-full z-50 mt-2 max-h-60 w-40 overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                             {locations.map((location, index) => (
                                 <Listbox.Option
                                     key={index}

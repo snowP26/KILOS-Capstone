@@ -23,8 +23,8 @@ type feedbackCardProps = {
 export const FeedbackCard = ({ header, body, date }: feedbackCardProps) => {
   return (
     <Dialog>
-      <DialogTrigger className="m-10">
-        <div className="cursor-pointer p-5 h-100 w-100 bg-[#E6F1FF] rounded-md shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
+      <DialogTrigger className="my-10 sm:m-10">
+        <div className="cursor-pointer p-5 h-70 w-70 sm:h-100 sm:w-100 bg-[#E6F1FF] rounded-md shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
           <Quote fill='black' />
           <p className="m-5 font-semibold text-4xl">{header}</p>
 

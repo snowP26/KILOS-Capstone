@@ -82,22 +82,11 @@ export const DbCalendarCard = () => {
   return (
     <>
         <div>
-            {/* <div className="grid grid-cols-2 grid-rows-3 gap-5">
-                <div className="bg-amber-500 row-span-3">
-                    Calendar
-                </div>
-                
-                <div className="col-span-1">
-                    <DateTodayCard />
-                </div>
-                <div className="bg-blue-600 col-span-1 row-span-2">
-                    sample
-                </div>
-            </div> */}
-            <div className="flex flex-row w-[100%]">
-                <div className="w-[80%] mt-10 mx-5 bg-white p-10 rounded-2xl">
+            <div className="flex flex-col mb-10 xl:flex-row">
+                <div className="bg-white w-full rounded-2xl xl:w-[80%] xl:mt-10 xl:mx-5 xl:p-10 xl:h-fit">
                     <FullCalendar 
-                    height='70vh' 
+                    height='70vh'
+                    
                     plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]} 
                     headerToolbar={{left: "prev", center: "title", right: "next today"}}
                         editable={true}
@@ -110,16 +99,16 @@ export const DbCalendarCard = () => {
                         initialEvents={typeof window !== "undefined" ? JSON.parse(localStorage.getItem("events") || "[]") : []}
                     />
                 </div>
-                <div className="w-[20%]">
+                <div className="w-full xl:w-[20%]">
                     <div className="mt-5">
                         <DateTodayCard />
                     </div>
 
-                    <div className="border-black border-2 rounded-2xl p-5 mt-5">
+                    <div className="border-black border-2 h-[80%] rounded-2xl p-5 mt-5">
                         <div className="text-3xl font-bold text-center">
                             Upcoming Events
                         </div>
-                        <ul className="mt-5">
+                        <ul className="mt-5 max-h-[500px] overflow-y-scroll">
                             {currentEvents.length <= 0 && (
                                 <div>
                                     No Events Present

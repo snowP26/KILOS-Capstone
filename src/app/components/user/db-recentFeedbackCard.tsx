@@ -10,7 +10,7 @@ export const DbRecentFeedbackCard = () => {
         </div>
         
 
-        <p className="font-semibold text-xl text-center wrap-anywhere">
+        <p className="font-semibold text-xl text-center wrap-anywhere xl:text-sm">
             Sari po su pagkaon sadto munisipyo?
         </p>
 

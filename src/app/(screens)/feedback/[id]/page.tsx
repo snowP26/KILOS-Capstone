@@ -61,7 +61,7 @@ export default function Page() {
         <CommunityBanner id={loc_name} />
       </div>
 
-      <p className="text-4xl font-bold text-center">Community Feedback</p>
+      <p className="font-bold text-center text-2xl sm:text-2xl md:text-3xl lg:text-4xl">Community Feedback</p>
       <div className="flex justify-center mt-5">
         <PostFeedbackCard/>
       </div>
