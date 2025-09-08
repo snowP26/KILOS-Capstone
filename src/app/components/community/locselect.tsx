@@ -1,52 +1,61 @@
-'use client'
+"use client"
 
-import { Listbox } from '@headlessui/react'
-import { useState } from 'react'
+import { useState } from "react"
+import { ChevronDown, Check } from "lucide-react"
 
 const locations = [
-    { name: 'Naga City', value: 'Naga' },
-    { name: 'Pili', value: 'Pili' },
-    { name: 'Bula', value: 'Bula' }
+  { name: "Naga City", value: "1" },
+  { name: "Bula", value: "2" },
+  { name: "Pili", value: "3" },
 ]
 
-export default function LocationSelect() {
-    const [selected, setSelected] = useState<null | typeof locations[0]>(null)
+export default function LocationSelect( { onChange }: { onChange: (location: string | null) => void} ) {
+  const [isOpen, setIsOpen] = useState(false)
+  const [selected, setSelected] = useState<typeof locations[0] | null>(null)
 
-    return (
-        <div className="min-w-[130px]">
-            <Listbox value={selected} onChange={setSelected}>
-                {({ open }) => (
-                    <div className="relative">
-                        <Listbox.Button className="min-h-[48px] relative w-full cursor-default rounded-lg bg-[#D9D9D9] py-2 px-3 pr-8 text-center shadow-md focus:outline-none focus:ring-2 focus:ring-[#0073FF]">
-                            <span className={`${selected ? 'text-black' : 'text-gray-500'}`}>
-                                {selected ? selected.name : 'Location'}
-                            </span>
-                            <span
-                                className={`absolute inset-y-0 right-3 flex items-center pointer-events-none text-[10px] transform transition-transform duration-300 ease-in-out 
-                    ${open ? 'rotate-180' : 'rotate-0'}`}
-                            >
-                                ▼
-                            </span>
-                        </Listbox.Button>
-                        <Listbox.Options className="absolute mt-2 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            {locations.map((location, index) => (
-                                <Listbox.Option
-                                    key={index}
-                                    value={location}
-                                    className={({ active }) =>
-                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${active
-                                            ? 'bg-blue-100 text-blue-900'
-                                            : 'text-gray-900'
-                                        }`
-                                    }
-                                >
-                                    {location.name}
-                                </Listbox.Option>
-                            ))}
-                        </Listbox.Options>
-                    </div>
-                )}
-            </Listbox>
+  const handleSelect = (location: typeof locations[0]) => {
+    setSelected(location)
+    setIsOpen(false)
+    onChange(location.value)
+  }
+
+  return (
+    <div className="relative min-w-[160px]">
+      {/* Button */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex w-full items-center justify-between rounded-lg bg-[#D9D9D9] px-3 py-2 shadow-md focus:outline-none focus:ring-2 focus:ring-[#0073FF]"
+      >
+        <span className={`${selected ? "text-black" : "text-gray-500"} truncate`}>
+          {selected ? selected.name : "Location"}
+        </span>
+        <ChevronDown
+          className={`h-4 w-4 text-gray-600 transform transition-transform duration-300 ${
+            isOpen ? "rotate-180" : "rotate-0"
+          }`}
+        />
+      </button>
+
+      {/* Options */}
+      {isOpen && (
+        <div className="absolute z-10 mt-2 w-full rounded-lg bg-white shadow-lg ring-1 ring-black/10">
+          {locations.map((location, idx) => (
+            <div
+              key={idx}
+              onClick={() => handleSelect(location)}
+              className={`flex cursor-pointer items-center px-3 py-2 text-sm hover:bg-blue-100 ${
+                selected?.value === location.value ? "bg-blue-50 font-semibold" : "text-gray-900"
+              }`}
+            >
+              {selected?.value === location.value && (
+                <Check className="mr-2 h-4 w-4 text-blue-600" />
+              )}
+              {location.name}
+            </div>
+          ))}
         </div>
-    )
+      )}
+    </div>
+  )
 }

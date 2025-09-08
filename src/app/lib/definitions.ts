@@ -14,7 +14,7 @@ type AnnouncementType =
     | "Press Release";
 
 type ApprovalStatus = "in progress" | "pending" | "approved" | "vetoed";
-    
+
 type readingData = {
     status: ApprovalStatus,
     approver: string | null,
@@ -25,18 +25,7 @@ type readingData = {
 
 export const locations = ["naga-city", "pili", "bula"] as const;
 
-export type ordinance = {
-    id: number,
-    title: string,
-    description: string,
-    location: string,
-    approvals:  {
-        "First Reading": readingData;
-        "Second Reading": readingData;
-        "Third Reading": readingData;
-    },
-    author: number,
-}
+
 
 export type u = {
     id: number;
@@ -65,7 +54,9 @@ export type announcement = {
     type: AnnouncementType;
     photo: string; // string = url to photo.
     author_email: string;
-
+    authorName: string;
+    authorPosition: string;
+    authorRole: string;
 };
 
 // define Meeting based on ERD
@@ -77,13 +68,32 @@ export type meeting = {
     date_posted: Date;
 }
 
-export type ordinanceFiles = {
+export type ordinance = {
     id: number,
-    created_at: Date,
+    title: string,
+    description: string,
+    location: string,
+    author: number,
+    status: string,
+    created_at: string
+}
+
+export type ordinance_approvals = {
+    id: number,
     ordinance_id: number,
-    file_path: string,
-    file_name: string,
-    author_id: number
+    stage: string,
+    status: string,
+    start_date: string,
+    end_date: string,
+    approver: string,
+    remarks: string,
+    locked: boolean,
+}
+
+export type ordinanceFiles = {
+    url: string;
+    name: string;
+    type: string;
 }
 
 export type commFeedback = {
@@ -92,4 +102,30 @@ export type commFeedback = {
     header: string,
     body: string,
     location: number
+}
+
+export type feedbackComment = {
+    id: number,
+    created_at: string,
+    feedback_id: number,
+    author_id: number,
+    content: string,
+}
+
+export type homeFeedback = {
+    id: number,
+    header: string,
+    created_at: string,
+}
+
+export type project = {
+    id: number,
+    location_id: number,
+    author: number,
+    created_at: string,
+    title: string,
+    description: string,
+    target_date: string,
+    status: string,
+    photo: string,
 }

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { commFeedback } from '@/src/app/lib/definitions';
-import { FeedbackCard } from '@/src/app/components/community/feedbackCard';
+import { FeedbackCard } from '@/src/app/components/user/feedbackCard_user';
 import { getFeedback } from '@/src/app/actions/feedback';
 import { getLocFromAuth } from '@/src/app/actions/convert';
 
@@ -24,14 +24,13 @@ export default function CommunityFeedback() {
 
     fetchFeedbackData();
 
-
   }, [])
 
   return (
     <div className="bg-[#E6F1FF] h-vh">
 
 
-      <p className="mt-15 mx-40 font-bold text-3xl">Ordinances & Resolutions</p>
+      <p className="mt-15 mx-40 font-bold text-3xl">Community Feedback</p>
       <hr className="border-t border-black w-[90%] mx-auto my-3" />
       <p className="text-gray-400 font-thin ml-45">Click on a card to add your comments.</p>
 
@@ -41,6 +40,7 @@ export default function CommunityFeedback() {
             feedback?.map((data) => (
               <FeedbackCard
                 key={data.id}
+                feedbackID={data.id}
                 header={data.header}
                 body={data.body}
                 date={new Date(data.created_at)
@@ -52,6 +52,7 @@ export default function CommunityFeedback() {
                     minute: "2-digit",
                     hour12: true,
                   })}
+                isWhite={true}
               />
             ))
           }

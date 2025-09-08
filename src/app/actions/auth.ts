@@ -1,6 +1,7 @@
 import client from "@/src/api/client";
 import { users } from "@/src/app/lib/definitions";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { FormEvent } from "react";
 import Swal from "sweetalert2";
 
 const successPopup = async () => {
@@ -13,25 +14,43 @@ const successPopup = async () => {
   });
 };
 
+
+export const getCodeData = async (code: string) => {
+  const { data, error } = await client.from("position").select("*").eq("registration_code", code).single();
+
+  if (error) {
+    console.log("Error fetching code data: ", error);
+    return null;
+  }
+
+  if (data) {
+    console.log("Successfully fetched registration code data.");
+    return data.user_type;
+  }
+}
+
+// create code checker
 export const checkCode = async (code: string) => {
   const { data, error } = await client
     .from("positions")
-    .select("is_assigned")
+    .select("*")
     .eq("registration_code", code);
 
   if (error) {
     return console.log("Registration code error: ", error);
   }
   if (data) {
-    console.log(data[0].is_assigned);
+    return data[0]
   }
 };
+
 
 export const registerUser = async (
   regData: users,
   router: AppRouterInstance
 ) => {
   const { email, password, firstName, lastName, regCode } = regData;
+  const userType = checkCode(regCode);
 
   Swal.fire({
     title: "Signing you up...",
@@ -63,7 +82,6 @@ export const registerUser = async (
     Swal.close();
     return console.log("This registration code has already been used.");
   }
-
   const { error: yoError } = await client.from("youth_official").insert([
     {
       email: email,
@@ -90,8 +108,9 @@ export const registerUser = async (
         role: posData[0].user_type,
         location: posData[0].location_id,
       },
-      emailRedirectTo: "http://localhost:3000/login", // replace with deployed url.
+      emailRedirectTo: "http://localhost:3000/login",
     },
+
   });
 
   Swal.close();
@@ -133,3 +152,67 @@ export const logoutUser = async (router: AppRouterInstance) => {
     }
   });
 };
+
+
+const getRole = async () => {
+  const { data: { user } } = await client.auth.getUser();
+
+  if (user) {
+    return user.user_metadata.role as string
+  }
+
+  return null
+}
+
+
+
+
+export const handleLogin = async (e: FormEvent<HTMLFormElement>, router: AppRouterInstance) => {
+  e.preventDefault();
+  const loginForm = new FormData(e.currentTarget)
+
+  const form = {
+    email: loginForm.get("email") as string,
+    password: loginForm.get("password") as string
+  }
+
+
+  const { data, error } = await client.auth.signInWithPassword({
+    email: form.email,
+    password: form.password
+  })
+
+  if (error) {
+    console.log("Error with login: ", error);
+    console.log(form.email, form.password)
+    return
+  }
+
+
+  const user = data.user
+  if (!user) return
+  const role = user.user_metadata.role as string
+
+  switch (role) {
+    case "Legislative":
+    case "Executive":
+    case "Treasurer":
+      router.push("/users/home")
+      console.log(role)
+      break
+    case "admin":
+      router.push("/admin")
+      console.log(role)
+      break
+    case "superadmin":
+      router.push("/superadmin")
+      console.log(role)
+      break
+    default:
+      console.log(user)
+      console.log(role)
+      router.push("/users/home")
+  }
+
+  return
+}

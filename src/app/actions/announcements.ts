@@ -2,6 +2,7 @@ import client from "@/src/api/client";
 
 import { FormEvent, RefObject } from "react";
 import Swal from "sweetalert2";
+import { getLocFromAuth, getUserID } from "./convert";
 
 
 
@@ -36,6 +37,7 @@ export const postAnnouncements = async (e: FormEvent<HTMLFormElement>, formRef: 
         type: formData.get("type") as string,
         image: formData.get("image") as File
     };
+    const loc = await getLocFromAuth();
 
     if (form.type == null) {
         return alert('Type should not be null');
@@ -56,7 +58,8 @@ export const postAnnouncements = async (e: FormEvent<HTMLFormElement>, formRef: 
         body: form.body,
         photo: photoFilename,
         author_email: user,
-        type: form.type
+        type: form.type,
+        location: loc,
     }]);
 
     if (error) {
@@ -76,7 +79,8 @@ export const postAnnouncements = async (e: FormEvent<HTMLFormElement>, formRef: 
 
 // Get Announcements Function
 export const getAnnouncments = async () => {
-    const { data, error } = await client.from("announcement").select("*").order("created_at", { ascending: false })
+    const loc = await getLocFromAuth();
+    const { data, error } = await client.from("announcement").select("*").order("created_at", { ascending: false }).eq("location", loc)
 
     if (error) {
         console.log("Error loading data: ", error);
