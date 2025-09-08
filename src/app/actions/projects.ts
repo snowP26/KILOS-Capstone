@@ -1,5 +1,7 @@
 import client from "@/src/api/client";
 import { getLocFromAuth } from "./convert";
+import { FormEvent } from "react";
+import { RefObject } from "@fullcalendar/core/preact.js";
 
 export const getProjects = async () => {
     const loc = await getLocFromAuth();
@@ -15,4 +17,11 @@ export const getProjects = async () => {
     console.log(data[0])
 
     return data;
+}
+
+export const postProject = async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    
 }

@@ -1,38 +1,36 @@
-"use client"
+"use client";
 
-import client from '@/src/api/client'
-import React, { useEffect, useState } from 'react'
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
-export default function Page() {
-    const [role, setRole] = useState<string | null>(null)
-
-    useEffect(() => {
-        const getUser = async () => {
-            const { data: { user } } = await client.auth.getUser()
-
-            if (user) {
-                console.log(user)
-
-                const userRole = user.user_metadata.role as string
-                console.log("User role:", userRole)
-                setRole(userRole)
-            }
-        }
-
-        getUser()
-    }, [])
-
-    if (!role) {
-        return <p>Loading...</p>
-    }
-
+export default function ProjectForm() {
     return (
-        <>
-            {role === "Legislative" && <h1>Legislative View</h1>}
-            {role === "Executive" && <h1>Executive View</h1>}
-            {role === "Treasurer" && <h1>Treasurer View</h1>}
-            {role === "admin" && <h1>Admin Dashboard</h1>}
-            {role === "superadmin" && <h1>Superadmin Dashboard</h1>}
-        </>
-    )
+        <div className="max-w-md mx-auto mt-10 p-6 border rounded-2xl shadow-md">
+            <h2 className="text-xl font-semibold mb-4">Create New Project</h2>
+            <form className="space-y-4">
+                <Input
+                    type="text"
+                    placeholder="Project Title"
+                    required
+                />
+
+                <Textarea
+                    placeholder="Project Description"
+                    required
+                />
+
+                <Input
+                    type="file"
+                    accept="image/*"
+                    required
+                />
+
+                <Button type="submit" className="w-full">
+                    Submit Project
+                </Button>
+            </form>
+        </div>
+    );
 }
