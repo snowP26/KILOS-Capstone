@@ -15,8 +15,9 @@ export const DbRecentFeedbackCard = ( { header, date } : recentFeedback) => {
         </div>
         
 
-        <p className="font-semibold text-xl text-center wrap-anywhere">
+        <p className="font-semibold text-xl text-center wrap-anywhere xl:text-sm">
             {header}
+
         </p>
 
         <div className="flex flex-row justify-end mt-5">
