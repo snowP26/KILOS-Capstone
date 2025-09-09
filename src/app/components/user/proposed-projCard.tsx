@@ -2,7 +2,7 @@
 
 export const ProposedProjCard = () => {
     return (
-        <div className="bg-[#E6F1FF] h-[100%] w-full rounded-2xl px-5 py-3 mb-2">
+        <div className="bg-[#E6F1FF] h-[100%] w-full cursor-pointer rounded-2xl px-5 py-3 mb-2 shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
             <div className="flex flex-row gap-3">
                 <div className="bg-black w-20 min-w-15 h-25 rounded-[8px]">
                     {/* image placeholder */}
