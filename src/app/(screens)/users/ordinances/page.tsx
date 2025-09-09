@@ -1,9 +1,8 @@
 "use client";
 
-import React from 'react'
-import { Button } from '@/components/ui/button';
-
-import { OrdinancesCard } from '@/src/app/components/user/ordinances-card';
+import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { OrdinancesCard } from "@/src/app/components/user/ordinances-card";
 import {
   Select,
   SelectContent,
@@ -11,47 +10,151 @@ import {
   SelectGroup,
   SelectTrigger,
   SelectValue,
-  SelectLabel,
-} from "@/components/ui/select"
-import { useRouter } from 'next/navigation';
+} from "@/components/ui/select";
+import { useRouter } from "next/navigation";
+import { ordinance } from "@/src/app/lib/definitions";
+import {
+  getOrdinancesByLocID,
+  openOrdinancePDF,
+} from "@/src/app/actions/ordinances";
+import { useUserRole } from "@/src/app/actions/role";
 
 export default function Ordinances() {
+  const [ordinances, setOrdinances] = useState<ordinance[]>([]);
+  const [loadingOrdinances, setLoadingOrdinances] = useState(true);
   const router = useRouter();
+  const { role } = useUserRole();
 
-  return (
-    <div className="bg-[#E6F1FF] min-h-screen max-h-fit">
-      <div className="flex flex-row justify-between mt-15 mx-40">
-        <p className="font-bold text-3xl">Ordinances & Resolutions</p>
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getOrdinancesByLocID();
+        setOrdinances(data);
+      } finally {
+        setLoadingOrdinances(false);
+      }
+    };
+    fetchData();
+  }, []);
 
-        <div className="flex flex-row gap-2">
-          <Button className="bg-white text-[#052659] border-[1px] border-black cursor-pointer hover:bg-[#052659] hover:text-white" onClick={() => router.push("/users/ordinances/view-pending")}>View Pending</Button>
-          <Button className="bg-[#052659] text-white cursor-pointer hover:bg-white hover:text-[#052659]" onClick={() => router.push("/users/ordinances/submit-doc")}>Submit Ordinance</Button>
+  const normalizedRole = role?.trim().toLowerCase();
+
+  // Skeleton component
+  const SkeletonList = () => (
+    <div className="mt-5 space-y-4 px-40">
+      {[1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="p-4 bg-white rounded-xl shadow-md flex flex-col gap-2 animate-pulse"
+        >
+          <div className="h-6 w-1/3 bg-gray-300 rounded"></div>
+          <div className="h-4 w-2/3 bg-gray-300 rounded"></div>
+          <div className="h-4 w-1/4 bg-gray-300 rounded"></div>
         </div>
-      </div>
-
-      <hr className="border-t border-black w-[90%] mx-auto my-3" />
-
-      {/* SortBy Placeholder */}
-      <div className="mr-35 place-self-end">
-
-        <Select>
-          <SelectTrigger className="w-[100%] bg-white cursor-pointer">
-            <SelectValue className="placeholder:italic" placeholder="Sort By" />
-          </SelectTrigger>
-          <SelectContent className="">
-            <SelectGroup>
-              <SelectItem value="newest ordinance">Newest Ordinance</SelectItem>
-              <SelectItem value="oldest ordinance">Oldest Ordinance</SelectItem>
-              <SelectItem value="submission date">Submission Date</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="pb-5">
-        <OrdinancesCard />
-        <OrdinancesCard />
-      </div>
+      ))}
     </div>
-  )
+  );
+
+  const OrdinanceList = () => (
+    <>
+      {ordinances.map((data) => (
+        <div
+          key={data.id}
+          className="pb-5 cursor-pointer"
+          onClick={async () => await openOrdinancePDF(data.id)}
+        >
+          <OrdinancesCard
+            className="transition-transform duration-300 hover:-translate-y-1 rounded-xl"
+            title={data.title}
+            description={data.description}
+            author={data.author}
+            submit_date={new Date(data.created_at).toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })}
+          />
+        </div>
+      ))}
+    </>
+  );
+
+  if (normalizedRole === "legislative") {
+    return (
+      <div className="bg-[#E6F1FF] min-h-screen max-h-fit">
+        <div className="flex flex-col sm:flex-row justify-between mt-15 mx-3 lg:mx-40">
+          <p className="font-bold text-2xl sm:text-3xl">Ordinances & Resolutions</p>
+
+          <div className="flex flex-row gap-2 self-center">
+            <Button
+              className="bg-white text-[#052659] border-[1px] border-black cursor-pointer hover:bg-[#052659] hover:text-white"
+              onClick={() => router.push("/users/ordinances/view-pending")}
+            >
+              View Pending
+            </Button>
+            <Button
+              className="bg-[#052659] text-white cursor-pointer hover:bg-white hover:text-[#052659] "
+              onClick={() => router.push("/users/ordinances/submit-doc")}
+            >
+              Submit Ordinance
+            </Button>
+          </div>
+        </div>
+
+        <hr className="border-t border-black w-[90%] mx-auto my-3" />
+
+        {/* Sort By */}
+        <div className="mr-10 xl:mr-35 place-self-end">
+          <Select>
+            <SelectTrigger className="w-[100%] bg-white cursor-pointer">
+              <SelectValue placeholder="Sort By" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="newest ordinance">Newest Ordinance</SelectItem>
+                <SelectItem value="oldest ordinance">Oldest Ordinance</SelectItem>
+                <SelectItem value="submission date">Submission Date</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Ordinances or Skeleton */}
+        {loadingOrdinances ? <SkeletonList /> : <OrdinanceList />}
+      </div>
+    );
+  }
+
+  if (normalizedRole === "executive" || normalizedRole === "treasurer") {
+    return (
+      <div className="bg-[#E6F1FF] min-h-screen max-h-fit">
+        <div className="mt-15 mx-3 lg:mx-40">
+          <p className="font-bold text-2xl sm:text-3xl">Ordinances & Resolutions</p>
+        </div>
+
+        <hr className="border-t border-black w-[90%] mx-auto my-3" />
+
+        {/* Sort By */}
+        <div className="mr-10 xl:mr-35 place-self-end">
+          <Select>
+            <SelectTrigger className="w-[100%] bg-white cursor-pointer">
+              <SelectValue placeholder="Sort By" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="newest ordinance">Newest Ordinance</SelectItem>
+                <SelectItem value="oldest ordinance">Oldest Ordinance</SelectItem>
+                <SelectItem value="submission date">Submission Date</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Ordinances or Skeleton */}
+        {loadingOrdinances ? <SkeletonList /> : <OrdinanceList />}
+      </div>
+    );
+  }
+
+  return null;
 }
