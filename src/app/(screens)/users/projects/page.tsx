@@ -65,7 +65,7 @@ export default function Practice() {
                                 title={data.title}
                                 status={data.status}
                                 date={data.target_date}
-                                imgURL={data.photo}
+                                imgURL={data.imageURL}
                             />
                         </div>
                     ))}
@@ -150,7 +150,7 @@ export default function Practice() {
                                         title={data.title}
                                         status={data.status}
                                         date={data.target_date}
-                                        imgURL={data.photo}
+                                        imgURL={data.imageURL}
                                     />
                                 </div>
                             ))}
