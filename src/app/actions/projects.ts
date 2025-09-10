@@ -103,3 +103,21 @@ export const postProject = async (e: FormEvent<HTMLFormElement>) => {
 
     console.log(`${userID}, ${location_id}, ${title}, ${description}`)
 }
+
+export const getProjectByID = async (projectID: string | undefined) => {
+    if(projectID == undefined) return null
+
+    const { data, error } = await client.from("projects").select("*").eq("title", projectID)
+
+    if(!data || data[0].length <= 0){
+        console.log("No Project found!")
+        return null
+    } 
+
+    if(error){
+        console.log("Error in fetching project", error)
+        return null
+    }
+
+    return data[0]
+}
