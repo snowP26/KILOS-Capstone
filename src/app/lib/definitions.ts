@@ -127,5 +127,5 @@ export type project = {
     description: string,
     target_date: string,
     status: string,
-    photo: string,
+    imageURL: string,
 }
