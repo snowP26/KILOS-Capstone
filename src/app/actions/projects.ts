@@ -4,7 +4,6 @@ import { FormEvent } from "react";
 
 export const getProjects = async () => {
     const loc = await getLocFromAuth();
-    console.log("loc:", loc);
 
     const { data, error } = await client
         .from("projects")
@@ -121,3 +120,23 @@ export const getProjectByID = async (projectID: string | undefined) => {
 
     return data[0]
 }
+
+export const getProposedProjectByID = async (id: number|string) => {
+    const { data, error } = await client
+        .from("projects")
+        .select("*")
+        .eq("id", id).eq("status", "For Approval");
+
+    if (error) {
+        console.error("Error retrieving projects:", error);
+        return [];
+    }
+
+    if (!data || data.length === 0) {
+        console.warn("No projects found for this location.");
+        return [];
+    }
+
+    console.log("Projects retrieved:", data);
+    return data;
+};

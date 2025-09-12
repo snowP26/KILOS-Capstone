@@ -297,7 +297,7 @@ export default function Practice() {
                             {proposedProjects?.map((data) => (
                                 <div
                                     onClick={() =>
-                                        router.push(`/users/projects/proposed-project/${(data.title).trim()}`)
+                                        router.push(`/users/projects/proposed-project/${(data.title).trim()}-${data.id}`)
                                     }
                                     key={data.id}
                                 >
