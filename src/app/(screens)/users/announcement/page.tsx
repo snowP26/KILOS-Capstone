@@ -8,6 +8,7 @@ import { Pin } from "lucide-react";
 import {
   fetchPinned,
   getAnnouncments,
+  getOwnAnnouncements,
   getPhoto,
   setPinned,
 } from "@/src/app/actions/announcements";
@@ -22,9 +23,11 @@ import {
   SelectGroup,
   SelectLabel,
 } from "@/components/ui/select";
+import { authorEmailToInfo } from "@/src/app/actions/convert";
 
 export default function Announcement() {
   const router = useRouter();
+
   const announcementTypes = [
     "all",
     "general",
@@ -39,37 +42,91 @@ export default function Announcement() {
     "infrastructure",
     "press_release",
   ];
+
   const [pinnedAnnouncements, setPinnedAnnouncements] = useState<number[]>([]);
-  const [announcements, setAnnouncements] = useState<announcement[]>([]);
+  const [allAnnouncements, setAllAnnouncements] = useState<announcement[]>([]);
+  const [myAnnouncements, setMyAnnouncements] = useState<announcement[]>([]);
+  const [activeTab, setActiveTab] = useState<"all" | "mine" | "pinned">("all");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [refresh, setRefresh] = useState(0);
+  const [loading, setLoading] = useState(true);
 
+  // fetch all announcements
   const updateAnnouncements = async () => {
+    setLoading(true);
     const updatedData = await getAnnouncments();
+    if (!updatedData) return;
 
-    if (updatedData) {
-      const processed = await Promise.all(
-        updatedData.map(async (item) => {
-          if (item.photo) {
-            const publicUrl = await getPhoto(item.photo);
-            return { ...item, photo: publicUrl };
-          } else {
-            return { ...item, photo: null };
-          }
-        })
-      );
-      setAnnouncements(processed);
-    }
+    const processed = await Promise.all(
+      updatedData.map(async (item) => {
+        const photoResult = item.photo ? await getPhoto(item.photo) : null;
+        const authorInfo = await authorEmailToInfo(item.author_email);
+        return {
+          ...item,
+          photo: typeof photoResult === "string" ? photoResult : null,
+          authorName: authorInfo.name,
+          authorPosition: authorInfo.position.trim(),
+          authorRole: authorInfo.role.trim(),
+        };
+      })
+    );
+
+    setAllAnnouncements(processed);
+    setLoading(false);
   };
 
+  // fetch pinned IDs
   const loadPinned = async () => {
-    const announcementIds = await fetchPinned();
-    setPinnedAnnouncements(announcementIds);
+    const ids = await fetchPinned();
+    setPinnedAnnouncements(ids);
+  };
+
+  // fetch my announcements
+  const loadMyAnnouncements = async () => {
+    const mine = await getOwnAnnouncements();
+    if (!mine) return;
+    const processed = await Promise.all(
+      mine.map(async (item) => {
+        const photoResult = item.photo ? await getPhoto(item.photo) : null;
+        const authorInfo = await authorEmailToInfo(item.author_email);
+        return {
+          ...item,
+          photo: typeof photoResult === "string" ? photoResult : null,
+          authorName: authorInfo.name,
+          authorPosition: authorInfo.position.trim(),
+          authorRole: authorInfo.role.trim(),
+        };
+      })
+    );
+    setMyAnnouncements(processed);
   };
 
   useEffect(() => {
     updateAnnouncements();
     loadPinned();
-  }, []);
+    loadMyAnnouncements();
+  }, [refresh]);
+
+  // toggle pinned announcements
+  const togglePinned = async (id: number) => {
+    await setPinned(id);
+    setPinnedAnnouncements((prev) =>
+      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
+    );
+  };
+
+  // prepare which list to display
+  const displayedAnnouncements = (() => {
+    if (activeTab === "all") return allAnnouncements;
+    if (activeTab === "mine") return myAnnouncements;
+    if (activeTab === "pinned")
+      return allAnnouncements.filter((a) =>
+        pinnedAnnouncements.includes(a.id)
+      );
+    return [];
+  })().filter(
+    (a) => selectedCategory === "all" || a.type === selectedCategory
+  );
 
   return (
     <div className="min-h-screen max-h-full xl:mx-20 bg-[#E6F1FF]">
@@ -95,13 +152,31 @@ export default function Announcement() {
           {/* Tabs + Filter */}
           <div className="flex flex-col mx-5 xl:flex-row xl:justify-between xl:ml-50 xl:mr-10 2xl:ml-100 2xl:mr-15">
             <div className="flex flex-row gap-0.5 my-3 justify-center text-center">
-              <div className="bg-[#052659] text-white shadow-md shadow-gray-400 text-xs lg:text-lg p-2 rounded-tl-2xl rounded-bl-2xl cursor-pointer">
+              <div
+                className={`${activeTab === "all"
+                    ? "bg-[#052659] text-white"
+                    : "bg-[#052659] opacity-60 text-gray-400"
+                  } shadow-md text-xs lg:text-lg p-2 rounded-tl-2xl rounded-bl-2xl cursor-pointer`}
+                onClick={() => setActiveTab("all")}
+              >
                 <p>Uploaded Announcements</p>
               </div>
-              <div className="bg-[#052659] opacity-60 text-gray-400 shadow-lg shadow-blue-800/40 text-xs lg:text-lg p-2 lg:hidden cursor-pointer">
+              <div
+                className={`xl:hidden ${activeTab === "pinned"
+                    ? "bg-[#052659] text-white"
+                    : "bg-[#052659] opacity-60 text-gray-400"
+                  } shadow-md text-xs lg:text-lg p-2 cursor-pointer`}
+                onClick={() => setActiveTab("pinned")}
+              >
                 <p>Pinned Announcements</p>
               </div>
-              <div className="bg-[#052659] opacity-60 text-gray-400 shadow-lg shadow-blue-800/40 text-xs lg:text-lg p-2 rounded-tr-2xl rounded-br-2xl cursor-pointer">
+              <div
+                className={`${activeTab === "mine"
+                    ? "bg-[#052659] text-white"
+                    : "bg-[#052659] opacity-60 text-gray-400"
+                  } shadow-md text-xs lg:text-lg p-2 rounded-tr-2xl rounded-br-2xl cursor-pointer`}
+                onClick={() => setActiveTab("mine")}
+              >
                 <p>My Announcements</p>
               </div>
             </div>
@@ -129,11 +204,14 @@ export default function Announcement() {
           </div>
 
           {/* Announcement List */}
-          {announcements
-            .filter(
-              (a) => selectedCategory === "all" || a.type === selectedCategory
-            )
-            .map((data) => (
+          {loading ? (
+            <p className="text-center text-gray-500">Loading...</p>
+          ) : displayedAnnouncements.length === 0 ? (
+            <p className="text-center text-gray-500 italic">
+              No announcements found
+            </p>
+          ) : (
+            displayedAnnouncements.map((data) => (
               <div
                 key={data.id}
                 className="bg-white rounded-2xl w-[90%] place-self-center px-5 lg:w-full lg:pl-10 lg:pr-10 pb-2 mb-2"
@@ -141,15 +219,14 @@ export default function Announcement() {
                 {/* Top Section */}
                 <div className="flex flex-row justify-between">
                   <div className="flex flex-col">
-                    <p className="font-semibold text-sm lg:text-xl mt-5">
-                      {data.author_email}
+                    <p className="font-bold text-sm lg:text-xl mt-5">
+                      {data.authorName}
                     </p>
 
-                    <div className="flex flex-row gap-2 lg:gap-5">
-                      {/* Replace with actual author role if needed */}
-                      <p className="text-xs lg:text-sm font-thin">
-                        Local Municipal Youth Developmental Officer
-                      </p>
+                    <div className="flex flex-row items-center gap-2 lg:gap-5 text-gray-400">
+                      <span>
+                        {data.authorRole} | {data.authorPosition}
+                      </span>
                       <p className="text-xs lg:text-sm font-thin">
                         {format(new Date(data.created_at), "MMMM d, yyyy h:mm a")}
                       </p>
@@ -160,8 +237,10 @@ export default function Announcement() {
                     <Pin
                       className="cursor-pointer hover:text-blue-600"
                       size="25px"
-                      onClick={() => setPinned(data.id)}
-                      fill={pinnedAnnouncements.includes(data.id) ? "black" : "none"}
+                      onClick={() => togglePinned(data.id)}
+                      fill={
+                        pinnedAnnouncements.includes(data.id) ? "black" : "none"
+                      }
                     />
                   </div>
                 </div>
@@ -186,7 +265,8 @@ export default function Announcement() {
                   )}
                 </div>
               </div>
-            ))}
+            ))
+          )}
         </div>
 
         {/* Right Section (Pinned Sidebar) */}
@@ -205,7 +285,7 @@ export default function Announcement() {
               Pinned Announcements
             </p>
             <div className="flex flex-col mt-5 items-center">
-              {announcements
+              {allAnnouncements
                 .filter((a) => pinnedAnnouncements.includes(a.id))
                 .map((a) => (
                   <PinnedAnnouncementCard
@@ -216,12 +296,13 @@ export default function Announcement() {
                     announcementType={a.type}
                   />
                 ))}
-              {announcements.filter((a) => pinnedAnnouncements.includes(a.id))
-                .length === 0 && (
-                <p className="text-sm text-gray-500 text-center italic">
-                  No pinned announcements
-                </p>
-              )}
+              {allAnnouncements.filter((a) =>
+                pinnedAnnouncements.includes(a.id)
+              ).length === 0 && (
+                  <p className="text-sm text-gray-500 text-center italic">
+                    No pinned announcements
+                  </p>
+                )}
             </div>
           </div>
         </div>
