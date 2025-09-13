@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, SquarePen, Trash2, MessageSquareWarning } from "lucide-react";
+import { ArrowLeft, SquarePen, Trash2, MessageSquareWarning, Save } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
     Breadcrumb,
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { SubmitDocCard } from "@/src/app/components/user/submit-docCard";
 import { project } from "@/src/app/lib/definitions";
-import { getProposedProjectByID } from "@/src/app/actions/projects";
+import { getProposedProjectByID, postProject, uploadPhotoByID } from "@/src/app/actions/projects";
 import { ProjectTable } from "@/src/app/components/user/table";
 import { ProjectDetails } from "@/src/app/components/user/project-details";
 
@@ -25,8 +25,12 @@ export default function ViewProposedProject() {
     const slug = params?.id as string;
     const projectId = slug.split("-").pop();
 
+
     const [project, setProject] = useState<project | null>(null);
-    const [showDetails, setShowDetails] = useState(false); // <-- NEW STATE
+    const [showDetails, setShowDetails] = useState(false);
+    const [tempPosterFile, setTempPosterFile] = useState<File | null>(null);
+    const [refresh, setRefresh] = useState(0)
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -36,8 +40,9 @@ export default function ViewProposedProject() {
             }
         };
 
+        setTempPosterFile(null)
         fetchData();
-    }, [projectId]);
+    }, [projectId, refresh]);
 
     return (
         <div className="bg-[#E6F1FF] h-fit xl:h-screen mt-10">
@@ -46,12 +51,12 @@ export default function ViewProposedProject() {
                     <Button
                         className="group gap-0 relative bg-[#E6F1FF] cursor-pointer"
                         variant="link"
-                        onClick={() => router.back()} // FIX: added ()
+                        onClick={() => router.back()}
                     >
                         <ArrowLeft color="black" />
-                        <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
+                        <span className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
                             Return
-                        </div>
+                        </span>
                     </Button>
                     <div className="h-5 w-3">
                         <Separator className="bg-gray-500" orientation="vertical" />
@@ -80,14 +85,79 @@ export default function ViewProposedProject() {
                 <div className="flex flex-col xl:flex-row gap-1 place-items-center min-h-fit max-h-screen">
                     {/* LEFT SIDE POSTER */}
                     <div className="bg-white mt-10 w-[80%] h-full sm:h-150 xl:w-[35%] xl:h-155 justify-items-center place-content-center">
-                        <div className="bg-black mt-10 w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130">
-                            {/* image placeholder */}
-                        </div>
+                        {project?.imageURL ? (
+                            // Show existing project poster
+                            <img
+                                src={project.imageURL}
+                                alt="Project Poster"
+                                className="w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130 object-cover rounded-md"
+                            />
+                        ) : tempPosterFile ? (
+                            // Show preview of uploaded temp poster
+                            <div className="flex flex-col items-center justify-center w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130 overflow-hidden">
+                                <img
+                                    src={URL.createObjectURL(tempPosterFile)}
+                                    alt="Temp Poster Preview"
+                                    className="w-full h-full object-cover rounded-md"
+                                />
+                            </div>
+                        ) : (
+                            // Show upload dropbox
+                            <label
+                                htmlFor="poster-upload"
+                                className="flex flex-col items-center justify-center w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130 border-2 border-dashed border-gray-400 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+                            >
+                                <svg
+                                    className="w-10 h-10 text-gray-400 mb-2"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M7 16V4a1 1 0 011-1h8a1 1 0 011 1v12m-4-4l4 4m0 0l-4 4m4-4H3"
+                                    />
+                                </svg>
+                                <p className="text-gray-500">Drop your poster here</p>
+                                <p className="text-sm text-gray-400">or click to upload</p>
+                                <input
+                                    id="poster-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            setTempPosterFile(file);
+                                            console.log("Selected file:", file);
+                                        }
+                                    }}
+                                />
+                            </label>
+                        )}
+
                         <div className="flex flex-row w-[80%] justify-between my-3">
                             <p className="font-medium text-xl text-[#17A1FA]">Project Poster</p>
                             <div className="flex flex-row gap-2">
-                                <SquarePen className="cursor-pointer hover:bg-gray-300 rounded-[5px]" />
-                                <Trash2 className="cursor-pointer hover:bg-gray-300 rounded-[5px]" />
+                                {tempPosterFile && !project?.imageURL && (
+                                    <>
+                                        <Save 
+                                            onClick={async () => {
+                                                if (project?.id !== undefined && tempPosterFile) {
+                                                    await uploadPhotoByID(project.id, tempPosterFile);
+                                                    setRefresh((prev) => prev+1)
+                                                }
+                                            }}
+                                            className="cursor-pointer hover:bg-gray-300 rounded-[5px]" 
+                                        />
+                                        <Trash2
+                                            onClick={() => setTempPosterFile(null)}
+                                            className="cursor-pointer hover:bg-gray-300 rounded-[5px]"
+                                        />
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -119,7 +189,8 @@ export default function ViewProposedProject() {
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
+

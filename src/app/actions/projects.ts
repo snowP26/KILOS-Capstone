@@ -140,3 +140,36 @@ export const getProposedProjectByID = async (id: number|string) => {
     console.log("Projects retrieved:", data);
     return data;
 };
+
+export const uploadPhotoByID = async (id: number|string, file: File) => {
+    const locID = await getLocFromAuth();
+    const locName = await locIDtoName(locID);
+    const filepath = `photos/${locName}/${id}`
+
+    const { error: storageError } = await client.storage.from("projects").upload(filepath, file, {upsert: true})
+    if(storageError){
+        console.log("Error in uploading your photo: ", storageError)
+        return
+    }
+
+    const { data: publicUrlData } = client.storage
+        .from("projects")
+        .getPublicUrl(filepath);
+
+    const publicURL = publicUrlData?.publicUrl;
+
+    if (!publicURL) {
+        console.error("Could not retrieve public URL for uploaded photo.");
+        return;
+    }
+
+    const { error } = await client.from("projects").update([{imageURL: publicURL}]).eq("id", id);
+    console.log("Test:", id)
+
+    if(error){
+        console.log("Error in uploading to the database schema: ", error)
+        return
+    }
+
+    return
+}

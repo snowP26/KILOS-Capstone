@@ -301,7 +301,7 @@ export default function Practice() {
                                     }
                                     key={data.id}
                                 >
-                                    <ProposedProjCard Title={data.title} Description={data.description} Status={data.status}/>
+                                    <ProposedProjCard Title={data.title} Description={data.description} Status={data.status} PhotoURL={data.imageURL}/>
                                 </div>
 
                             ))
