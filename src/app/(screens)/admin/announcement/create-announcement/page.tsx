@@ -55,9 +55,9 @@ export default function CreateAnnouncement() {
                 <BreadcrumbList>
                     <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link">
                         <ArrowLeft color="black" />
-                        <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
+                        <span className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
                             Return
-                        </div>
+                        </span>
                     </Button>
                     <div className="h-5 w-3">
                         <Separator className="bg-gray-500" orientation="vertical" />

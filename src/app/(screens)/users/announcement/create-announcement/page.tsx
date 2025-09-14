@@ -67,7 +67,7 @@ export default function CreateAnnouncement() {
     };
 
     return (
-        <div className="bg-[#E6F1FF] h-screen mt-10">
+        <div className="bg-[#E6F1FF] min-h-screen max-h-fit mt-10">
             <Breadcrumb className="ml-20">
                 <BreadcrumbList>
                     <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.push("/users/announcement")}>
@@ -186,7 +186,6 @@ export default function CreateAnnouncement() {
                                     size="sm"
                                     className="mt-1 text-red-600 hover:text-red-800"
                                     onClick={handleRemoveFile}
-                                    type="button"
                                 >
                                     <X className="w-4 h-4 mr-1" /> Remove
                                 </Button>

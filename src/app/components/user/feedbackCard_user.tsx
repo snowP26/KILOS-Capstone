@@ -42,7 +42,7 @@ export const FeedbackCard = ({
     for (const comment of data) {
       if (!authorNames[comment.author_id]) {
         const name = await authorIDtoName(comment.author_id);
-        names[comment.author_id] = name ?? "Unknown User"; 
+        names[comment.author_id] = name ?? "Unknown User";
       }
     }
 
@@ -62,21 +62,38 @@ export const FeedbackCard = ({
 
   return (
     <Dialog onOpenChange={(open) => open && loadComments()}>
-      <DialogTrigger className="m-10">
+      <DialogTrigger className="m-5 xl:m-10">
         <div
-          className={`cursor-pointer p-5 h-100 w-100 ${bgColor} rounded-md shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl`}
+          className={`flex flex-col cursor-pointer w-60 h-60 lg:py-10 lg:px-10 lg:h-100 lg:w-100 p-8 rounded-md shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${bgColor}`}
         >
-          <Quote fill="black" />
-          <p className="m-5 font-semibold text-4xl">{header}</p>
-          <p className="m-5 text-gray-500 text-sm">{body}</p>
-          <div className="flex flex-row justify-end">
-            <p className="font-thin text-xs mr-5 content-center">{date}</p>
-            <Quote fill="black" />
+          {/* Top Quote Icon */}
+          <div className="mb-4">
+            <Quote fill="black" className="w-6 h-6" />
+          </div>
+
+
+          <h2 className="text-2xl font-bold mb-5 lg:mb-10">
+            {header}
+          </h2>
+
+
+
+          <div className="w-full h-[200px] max-h-[200px] truncate">
+            <p className="text-base mb-6">
+              {body}
+            </p>
+          </div>
+
+          {/* Bottom Row: Date and Quote */}
+          <div className="flex items-center self-end space-x-3">
+            <p className="text-xs font-thin text-gray-400">{date}</p>
+            <Quote fill="black" className="w-6 h-6" />
           </div>
         </div>
+
       </DialogTrigger>
 
-      <DialogContent className={bgColor}>
+      <DialogContent className="bg-[#E6F1FF]">
         <DialogHeader>
           <DialogTitle className="text-3xl text-center mt-5">{header}</DialogTitle>
           <p className="text-justify mt-5">{body}</p>
@@ -121,7 +138,7 @@ export const FeedbackCard = ({
               await postComment(e, formRef, feedbackID);
               await loadComments();
               formRef.current?.reset();
-              setRefresh((prev) => prev+1)
+              setRefresh((prev) => prev + 1)
             }}
           >
             <label htmlFor="comment" className="text-lg font-semibold">

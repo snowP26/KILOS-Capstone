@@ -27,12 +27,10 @@ export default function CommunityFeedback() {
   }, [])
 
   return (
-    <div className="bg-[#E6F1FF] h-vh">
-
-
-      <p className="mt-15 mx-40 font-bold text-3xl">Community Feedback</p>
-      <hr className="border-t border-black w-[90%] mx-auto my-3" />
-      <p className="text-gray-400 font-thin ml-45">Click on a card to add your comments.</p>
+    <div className="bg-[#E6F1FF] min-h-screen max-h-fit">
+      <p className="font-bold text-xl mt-10 ml-7 md:text-2xl md:ml-13 lg:ml-15 xl:mt-15 xl:mx-40 xl:text-3xl">Community Feedback</p>
+      <hr className="border-t border-black w-[90%] mx-auto mt-1 mb-3 xl:my-3" />
+      <p className="text-gray-400 font-thin ml-3 md:ml-10 xl:ml-45">Click on a card to add your comments.</p>
 
       <div className="mx-25">
         <div className="flex flex-wrap justify-center">

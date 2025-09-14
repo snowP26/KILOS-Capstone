@@ -1,10 +1,10 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { TextIcon } from "../text-logo";
-import { logoutUser } from "../../actions/auth";
 import { useState } from "react";
 import { Menu } from "lucide-react";
+import { TextIcon } from "../text-logo";
+import { logoutUser } from "../../actions/auth";
 
 export const UserNav = () => {
     const pathname = usePathname();
@@ -20,11 +20,15 @@ export const UserNav = () => {
         { label: "Community Feedback", path: "/users/community-feedback" },
     ];
 
-    function getMenuClassname() {
-        let menuClassname: string[] = [];
+    const handleNavigate = (path: string) => {
+        router.push(path);
+        window.scrollTo(0, 0);
+        setIsOpen(false);
+    };
 
+    const getMenuClassname = () => {
         if (isOpen) {
-            menuClassname = [
+            return [
                 "flex",
                 "absolute",
                 "top-19",
@@ -35,20 +39,17 @@ export const UserNav = () => {
                 "gap-5",
                 "flex-col",
                 "z-40",
-            ];
-        } else {
-            menuClassname.push(
-                "hidden",
-                "lg:flex",
-                "lg:w-300",
-                "lg:justify-between",
-                "items-center",
-                "gap-8"
-            );
+            ].join(" ");
         }
-
-        return menuClassname.join(" ");
-    }
+        return [
+            "hidden",
+            "lg:flex",
+            "lg:w-300",
+            "lg:justify-between",
+            "items-center",
+            "gap-8",
+        ].join(" ");
+    };
 
     return (
         <nav className="flex sticky top-0 py-5 z-50 bg-[#021024] sm:p-6 md:justify-center">
@@ -56,16 +57,12 @@ export const UserNav = () => {
                 {/* Logo */}
                 <TextIcon />
 
-                {/* Menu items */}
+                {/* Menu Items */}
                 <div className={getMenuClassname()}>
                     {navItems.map((item) => (
                         <button
                             key={item.path}
-                            onClick={() => {
-                                router.push(item.path);
-                                window.scrollTo(0, 0);
-                                setIsOpen(false); // close menu on mobile after clicking
-                            }}
+                            onClick={() => handleNavigate(item.path)}
                             className={
                                 pathname.startsWith(item.path)
                                     ? "p-4 bg-white text-[#052659] rounded-md font-bold cursor-pointer"

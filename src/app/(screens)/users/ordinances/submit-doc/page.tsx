@@ -41,7 +41,7 @@ export default function SubmitDoc() {
     };
 
     return (
-        <div className="bg-[#E6F1FF] h-screen mt-10">
+        <div className="bg-[#E6F1FF] min-h-screen max-h-fit mt-10">
             <Breadcrumb className="ml-20">
                 <BreadcrumbList>
                     <Button
@@ -79,7 +79,7 @@ export default function SubmitDoc() {
 
             <div className="justify-items-center mt-10">
                 <form
-                    className="bg-white w-[70%] px-20 rounded-[16px] py-10"
+                    className="bg-white w-[70%] px-20 rounded-[16px] py-10 shadow-lg/30"
                     ref={formRef}
                     onSubmit={(e) => {
                         postOrdinance(e, formRef);
@@ -171,7 +171,6 @@ export default function SubmitDoc() {
                                 size="sm"
                                 className="text-red-600 hover:text-red-800"
                                 onClick={handleRemoveFile}
-                                type="button"
                             >
                                 <X className="w-4 h-4 mr-1" /> Remove
                             </Button>
