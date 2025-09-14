@@ -16,7 +16,7 @@ const successPopup = async () => {
 
 
 export const getCodeData = async (code: string) => {
-  const { data, error } = await client.from("position").select("*").eq("registration_code", code).single();
+  const { data, error } = await client.from("positions").select("*").eq("registration_code", code).single();
 
   if (error) {
     console.log("Error fetching code data: ", error);
@@ -50,7 +50,7 @@ export const registerUser = async (
   router: AppRouterInstance
 ) => {
   const { email, password, firstName, lastName, regCode } = regData;
-  const userType = checkCode(regCode);
+  const userType = await checkCode(regCode);
 
   Swal.fire({
     title: "Signing you up...",
@@ -95,7 +95,7 @@ export const registerUser = async (
 
   if (yoError) {
     Swal.close();
-    return alert(`Registration error: ${yoError}`);
+    return alert(`Registration error: ${yoError.message}`);
   }
   const { error } = await client.auth.signUp({
     email,

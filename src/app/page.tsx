@@ -8,7 +8,7 @@ import { UpcomingEventCard } from "./components/community/upcoming-eventCard";
 import { ordinance } from "./lib/definitions";
 import { getAllOrdinances } from "./actions/landingpage";
 import { openOrdinancePDF } from "./actions/ordinances";
-import { SearchIcon } from "lucide-react";
+import { Search, SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Title } from "./components/community/title";
@@ -23,17 +23,24 @@ export default function Home() {
   const [ordinanceLoc, setOrdinanceLoc] = useState<string | null>(null);
   const [ordinances, setOrdinances] = useState<ordinance[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-    const [searchLoc, setSearchLoc] = useState<string | null>(null);
+  const [searchLoc, setSearchLoc] = useState<string | null>(null);
   const [seeOrdinances, setSeeOrdinances] = useState("All");
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const queryParams = new URLSearchParams();
+    queryParams.set("q", searchQuery);
+    if (searchLoc) queryParams.set("loc", searchLoc);
+
+    router.push(`/search/?${queryParams.toString()}`);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       const ordinancesData = await getAllOrdinances(ordinanceLoc ?? "");
       setOrdinances(ordinancesData);
     };
-
-    console.log(ordinances)
 
     fetchData();
   }, [refresh, ordinanceLoc]);
@@ -43,7 +50,39 @@ export default function Home() {
       <ComNav />
       <div className="min-h-screen overflow-y-auto">
         <div className="flex flex-col items-center pb-80">
-          <Title onLocationChange={setSearchLoc} />
+          <div className="flex flex-col items-center pb-80">
+            <h1 className="text-center mt-15 text-[50px] m-5 sm:mt-20 sm:m-0 sm:text-[48px] font-bold">
+              <strong className="text-[#0073FF]">K</strong>
+              <a className="hidden sm:inline">abataan&apos;s </a>
+              <strong className="text-[#0073FF]">I</strong>
+              <a className="hidden sm:inline">ntegrated </a>
+              <strong className="text-[#0073FF]">L</strong>
+              <a className="hidden sm:inline">eadership & </a>
+              <strong className="text-[#0073FF]">O</strong>
+              <a className="hidden sm:inline">rganizational </a>
+              <strong className="text-[#0073FF]">S</strong>
+              <a className="hidden sm:inline">ystem</a>
+            </h1>
+            <form className="flex flex-col gap-2 w-screen items-center justify-center md:flex-row" onSubmit={handleSearch}>
+              <LocationSelect onChange={setSearchLoc} />
+              <div className="relative w-full max-w-full sm:max-w-[400px] md:max-w-[683px]">
+                <div className="absolute inset-y-0 left-1 pl-3 flex items-center pointer-events-none">
+                  <Search />
+                </div>
+                <input
+                  type="text"
+                  name="Search-bar"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search for ordinances"
+                  className="pl-13 p-3 bg-[#D9D9D9] rounded-lg w-full placeholder-gray-600"
+                />
+              </div>
+              <Button type="submit" className="cursor-pointer h-[100%] py-3 px-5 bg-[#052659] text-white rounded-lg hover:bg-white hover:text-[#052659] hover:border-black hover:border">
+                Search
+              </Button>
+            </form>
+          </div>
         </div>
 
         <div className="flex flex-col items-center mx-25 relative z-10 sm:flex-row sm:justify-between sm:items-end">
@@ -65,7 +104,7 @@ export default function Home() {
         <div className="flex flex-col items-center mx-25 relative z-10 sm:flex-row sm:justify-between sm:items-end">
           <p className="text-2xl font-bold text-center mb-3 sm:mb-0 sm:text-start">Ordinances</p>
           <div className="overflow-visible">
-              <LocationSelect onChange={setOrdinanceLoc} />
+            <LocationSelect onChange={setOrdinanceLoc} />
           </div>
         </div>
 
@@ -81,6 +120,7 @@ export default function Home() {
                 className="cursor-pointer rounded-xl transition-all duration-200 hover:bg-white hover:shadow-lg hover:scale-[1.02]"
               >
                 <OrdinancesLandingCard
+                  id={data.id}
                   title={data.title}
                   description={data.description}
                   author={data.author}

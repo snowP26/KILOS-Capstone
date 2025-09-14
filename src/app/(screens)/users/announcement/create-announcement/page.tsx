@@ -186,7 +186,6 @@ export default function CreateAnnouncement() {
                                     size="sm"
                                     className="mt-1 text-red-600 hover:text-red-800"
                                     onClick={handleRemoveFile}
-                                    type="button"
                                 >
                                     <X className="w-4 h-4 mr-1" /> Remove
                                 </Button>

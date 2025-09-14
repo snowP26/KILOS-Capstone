@@ -1,6 +1,6 @@
 import client from "@/src/api/client";
 
-export const locIDtoName = async (id: string) => {
+export const locIDtoName = async (id: number) => {
   const { data, error } = await client
     .from("location")
     .select("name")

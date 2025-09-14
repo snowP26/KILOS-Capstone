@@ -2,7 +2,7 @@ import client from "@/src/api/client";
 
 import { FormEvent, RefObject } from "react";
 import Swal from "sweetalert2";
-import { getLocFromAuth, getUserID } from "./convert";
+import { getLocFromAuth } from "./convert";
 
 
 
@@ -147,14 +147,14 @@ export const setPinned = async (id: number) => {
     // get session data
     const session = await client.auth.getSession();
     const user = session?.data.session?.user.id
-    
+
     // if the announcement is already pinned, unpin the announcement
     const { data: pinExist } = await client
         .from("pinned_announcements")
         .select("*")
         .eq("announcement_id", id)
         .eq("user_id", user)
-        
+
 
 
     if (pinExist && pinExist.length > 0) {
@@ -170,11 +170,11 @@ export const setPinned = async (id: number) => {
         user_id: user,
         announcement_id: id,
     }])
-    
+
     if (error) {
         return console.log("Unable to pin announcement: ", error);
     }
-    
+
     return console.log('You have pinned the announcement.')
 };
 
@@ -190,3 +190,25 @@ export const fetchPinned = async () => {
     return data.map(row => row.announcement_id);
 }
 
+export const getOwnAnnouncements = async () => {
+    const { data: { session }, error: sessionError } = await client.auth.getSession();
+
+    if (sessionError || !session) {
+        console.error("Error getting session or no session found:", sessionError);
+        return [];
+    }
+
+    const email = session.user.email;
+
+    const { data, error } = await client
+        .from("announcement")
+        .select("*")
+        .eq("author_email", email);
+
+    if (error) {
+        console.error("Error loading your announcements:", error);
+        return [];
+    }
+
+    return data ?? [];
+};
