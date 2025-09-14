@@ -15,9 +15,10 @@ import {
 } from "@/components/ui/breadcrumb";
 import { SubmitDocCard } from "@/src/app/components/user/submit-docCard";
 import { project } from "@/src/app/lib/definitions";
-import { getProposedProjectByID, postProject, uploadPhotoByID } from "@/src/app/actions/projects";
+import { deleteProjectPhoto, getProposedProjectByID, postProject, uploadPhotoByID } from "@/src/app/actions/projects";
 import { ProjectTable } from "@/src/app/components/user/table";
 import { ProjectDetails } from "@/src/app/components/user/project-details";
+import Swal from "sweetalert2";
 
 export default function ViewProposedProject() {
     const router = useRouter();
@@ -86,14 +87,47 @@ export default function ViewProposedProject() {
                     {/* LEFT SIDE POSTER */}
                     <div className="bg-white mt-10 w-[80%] h-full sm:h-150 xl:w-[35%] xl:h-155 justify-items-center place-content-center">
                         {project?.imageURL ? (
-                            // Show existing project poster
-                            <img
-                                src={project.imageURL}
-                                alt="Project Poster"
-                                className="w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130 object-cover rounded-md"
-                            />
+                            <div className="relative w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130 flex items-center justify-center">
+                                <img
+                                    src={`${project.imageURL}?t=${new Date().getTime()}`}
+                                    alt="Project Poster"
+                                    className="w-full h-full object-cover rounded-md"
+                                    onClick={() => console.log(project.imageURL)}
+                                />
+                                <div className="absolute top-3 right-3 flex gap-2">
+                                    {/* <SquarePen
+                                        className="cursor-pointer rounded-full bg-white/90 p-2 shadow-md hover:bg-gray-100 hover:text-blue-500 active:scale-95 transition"
+                                        strokeWidth={2.3}
+                                        size={32}
+                                    /> */}
+                                    <Trash2
+                                        className="cursor-pointer rounded-full bg-white/90 p-2 shadow-md hover:bg-red-50 hover:text-red-500 active:scale-95 transition"
+                                        strokeWidth={2.3}
+                                        size={32}
+                                        onClick={async () => {
+                                            const result = await Swal.fire({
+                                                title: "Delete Project Poster?",
+                                                text: "This action cannot be undone.",
+                                                icon: "warning",
+                                                showCancelButton: true,
+                                                confirmButtonColor: "#d33",
+                                                cancelButtonColor: "#3085d6",
+                                                confirmButtonText: "Yes, delete it!",
+                                                cancelButtonText: "Cancel",
+                                            });
+
+                                            if (result.isConfirmed) {
+                                                await deleteProjectPhoto(project.id);
+                                                Swal.fire("Deleted!", "Your project poster has been removed.", "success");
+                                                setRefresh((prev) => prev + 1)
+                                            }
+                                        }
+                                        }
+                                    />
+                                </div>
+                            </div>
+
                         ) : tempPosterFile ? (
-                            // Show preview of uploaded temp poster
                             <div className="flex flex-col items-center justify-center w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130 overflow-hidden">
                                 <img
                                     src={URL.createObjectURL(tempPosterFile)}
@@ -102,7 +136,6 @@ export default function ViewProposedProject() {
                                 />
                             </div>
                         ) : (
-                            // Show upload dropbox
                             <label
                                 htmlFor="poster-upload"
                                 className="flex flex-col items-center justify-center w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130 border-2 border-dashed border-gray-400 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
@@ -142,21 +175,30 @@ export default function ViewProposedProject() {
                             <p className="font-medium text-xl text-[#17A1FA]">Project Poster</p>
                             <div className="flex flex-row gap-2">
                                 {tempPosterFile && !project?.imageURL && (
-                                    <>
-                                        <Save 
+                                    <div className="flex flex-row gap-3">
+                                        {/* Save Poster Button */}
+                                        <button
                                             onClick={async () => {
                                                 if (project?.id !== undefined && tempPosterFile) {
                                                     await uploadPhotoByID(project.id, tempPosterFile);
-                                                    setRefresh((prev) => prev+1)
+                                                    setRefresh((prev) => prev + 1);
                                                 }
                                             }}
-                                            className="cursor-pointer hover:bg-gray-300 rounded-[5px]" 
-                                        />
-                                        <Trash2
+                                            className="group flex items-center gap-2 bg-blue-500 text-white px-3 py-1.5 rounded-md hover:bg-blue-600 active:scale-95 transition cursor-pointer"
+                                        >
+                                            <Save size={18} />
+                                            <span
+                                                className="opacity-0 max-w-0 h-0 p-0 overflow-hidden group-hover:opacity-100 group-hover:max-w-[120px] transition-all duration-300 ease-in-out group-hover:h-5 "
+                                            >Save Poster</span>
+                                        </button>
+                                        <button
                                             onClick={() => setTempPosterFile(null)}
-                                            className="cursor-pointer hover:bg-gray-300 rounded-[5px]"
-                                        />
-                                    </>
+                                            className="flex items-center gap-2 bg-gray-200 text-gray-700 px-3 py-1.5 rounded-md hover:bg-gray-300 active:scale-95 transition cursor-pointer"
+                                        >
+                                            <Trash2 size={18} />
+                                            <span>Cancel</span>
+                                        </button>
+                                    </div>
                                 )}
                             </div>
                         </div>

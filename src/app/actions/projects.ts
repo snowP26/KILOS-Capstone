@@ -173,3 +173,25 @@ export const uploadPhotoByID = async (id: number|string, file: File) => {
 
     return
 }
+
+export const deleteProjectPhoto = async (id: number|string) => {
+    const locID = await getLocFromAuth();
+    const locName = await locIDtoName(locID);
+    const filepath = `photos/${locName}/${id}`
+    const { error: storageError } = await client.storage.from("projects").remove([filepath]) 
+    
+    if(storageError){
+        console.log("Error deleting photo in storage: ", storageError);
+        return;
+    }
+
+    const { error: dbError } = await client.from("projects").update({imageURL: null}).eq("id", id);
+
+    if(dbError){
+        console.log("Error in deleting imgUrl in db: ", dbError)
+        return
+    }
+
+    console.log("Successfully deleted data.")
+    return
+}
