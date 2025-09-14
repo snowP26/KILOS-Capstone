@@ -93,7 +93,7 @@ export default function Ordinances() {
               View Pending
             </Button>
             <Button
-              className="bg-[#052659] text-white cursor-pointer hover:bg-white hover:text-[#052659] "
+              className="bg-[#052659] text-white cursor-pointer hover:bg-white hover:text-[#052659] hover:border-[1px] hover:border-black"
               onClick={() => router.push("/users/ordinances/submit-doc")}
             >
               Submit Ordinance

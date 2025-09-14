@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ImagePlus, CircleX, CircleCheck, FileText } from "lucide-react";
 import {
@@ -15,9 +14,9 @@ export const SubmitDocCard = () => {
     return (
         <Dialog>
             <DialogTrigger>
-                <Button className="bg-[#E6F1FF] text-black cursor-pointer hover:bg-black hover:text-[#E6F1FF]">
+                <div className="bg-[#E6F1FF] font-semibold text-sm py-2.5 px-4 rounded-md text-black cursor-pointer hover:bg-black hover:text-[#E6F1FF]">
                     Submit a Document
-                </Button>
+                </div>
             </DialogTrigger>
 
             <DialogContent>

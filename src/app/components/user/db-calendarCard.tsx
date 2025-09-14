@@ -17,6 +17,7 @@ import {
 
 import { DateTodayCard } from './date-todayCard';
 import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 
 export const DbCalendarCard = () => {
@@ -67,7 +68,7 @@ export const DbCalendarCard = () => {
         if (newEventTitle && selectedDate) {
             const calendarApi = selectedDate.view.calendar;
             calendarApi.unselect();
-            
+
             const newEvent = {
                 id: `${selectedDate?.start.toISOString()}-${newEventTitle}`,
                 title: newEventTitle,
@@ -79,96 +80,100 @@ export const DbCalendarCard = () => {
         }
     };
 
-  return (
-    <>
-        <div>
-            <div className="flex flex-col mb-10 xl:flex-row">
-                <div className="bg-white w-full rounded-2xl xl:w-[80%] xl:mt-10 xl:mx-5 xl:p-10 xl:h-fit">
-                    <FullCalendar 
-                    height='70vh'
-                    
-                    plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]} 
-                    headerToolbar={{left: "prev", center: "title", right: "next today"}}
-                        editable={true}
-                        selectable={true}
-                        selectMirror={true}
-                        dayMaxEvents={true}
-                        select={handleDateClick}
-                        eventClick={handleEventClick}
-                        eventsSet={(events) => setCurrentEvents(events)}
-                        initialEvents={typeof window !== "undefined" ? JSON.parse(localStorage.getItem("events") || "[]") : []}
-                    />
-                </div>
-                <div className="w-full xl:w-[20%]">
-                    <div className="mt-5">
-                        <DateTodayCard />
+    return (
+        <>
+            <div>
+                <div className="flex flex-col mb-10 xl:flex-row">
+                    <div className="bg-white w-full rounded-2xl xl:w-[80%] xl:mt-10 xl:mx-5 xl:p-10 xl:h-fit">
+                        <FullCalendar
+                            height='70vh'
+
+                            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                            headerToolbar={{ left: "prev", center: "title", right: "next today" }}
+                            editable={true}
+                            selectable={true}
+                            selectMirror={true}
+                            dayMaxEvents={true}
+                            select={handleDateClick}
+                            eventClick={handleEventClick}
+                            eventsSet={(events) => setCurrentEvents(events)}
+                            initialEvents={typeof window !== "undefined" ? JSON.parse(localStorage.getItem("events") || "[]") : []}
+                        />
                     </div>
-
-                    <div className="border-black border-2 h-[80%] rounded-2xl p-5 mt-5">
-                        <div className="text-3xl font-bold text-center">
-                            Upcoming Events
+                    <div className="w-full xl:w-[20%]">
+                        <div className="mt-5">
+                            <DateTodayCard />
                         </div>
-                        <ul className="mt-5 max-h-[500px] overflow-y-scroll">
-                            {currentEvents.length <= 0 && (
-                                <div>
-                                    No Events Present
-                                </div>
-                            )}
 
-                            {currentEvents.length > 0 && currentEvents.map ((event: EventApi) => (
-                                <li key={event.id}>
-                                    <div className="bg-purple-400 p-5 mt-2 rounded-2xl">
-                                        <div className="font-bold text-xl text-center">   
-                                            {event.title}
+                        <div className="border-black border-2 h-[80%] rounded-2xl p-5 mt-5">
+                            <div className="text-3xl font-bold text-center">
+                                Upcoming Events
+                            </div>
+                            <ScrollArea className="px-5 mt-5">
+                                <ul className=" max-h-[500px]">
+                                    {currentEvents.length <= 0 && (
+                                        <div className="text-center">
+                                            No Events Present
                                         </div>
-                                        <div className="flex flex-row">
-                                            <p className="pr-1">Host:</p>
-                                            <p>Mayor Kurt Sereno</p>
-                                        </div>
-                                        <div className="flex flex-row">
-                                            <p className="pr-1">Date:</p>
-                                            <div>
-                                                {formatDate(event.start!, {
-                                                    year: "numeric",
-                                                    month: "short",
-                                                    day: "numeric",
-                                                })}
+                                    )}
+
+                                    {currentEvents.length > 0 && currentEvents.map((event: EventApi) => (
+                                        <li key={event.id}>
+                                            <div className="bg-purple-400 p-5 mt-2 rounded-2xl">
+                                                <div className="font-bold text-xl text-center">
+                                                    {event.title}
+                                                </div>
+                                                <div className="flex flex-row">
+                                                    <p className="pr-1">Host:</p>
+                                                    <p>Mayor Kurt Sereno</p>
+                                                </div>
+                                                <div className="flex flex-row">
+                                                    <p className="pr-1">Date:</p>
+                                                    <div>
+                                                        {formatDate(event.start!, {
+                                                            year: "numeric",
+                                                            month: "short",
+                                                            day: "numeric",
+                                                        })}
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </ScrollArea>
+
+
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Set up a Meeting</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleAddEvent}>
-                    <div className="flex-col">
-                        <input 
-                            type="text"
-                            placeholder="Meeting Header"
-                            value={newEventTitle}
-                            onChange={(e) => setNewEventTitle(e.target.value)}
-                            required
-                            className="border-black border-2" 
-                        />
-                        <Button type="submit">Submit</Button>
-                    </div>
-                    
-                </form>
-                
-            </DialogContent>
-        </Dialog>
-    </>
-    
-        
-  )
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Set up a Meeting</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleAddEvent}>
+                        <div className="flex-col">
+                            <input
+                                type="text"
+                                placeholder="Meeting Header"
+                                value={newEventTitle}
+                                onChange={(e) => setNewEventTitle(e.target.value)}
+                                required
+                                className="border-black border-2"
+                            />
+                            <Button type="submit">Submit</Button>
+                        </div>
+
+                    </form>
+
+                </DialogContent>
+            </Dialog>
+        </>
+
+
+    )
 }
 

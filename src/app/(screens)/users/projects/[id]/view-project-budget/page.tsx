@@ -29,10 +29,10 @@ export default function ViewProject() {
     const router = useRouter();
 
     return (
-        <div className="bg-[#E6F1FF] h-screen mt-10">
+        <div className="bg-[#E6F1FF] min-h-screen max-h-fit mt-10">
             <Breadcrumb className="ml-5 xl:ml-20">
                 <BreadcrumbList>
-                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.back}>
+                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.back()}>
                         <ArrowLeft color="black" />
                         <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
                             Return
@@ -83,8 +83,8 @@ export default function ViewProject() {
                         </TableHeader>
                         <TableBody>
                             <TableRow>
-                                <TableCell>
-                                    <p className="text-center font-medium w-50 bg-[#052659] rounded-2xl text-white">For Approval</p>
+                                <TableCell className="flex justify-center">
+                                    <p className="-center text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">For Approval</p>
                                 </TableCell>
                                 <TableCell className="max-w-[150px] text-center">Product Name 1</TableCell>
                                 <TableCell className="text-center">Php 123,456,789</TableCell>
@@ -95,8 +95,8 @@ export default function ViewProject() {
                         </TableBody>
                         <TableBody>
                             <TableRow>
-                                <TableCell>
-                                    <p className="text-center font-medium w-50 bg-[#052659] rounded-2xl text-white">Approved</p>
+                                <TableCell className="flex justify-center">
+                                    <p className="text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">Approved</p>
                                 </TableCell>
                                 <TableCell className="max-w-[150px] text-center">Product Name 2</TableCell>
                                 <TableCell className="text-center">Php 123,456,789</TableCell>
@@ -107,8 +107,8 @@ export default function ViewProject() {
                         </TableBody>
                         <TableBody>
                             <TableRow>
-                                <TableCell>
-                                    <p className="text-center font-medium w-50 bg-[#052659] rounded-2xl text-white">Rejected</p>
+                                <TableCell className="flex justify-center">
+                                    <p className="text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">Rejected</p>
                                 </TableCell>
                                 <TableCell className="max-w-[150px] text-center">Product Name 3</TableCell>
                                 <TableCell className="text-center">Php 123,456,789</TableCell>
@@ -119,8 +119,8 @@ export default function ViewProject() {
                         </TableBody>
                         <TableBody>
                             <TableRow>
-                                <TableCell>
-                                    <p className="text-center font-medium w-50 bg-[#052659] rounded-2xl text-white">Resubmit</p>
+                                <TableCell className="flex justify-center">
+                                    <p className="text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">Resubmit</p>
                                 </TableCell>
                                 <TableCell className="max-w-[150px] text-center">Product Name 4</TableCell>
                                 <TableCell className="text-center">Php 123,456,789</TableCell>
