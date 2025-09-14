@@ -6,7 +6,7 @@ type recentFeedback = {
   date: string,
 }
 
-export const DbRecentFeedbackCard = ( { header, date } : recentFeedback) => {
+export const DbRecentFeedbackCard = ({ header, date } : recentFeedback) => {
   return (
     <div className="my-3 p-5 w-[70%] bg-[#C1E8FF] rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
         
@@ -15,13 +15,12 @@ export const DbRecentFeedbackCard = ( { header, date } : recentFeedback) => {
         </div>
         
 
-        <p className="font-semibold text-xl text-center wrap-anywhere xl:text-sm">
+        <p className="font-semibold text-xl text-center break-words xl:text-sm">
             {header}
-
         </p>
 
         <div className="flex flex-row justify-end mt-5">
-            <p className="font-thin text-xs mr-5 content-center">{date}</p>
+            <p className="font-thin text-xs mr-3">{date}</p>
             <Quote fill='black' size={15}/>
         </div>
     </div>

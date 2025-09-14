@@ -126,7 +126,7 @@ export default function ViewOrdinance() {
   };
 
   return (
-    <div className="bg-[#E6F1FF] h-screen mt-10">
+    <div className="bg-[#E6F1FF] min-h-screen max-h-fit mt-10">
       {/* Breadcrumb */}
       <Breadcrumb className="ml-20">
         <BreadcrumbList>

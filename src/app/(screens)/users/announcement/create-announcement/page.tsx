@@ -67,7 +67,7 @@ export default function CreateAnnouncement() {
     };
 
     return (
-        <div className="bg-[#E6F1FF] h-screen mt-10">
+        <div className="bg-[#E6F1FF] min-h-screen max-h-fit mt-10">
             <Breadcrumb className="ml-20">
                 <BreadcrumbList>
                     <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.push("/users/announcement")}>
