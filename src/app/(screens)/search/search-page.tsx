@@ -13,22 +13,21 @@ export default function SearchPage() {
   const loc = locationID ? parseInt(locationID, 10) : undefined;
   const [results, setResults] = useState<ordinance[]>([]);
 
-  const setData = async () => {
-    if (!query && !locationID) {
-      setResults([]);
-      return;
-    }
-
-    setResults(await searchData(query, loc));
-  };
 
   useEffect(() => {
     const fetchData = async () => {
-      await setData();
+      if (!query && !locationID) {
+        setResults([]);
+        return;
+      }
+
+      const data = await searchData(query, loc);
+      setResults(data ?? []);
+      console.log("Results: ", data);
     };
 
     fetchData();
-  }, []);
+  }, [query, locationID, loc]);
 
   return (
     <Suspense>
@@ -42,6 +41,7 @@ export default function SearchPage() {
             {results.map((ord) => (
               <OrdinancesLandingCard
                 key={ord.id}
+                id={ord.id}
                 title={ord.title}
                 description={ord.description}
                 author={ord.author}

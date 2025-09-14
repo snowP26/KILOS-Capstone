@@ -1,7 +1,7 @@
 "use client";
 
-import React from 'react'
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react';
 import { SquarePen } from 'lucide-react';
@@ -15,9 +15,35 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { project } from '@/src/app/lib/definitions';
+import { getProjectByID } from '@/src/app/actions/projects';
 
 export default function ViewProject() {
+    const params = useParams();
+    const projectID = Array.isArray(params.id)
+        ? decodeURIComponent(params.id[0] ?? "")
+        : decodeURIComponent(params.id ?? "");
     const router = useRouter();
+    const [project, setProject] = useState<project | null>(null);
+
+    useEffect(() => {
+        const fetchProject = async () => {
+            const data = await getProjectByID(projectID);
+            console.log("fetched:", data);
+            setProject(data);
+        };
+        fetchProject();
+    }, [projectID]);
+
+    useEffect(() => {
+        if (project) {
+            console.log("project updated:", project);
+        }
+    }, [project]);
+
+    if (!project) {
+        return <h1>Not found</h1>
+    }
 
     return (
         <div className="bg-[#E6F1FF] h-fit xl:h-screen mt-10">
@@ -44,14 +70,15 @@ export default function ViewProject() {
             </Breadcrumb>
 
             <div className="mx-2 sm:mx-10 xl:mx-25">
-                <p className="font-bold text-xl xl:text-3xl mt-8 mb-2 xl:mb-6">Iheras: Sharing the Christmas Spirit Year 4</p>
+                <p className="font-bold text-xl xl:text-3xl mt-8 mb-2 xl:mb-6">{project.title}</p>
 
                 <div className="flex flex-col-reverse gap-3 sm:gap-5 sm:h-10 sm:flex-row">
-                    <Button className="text-black bg-[#A3C4A8] w-full h-8 sm:w-fit sm:h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push("/users/projects/[id]/view-project-budget")}>View Budget Breakdown</Button>
-                    <p className="text-black bg-white rounded-2xl px-5 font-medium content-center w-fit h-8 sm:h-10">January 1, 2000</p>
+                    <Button className="text-black bg-[#A3C4A8] w-full h-8 sm:w-fit sm:h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push("/users/projects/[id]/view-project-budget")}>
+                        View Budget Breakdown</Button>
+                    <p className="text-black bg-white rounded-2xl px-5 font-medium content-center w-fit h-8 sm:h-10">{project.target_date}</p>
                 </div>
 
-                <div className="flex flex-col xl:flex-row gap-1 place-items-center min-h-fit max-h-screen"> 
+                <div className="flex flex-col xl:flex-row gap-1 place-items-center min-h-fit max-h-screen">
                     <div className="bg-white mt-10 w-[80%] h-full sm:h-150 xl:w-[35%] xl:h-155 justify-items-center place-content-center">
                         <div className="bg-black mt-10 w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130">
                             {/* image placeholder */}
@@ -59,8 +86,8 @@ export default function ViewProject() {
                         <div className="flex flex-row w-[80%] justify-between my-3">
                             <p className="font-medium text-xl text-[#17A1FA]">Project Poster</p>
                             <div className="flex flex-row gap-2">
-                                <SquarePen className="cursor-pointer hover:bg-gray-300 rounded-[5px]"/>
-                                <Trash2 className="cursor-pointer hover:bg-gray-300 rounded-[5px]"/>
+                                <SquarePen className="cursor-pointer hover:bg-gray-300 rounded-[5px]" />
+                                <Trash2 className="cursor-pointer hover:bg-gray-300 rounded-[5px]" />
                             </div>
                         </div>
                     </div>
@@ -69,17 +96,10 @@ export default function ViewProject() {
                             <p className="font-semibold text-xl text-center xl:text-2xl xl:text-start">Project Description:</p>
                             <div className="mt-2 xl:h-[90%] xl:w-[100%]">
                                 <p className="w-full h-100 xl:h-full overflow-y-auto pl-4 pr-6 xl:px-10">
-                                    Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-                                    <br/><br/>
-                                    Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-                                    <br/><br/>
-                                    Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-                                    <br/><br/>
-                                    Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-                                    Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+                                    {project.description}
                                 </p>
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>

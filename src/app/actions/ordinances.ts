@@ -412,7 +412,7 @@ export const uploadOrdinanceFile = async (file: File, ordinanceID: number) => {
       throw new Error("No data was found: ", dbError);
     }
 
-    const loc = await locIDtoName(data?.location as string);
+    const loc = await locIDtoName(data?.location);
     const filename = `${loc}/${loc}_${ordinanceID}_${file.name}`;
 
     const upload = await client.storage
