@@ -3,7 +3,6 @@ import { Search as SearchIcon } from "lucide-react";
 import LocationSelect from "./locselect";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-const router = useRouter();
 
 const Search = () => {
     return <SearchIcon size={24} />
