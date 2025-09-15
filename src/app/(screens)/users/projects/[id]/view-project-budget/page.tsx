@@ -1,7 +1,7 @@
 "use client";
 
-import React from 'react'
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react';
 import { Image } from 'lucide-react';
@@ -24,9 +24,28 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { project } from '@/src/app/lib/definitions';
+import { getProjectByTitle } from '@/src/app/actions/projects';
 
 export default function ViewProject() {
     const router = useRouter();
+    const params = useParams();
+    const projectID = Array.isArray(params.id)
+        ? params.id[0]
+        : params.id;
+
+    const [project, setProject] = useState<project | null>(null)
+
+    useEffect(() => {
+        const setData = async() => {
+            if(projectID){
+                const data = await getProjectByTitle(projectID)
+                setProject(data)
+            }
+        }
+
+        setData()
+    }, [])
 
     return (
         <div className="bg-[#E6F1FF] h-screen mt-10">
@@ -47,7 +66,7 @@ export default function ViewProject() {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/users/projects/[id]">View Project</BreadcrumbLink>
+                        <BreadcrumbLink href={`/users/projects/${projectID}`}>View Project</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
@@ -57,10 +76,10 @@ export default function ViewProject() {
             </Breadcrumb>
 
             <div className="mx-2 sm:mx-10 xl:mx-25">
-                <p className="font-bold text-xl xl:text-3xl mt-8 mb-2 xl:mb-6">Iheras: Sharing the Christmas Spirit Year 4</p>
+                <p className="font-bold text-xl xl:text-3xl mt-8 mb-2 xl:mb-6">{project?.title}</p>
 
                 <div className="flex flex-col md:flex-row gap-5 h-10 justify-between">
-                    <Button className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push("/users/projects/[id]")}>View Project Details</Button>
+                    <Button className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push(`/users/projects/${projectID}`)}>View Project Details</Button>
                     <div className="flex flex-row gap-2">
                         <p className="text-black font-medium text-sm md:text-base content-center">Set Budget for Project:</p>
                         <p className="text-[#28A745] text-base md:text-xl font-medium content-center">&#8369;999,999,999.00</p>
@@ -89,8 +108,8 @@ export default function ViewProject() {
                                 <TableCell className="max-w-[150px] text-center">Product Name 1</TableCell>
                                 <TableCell className="text-center">Php 123,456,789</TableCell>
                                 <TableCell className="text-center">1</TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300"/></TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300"/></TableCell>
+                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
+                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
                             </TableRow>
                         </TableBody>
                         <TableBody>
@@ -101,8 +120,8 @@ export default function ViewProject() {
                                 <TableCell className="max-w-[150px] text-center">Product Name 2</TableCell>
                                 <TableCell className="text-center">Php 123,456,789</TableCell>
                                 <TableCell className="text-center">1</TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300"/></TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300"/></TableCell>
+                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
+                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
                             </TableRow>
                         </TableBody>
                         <TableBody>
@@ -113,8 +132,8 @@ export default function ViewProject() {
                                 <TableCell className="max-w-[150px] text-center">Product Name 3</TableCell>
                                 <TableCell className="text-center">Php 123,456,789</TableCell>
                                 <TableCell className="text-center">1</TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300"/></TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300"/></TableCell>
+                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
+                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
                             </TableRow>
                         </TableBody>
                         <TableBody>
@@ -125,8 +144,8 @@ export default function ViewProject() {
                                 <TableCell className="max-w-[150px] text-center">Product Name 4</TableCell>
                                 <TableCell className="text-center">Php 123,456,789</TableCell>
                                 <TableCell className="text-center">1</TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300"/></TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300"/></TableCell>
+                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
+                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
