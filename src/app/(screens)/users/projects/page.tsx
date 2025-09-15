@@ -300,6 +300,7 @@ export default function Practice() {
                                         router.push(`/users/projects/proposed-project/${(data.title).trim()}-${data.id}`)
                                     }
                                     key={data.id}
+                                    className="min-w-full"
                                 >
                                     <ProposedProjCard Title={data.title} Description={data.description} Status={data.status} PhotoURL={data.imageURL}/>
                                 </div>
@@ -307,7 +308,6 @@ export default function Practice() {
                             ))
 
                             }
-
                         </div>
                     </div>
                 </div>
