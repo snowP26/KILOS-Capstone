@@ -129,7 +129,7 @@ export default function Announcement() {
   );
 
   return (
-    <div className="min-h-screen max-h-full xl:mx-20 bg-[#E6F1FF]">
+    <div className="min-h-screen max-h-fit xl:mx-20 bg-[#E6F1FF]">
       {/* Title */}
       <p className="font-bold text-2xl mt-10 mx-10 sm:text-3xl">
         Announcements
@@ -141,7 +141,7 @@ export default function Announcement() {
         <div className="lg:w-[70%] xl:w-4/5 lg:my-2 lg:mx-3">
           {/* Mobile create button */}
           <Button
-            className="lg:hidden bg-[#052659] w-[90%] flex justify-self-center my-3 hover:bg-accent hover:text-accent-foreground cursor-pointer"
+            className="lg:hidden bg-[#052659] w-[90%] flex justify-self-center my-3 hover:bg-accent hover:text-accent-foreground hover:border-[1px] hover:border-black cursor-pointer"
             onClick={() =>
               router.push("/users/announcement/create-announcement")
             }
@@ -254,14 +254,17 @@ export default function Announcement() {
                         .replace(/_/g, " ")
                         .replace(/\b\w/g, (c) => c.toUpperCase())}
                     </p>
-                    <p className="pb-3 lg:pb-0 lg:w-150">{data.body}</p>
+                    <p className="pb-3 lg:w-150">{data.body}</p>
                   </div>
                   {data.photo && (
-                    <img
-                      alt="Announcement image"
-                      className="bg-black self-center max-w-50 max-h-50 hover:opacity-90 transition"
-                      src={data.photo}
-                    />
+                    <div className="">
+                      <img
+                        alt="Announcement image"
+                        className="bg-black aspect-3/2 xl:aspect-4/3 object-cover hover:opacity-90 transition"
+                        src={data.photo}
+                      />
+                    </div>
+
                   )}
                 </div>
               </div>
@@ -272,7 +275,7 @@ export default function Announcement() {
         {/* Right Section (Pinned Sidebar) */}
         <div className="hidden lg:block lg:w-[30%] xl:w-1/5 mr-3">
           <Button
-            className="bg-[#052659] w-[100%] my-3 hover:bg-accent hover:text-accent-foreground cursor-pointer"
+            className="bg-[#052659] w-[100%] my-3 hover:bg-accent hover:text-accent-foreground hover:border-[1px] hover:border-black cursor-pointer"
             onClick={() =>
               router.push("/users/announcement/create-announcement")
             }
@@ -296,6 +299,7 @@ export default function Announcement() {
                     announcementType={a.type}
                   />
                 ))}
+
               {allAnnouncements.filter((a) =>
                 pinnedAnnouncements.includes(a.id)
               ).length === 0 && (

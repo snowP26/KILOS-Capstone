@@ -14,14 +14,15 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogDescription, // ✅ added
+    DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ImagePlus } from "lucide-react";
 
 
-export default function Practice() {
+export default function Projects() {
+
     const router = useRouter();
     const [projects, setProjects] = useState<project[] | null>(null);
     const [proposedProjects, setProposedProjects] = useState<project[] | null>(null);
@@ -74,21 +75,18 @@ export default function Practice() {
         );
     } else if (normalizedRole === "executive") {
         content = (
-            <div className="flex flex-col xl:flex-row bg-[#E6F1FF] min-h-screen max-h-full">
-                <div className="w-full xl:w-[80%] flex flex-col items-center xl:items-start">
-                    <p className="hidden xl:block font-bold text-3xl m-10">
-                        Current Projects
-                    </p>
+            <div className="flex flex-col lg:flex-row bg-[#E6F1FF] min-h-screen max-h-full">
+                <div className="w-full lg:w-[70%] xl:w-[80%] flex flex-col items-center lg:items-start">
+                    <p className="hidden lg:block font-bold text-3xl m-10">Current Projects</p>
 
-                    <p className=" xl:hidden font-bold text-3xl mt-5 mx-10">
-                        Current Projects
-                    </p>
+                    <p className="lg:hidden font-bold text-3xl mt-5 mx-10">Current Projects</p>
 
-                    <hr className="border-t border-gray-400 w-[90%] mx-auto my-2 xl:hidden" />
+
+                    <hr className="border-t border-gray-400 w-[90%] mx-auto my-2 lg:hidden" />
 
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger onClick={() => setIsDialogOpen(true)}>
-                            <div className="w-full my-2 bg-[#93C2FF] text-black cursor-pointer py-1 px-3 rounded-md font-semibold hover:bg-black hover:text-[#93C2FF] xl:hidden">
+                            <div className="w-full my-2 bg-[#93C2FF] text-black cursor-pointer py-1 px-3 rounded-md font-semibold hover:bg-black hover:text-[#93C2FF] lg:hidden">
                                 Propose a Project
                             </div>
                         </DialogTrigger>
@@ -130,7 +128,7 @@ export default function Practice() {
                         </DialogContent>
                     </Dialog>
 
-                    <div className="mt-5 flex flex-row gap-0.5 xl:hidden">
+                    <div className="mt-5 flex flex-row gap-0.5 lg:hidden">
                         <div className="bg-[#052659] text-white shadow-md shadow-gray-400 p-2 rounded-tl-2xl rounded-bl-2xl">
                             <p>Current Projects</p>
                         </div>
@@ -139,8 +137,8 @@ export default function Practice() {
                         </div>
                     </div>
 
-                    <div className="w-[80%] my-4">
-                        <div className="flex flex-wrap justify-center gap-5">
+                    <div className="w-full my-4">
+                        <div className="flex flex-wrap justify-center gap-5 lg:gap-3 xl:gap-5">
                             {projects?.map((data) => (
                                 <div
                                     onClick={() => router.push(`/users/projects/${data.title}`)}
@@ -158,10 +156,11 @@ export default function Practice() {
                     </div>
                 </div>
 
-                <div className="hidden xl:flex xl:flex-col w-[20%] mr-5 mb-10">
+
+                <div className="hidden lg:flex lg:flex-col lg:w-[30%] w-[20%] mr-5 mb-10">
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger onClick={() => setIsDialogOpen(true)}>
-                            <div className="w-full my-2 bg-[#93C2FF] text-black cursor-pointer rounded-md font-semibold py-1  hover:bg-black hover:text-[#93C2FF]">
+                          <div className="w-full my-2 bg-[#93C2FF] text-black cursor-pointer rounded-md font-semibold py-1  hover:bg-black hover:text-[#93C2FF]">
                                 Propose a Project
                             </div>
                         </DialogTrigger>
@@ -289,11 +288,12 @@ export default function Practice() {
                             </DialogHeader>
                         </DialogContent>
                     </Dialog>
-                    <div className="bg-white min-h-[85%] rounded-[8px] py-6 px-2">
+
+                    <div className="bg-white min-h-200 max-h-full pb-5 rounded-[8px]">
                         <p className="font-bold text-2xl text-center mb-4">
                             Proposed Projects
                         </p>
-                        <div className="flex flex-wrap gap-4">
+                        <div className="flex flex-col gap-4">
                             {proposedProjects?.map((data) => (
                                 <div
                                     onClick={() =>

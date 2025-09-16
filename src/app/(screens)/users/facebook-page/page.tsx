@@ -7,6 +7,7 @@ import { Mail } from 'lucide-react'
 import { Phone } from 'lucide-react'
 import { FbInboxCard } from '@/src/app/components/user/fb-inboxCard'
 import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 import {
     NavigationMenu,
@@ -20,43 +21,67 @@ import {
 
 export default function FacebookPage() {
     return (
-        <div className="bg-[#E6F1FF] w-[100%] min-h-screen max-h-fit">
-            <div className="flex flex-row">
+        <div className="w-[100%] min-h-screen max-h-fit">
+            {/* Title */}
+            <p className="font-bold text-2xl mt-6 mx-10 sm:text-3xl">
+                Facebook Page
+            </p>
+            <hr className="border-t border-black w-[90%] lg:w-[95%] mx-auto mt-1" />
 
-                {/* start of fb post card */}
-                <div className="w-1/5 bg-white h-fit rounded-[10px] pt-5 mt-2 ml-3">
-                    <p className="text-xl font-semibold ml-4 text-center text-shadow-lg">Bula Municipal Youth Officials</p>
+            <div className="flex flex-col lg:flex-row">
+
+                {/* Information */}
+                <div className="bg-white w-[90%] mt-6 pb-5 self-center h-fit rounded-[10px] lg:self-start lg:mt-3 lg:ml-3 lg:pt-5 lg:w-[25%] xl:w-1/5 ">
+                    <p className="text-xl mt-3 font-semibold text-center text-shadow-lg lg:text-md lg:mt-0 lg:mx-5">Bula Municipal Youth Officials</p>
                     <hr className="border-t border-black w-[90%] mx-auto my-3" />
-                    <div className="mt-5">
-                        <div className="flex flex-row gap-5 my-10 mx-10">
-                            <Info />
-                            <p className="text-sm self-center">In the Service of the Bulaeño Youth</p>
+
+                    {/* Information items */}
+                    <div className="mx-auto w-[90%] space-y-3">
+                        <div className="w-full flex flex-row gap-5 md:gap-2 lg:my-5 lg:gap-2 xl:my-10">
+                            <Info className="w-[10%] h-full self-center md:p-3 lg:p-0" />
+                            <p className="text-sm md:text-lg lg:text-sm self-center w-[90%]">In the Service of the Bulaeño Youth
+                            </p>
                         </div>
-                        <div className="flex flex-row gap-5 my-10 mx-10">
-                            <MapPin />
-                            <p className="text-sm self-center">Bula, Camarines Sur</p>
+                        <div className="w-full flex flex-row gap-5 md:gap-2 lg:my-5 lg:gap-2 xl:my-10">
+                            <MapPin className="w-[10%] h-full self-center md:p-3 lg:p-0"/>
+                            <p className="text-sm md:text-lg lg:text-sm self-center w-[90%]">Bula, Camarines Sur</p>
                         </div>
-                        <div className="flex flex-row gap-5 my-10 mx-10">
-                            <Mail />
-                            <p className="text-sm italic underline self-center">bmyouthofficials@gmail.com</p>
+                        <div className="w-full flex flex-row gap-5 md:gap-2 lg:my-5 lg:gap-2 xl:my-10">
+                            <Mail className="w-[10%] h-full self-center md:p-3 lg:p-0"/>
+                            <p className="text-sm md:text-lg lg:text-sm self-center w-[90%] italic underline">bmyouthofficials@gmail.com</p>
                         </div>
-                        <div className="flex flex-row gap-5 my-10 mx-10">
-                            <Phone />
-                            <p className="text-sm italic underline self-center">+639001118392</p>
+                        <div className="w-full flex flex-row gap-5 md:gap-2 lg:my-5 lg:gap-2 xl:my-10">
+                            <Phone className="w-[10%] h-full self-center md:p-3 lg:p-0"/>
+                            <p className="text-sm md:text-lg lg:text-sm self-center w-[90%] italic underline">+639001118392</p>
                         </div>
                     </div>
                 </div>
 
+                {/* Tabs */}
+                <div className="flex flex-row w-[70%] gap-0.5 mt-10 self-center text-center lg:hidden">
+                    <div className="bg-[#052659] w-[100%] text-white shadow-md shadow-gray-400 text-xs lg:text-lg p-2 rounded-tl-2xl rounded-bl-2xl cursor-pointer">
+                        <p>Feed</p>
+                    </div>
+                    <div className="bg-[#052659] w-[100%] opacity-60 text-gray-400 shadow-lg shadow-blue-800/40 text-xs lg:text-lg p-2 rounded-tr-2xl rounded-br-2xl cursor-pointer">
+                        <p>Page Inbox</p>
+                    </div>
+                </div>
 
-                <div className="w-3/5 my-2 mx-3">
-                    <Button className="w-[100%] rounded-[20px] bg-[#B2D3FF] font-bold text-black">Create a new post</Button>
-                    <div className="bg-white rounded-2xl w-[100%] pl-10 pr-10 pb-2 mt-3 mb-2">
-                        <div className="flex flex-row  pt-5 justify-between">
-                            <div className="flex flex-row gap-2">
-                                <div className="w-15 h-15 bg-black rounded-full self-center"></div>
+                {/* start of fb post card */}
+                <div className="w-[90%] mt-3 self-center lg:w-[50%] xl:w-3/5 lg:my-2 lg:mx-3">
+                    <Button className="w-[100%] rounded-[20px] bg-[#B2D3FF] font-bold text-black hover:bg-black hover:text-[#B2D3FF] cursor-pointer">Create a new post</Button>
+                    <div className="bg-white rounded-2xl w-[100%] px-5 pb-2 mt-3 mb-2 lg:mt-2">
+                        <div className="w-full flex flex-row justify-between">
+
+                            <div className="w-full mt-5 flex flex-row gap-2">
+                                <Avatar className="w-12 h-12">
+                                    <AvatarImage src="https://github.com/shadcn.png" />
+                                    <AvatarFallback>CN</AvatarFallback>
+                                </Avatar>
+
                                 <div className="flex flex-col self-center">
-                            
-                                    <p className="font-semibold text-xl">Bula Municipal Youth Officials</p>
+
+                                    <p className="font-semibold text-md xl:text-xl">Bula Municipal Youth Officials</p>
 
                                     <div className="flex flex-row gap-1">
                                         <p className="text-sm font-thin">January 1</p>
@@ -65,8 +90,7 @@ export default function FacebookPage() {
                                     </div>
                                 </div>
                             </div>
-                            
-                            
+
                             <div className="self-center">
                                 <NavigationMenu>
                                     <NavigationMenuList>
@@ -96,31 +120,31 @@ export default function FacebookPage() {
                         <div className="mt-8">
                             <p>
                                 BIG THINGS START WITH SMALL DIGS! 🌱
-                                <br/><br/>
-                                It only takes one step—and one shovel—to start something bigger. This June 25, we&apos;re not just planting trees. 
+                                <br /><br />
+                                It only takes one step—and one shovel—to start something bigger. This June 25, we&apos;re not just planting trees.
                                 We&apos;re planting hope, setting down roots, and growing a future that&apos;s greener and stronger for Bula. ✨
-                                <br/><br/>
-                                The Bula Municipal Youth Officials invite you to move with nature, and take part in our EnviroWARRIOR: 
+                                <br /><br />
+                                The Bula Municipal Youth Officials invite you to move with nature, and take part in our EnviroWARRIOR:
                                 YOUTH TREE GROWING ACTIVITY happening in LA Victoria, Bula, Camarinues Sur at 8:00 AM.
-                                <br/><br/>
+                                <br /><br />
                                 Let&apos;s plant today, so tomorrow can breathe better! 🍃
-                                <br/><br/>
+                                <br /><br />
                                 🎨 : Adrian Abonita
-                                <br/>
+                                <br />
                                 ✍️ : Ron Avery Ystelle Baldovia
                             </p>
                         </div>
-                       
+
                         <div className="my-5">
-                             {/* image placeholder */}
-                            <div className="bg-black w-90 h-100 justify-self-center"></div>
+                            {/* image placeholder */}
+                            <div className="bg-black aspect-2/3 object-cover"></div>
                         </div>
 
                     </div>
                     {/* end of fb post card */}
 
                 </div>
-                <div className="w-1/5 mr-3">
+                <div className="self-center mb-5 w-[95%] lg:w-[25%] xl:w-1/5 lg:mr-3 lg:self-start">
                     {/* <Button className="bg-[#052659] w-[100%] my-2">Create Announcement</Button> */}
 
                     <div className="bg-white rounded-[10px] mt-2 pt-5 h-fit pb-5">

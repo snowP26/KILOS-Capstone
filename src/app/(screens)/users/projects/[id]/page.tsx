@@ -7,6 +7,7 @@ import { ArrowLeft } from 'lucide-react';
 import { SquarePen } from 'lucide-react';
 import { Trash2 } from 'lucide-react';
 import { Separator } from "@/components/ui/separator"
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -46,10 +47,10 @@ export default function ViewProject() {
     }
 
     return (
-        <div className="bg-[#E6F1FF] h-fit xl:h-screen mt-10">
+        <div className="min-h-screen max-h-full mt-10">
             <Breadcrumb className="xl:ml-20">
                 <BreadcrumbList>
-                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.back}>
+                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.back()}>
                         <ArrowLeft color="black" />
                         <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
                             Return
@@ -81,6 +82,7 @@ export default function ViewProject() {
                     <p className="text-black bg-white rounded-2xl px-5 font-medium content-center w-fit h-8 sm:h-10">{project.target_date}</p>
                 </div>
 
+
                 <div className="flex flex-col xl:flex-row gap-1 place-items-center min-h-fit max-h-screen">
                     <div className="bg-white mt-10 w-[80%] h-full sm:h-150 xl:w-[35%] xl:h-155 justify-items-center place-content-center">
                         {
@@ -102,16 +104,21 @@ export default function ViewProject() {
                             </div>
                         </div>
                     </div>
+
                     <div className="bg-white mb-10 w-[80%] xl:w-[80%] xl:h-155 xl:mt-10 xl:mb-0">
                         <div className="bg-[#E6F1FF] w-auto h-full mx-4 my-4 xl:h-[90%] xl:mx-5 xl:mt-8 pt-2 xl:pt-5 xl:px-10">
                             <p className="font-semibold text-xl text-center xl:text-2xl xl:text-start">Project Description:</p>
                             <div className="mt-2 xl:h-[90%] xl:w-full">
                                 <p className="w-full h-100 xl:h-full overflow-y-auto pl-4 pr-6 xl:px-10">
+
                                     {project.description}
                                 </p>
                             </div>
+                            </ScrollArea>
+                            
 
                         </div>
+
                     </div>
                 </div>
 
