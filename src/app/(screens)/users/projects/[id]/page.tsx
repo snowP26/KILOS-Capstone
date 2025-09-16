@@ -74,19 +74,29 @@ export default function ViewProject() {
                 <p className="font-bold text-xl xl:text-3xl mt-8 mb-2 xl:mb-6">{project.title}</p>
 
                 <div className="flex flex-col-reverse gap-3 sm:gap-5 sm:h-10 sm:flex-row">
-                    <Button className="text-black bg-[#A3C4A8] w-full h-8 sm:w-fit sm:h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push("/users/projects/[id]/view-project-budget")}>
+                    <Button
+                        className="text-black bg-[#A3C4A8] w-full h-8 sm:w-fit sm:h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]"
+                        onClick={() => router.push(`/users/projects/${project.title}/view-project-budget`)}
+                    >
                         View Budget Breakdown</Button>
                     <p className="text-black bg-white rounded-2xl px-5 font-medium content-center w-fit h-8 sm:h-10">{project.target_date}</p>
                 </div>
 
-                <div className="flex flex-col h-full lg:flex-row gap-1 place-items-center min-h-fit max-h-screen">
-                    {/* Project poster */}
-                    <div className="bg-white mt-10 w-[80%] content-center h-full sm:h-full lg:w-[35%] lg:h-155">
-                        <div className="bg-black mt-5 mx-5 aspect-1/2 object-cover xl:aspect-3/5 2xl:aspect-6/7">
 
-                            {/* image placeholder */}
-                        </div>
-                        <div className="flex flex-row place-self-center items-center w-[80%] justify-between my-3">
+                <div className="flex flex-col xl:flex-row gap-1 place-items-center min-h-fit max-h-screen">
+                    <div className="bg-white mt-10 w-[80%] h-full sm:h-150 xl:w-[35%] xl:h-155 justify-items-center place-content-center">
+                        {
+                            project.imageURL ? (
+
+                                <img src={project.imageURL} className="bg-black mt-10 w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130" />
+                            ) : (
+                                <div className="mt-10 flex items-center justify-center w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130 rounded-[8px] bg-blue-100 text-blue-600 font-bold text-6xl shadow">
+                                    {project.title?.charAt(0).toUpperCase()}
+                                </div>
+                            )
+                        }
+                        {/* image placeholder */}
+                        <div className="flex flex-row w-[80%] justify-between my-3">
                             <p className="font-medium text-xl text-[#17A1FA]">Project Poster</p>
                             <div className="flex flex-row gap-2">
                                 <SquarePen className="cursor-pointer hover:bg-gray-300 rounded-[5px]" />
@@ -94,19 +104,17 @@ export default function ViewProject() {
                             </div>
                         </div>
                     </div>
-                    {/* Project description */}
-                    <div className="bg-white mb-10 w-[80%] lg:w-[80%] lg:h-155 lg:mt-10 lg:mb-0">
-                        <div className="bg-[#E6F1FF] m-5 p-5">
-                            <p className="text-xl font-semibold">
-                                Project Description:
-                            </p>
-                            <ScrollArea className="mt-5 md:px-3 xl:px-5">
-                                <div className="min-h-50 max-h-150 lg:max-h-120">
-                                <p>
+
+                    <div className="bg-white mb-10 w-[80%] xl:w-[80%] xl:h-155 xl:mt-10 xl:mb-0">
+                        <div className="bg-[#E6F1FF] w-auto h-full mx-4 my-4 xl:h-[90%] xl:mx-5 xl:mt-8 pt-2 xl:pt-5 xl:px-10">
+                            <p className="font-semibold text-xl text-center xl:text-2xl xl:text-start">Project Description:</p>
+                            <div className="mt-2 xl:h-[90%] xl:w-full">
+                                <p className="w-full h-100 xl:h-full overflow-y-auto pl-4 pr-6 xl:px-10">
+
                                     {project.description}
                                 </p>
                             </div>
-                            </ScrollArea>
+
                             
 
                         </div>
@@ -115,7 +123,4 @@ export default function ViewProject() {
                 </div>
 
             </div>
-
-        </div>
-    )
-}
+            </div>)}
