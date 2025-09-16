@@ -17,36 +17,76 @@ export const getPendingProjects = async () => {
     return data
 }
 
-export const getProjectApprovals = async(id: number|undefined) => {
-    if(!id) return []
+export const getProjectApprovals = async (id: number | undefined) => {
+    if (!id) return []
 
-    const { data, error } = await client.from("project_approvals").select("*").eq("id", id)
+    const { data, error } = await client.from("project_approvals").select("*", ).eq("project_id", id).order("id", { ascending: true });
 
-    if(!data ){
+    if (!data) {
         console.log("Project does not exist");
         return []
     }
 
-    if(error){
+    if (error) {
         console.log("Error retrieving your project: ", error);
         return []
     }
-    
+
     console.log("getProjectApprovals: ", data)
     return data ?? []
 }
 
-export const addProjectApproval = async(id: number|undefined) => {
-    if(!id) return []
+export const addProjectApproval = async (id: number | undefined) => {
+    if (!id) return []
 
     const { error } = await client.from("project_approvals").insert([{
         project_id: id
     }])
 
-    if(error){
-        console.log('Error inserting approval for your project: ', error );
+    if (error) {
+        console.log('Error inserting approval for your project: ', error);
         return
     }
 
     return
+}
+
+export const deleteProjectApproval = async (id: number | undefined) => {
+    if (!id) return false
+
+    const { error } = await client.from("project_approvals").delete().eq("id", id)
+
+    if (error) {
+        console.error("Error deleting project approval:", error.message);
+        return false;
+    }
+
+    return true;
+}
+
+export const updateProjectApproval = async (
+    id: number,
+    updates: { recipient?: string; status?: string; comments?: string }
+) => {
+    const { error } = await client
+        .from("project_approvals")
+        .update(updates)
+        .eq("id", id);
+
+    if (error) {
+        console.error("Error updating approval:", error);
+        return false;
+    }
+
+    return true;
+};
+
+export const updateProjectStatus = async (id: number, value: string | null) => {
+    const { error } = await client.from("projects").update({"status": value}).eq("id", id)
+    if(error){
+        console.log("Error in updating project Status", error)
+        return false
+    }
+
+    return true
 }

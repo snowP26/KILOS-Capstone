@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { SubmitDocCard } from "@/src/app/components/user/submit-docCard";
 import { project } from "@/src/app/lib/definitions";
-import { deleteProjectPhoto, getProposedProjectByID, postProject, uploadPhotoByID } from "@/src/app/actions/projects";
+import { deleteProjectPhoto, getProposedProjectByID, uploadPhotoByID } from "@/src/app/actions/projects";
 import { ProjectTable } from "@/src/app/components/user/table";
 import { ProjectDetails } from "@/src/app/components/user/project-details";
 import Swal from "sweetalert2";

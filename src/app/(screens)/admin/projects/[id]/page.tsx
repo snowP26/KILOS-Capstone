@@ -35,7 +35,43 @@ import { useParams, useRouter } from 'next/navigation';
 import { getProjectByID } from '@/src/app/actions/projects';
 import { project, project_approvals } from '@/src/app/lib/definitions';
 import { motion, AnimatePresence } from 'framer-motion';
-import { addProjectApproval, getProjectApprovals } from '@/src/app/actions/admin_projects';
+import { addProjectApproval, deleteProjectApproval, getProjectApprovals, updateProjectApproval, updateProjectStatus } from '@/src/app/actions/admin_projects';
+import Swal from 'sweetalert2';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@radix-ui/react-hover-card';
+
+const checkStatuses = async (approval: project_approvals[] | null, id: number) => {
+    if (!id || !approval) {
+        return "null"
+    }
+    const status = approval.map(data => data.status);
+    let projectStatusValue = "Under Review";
+
+    if (status.includes("For Revision")) {
+        projectStatusValue = "Action Pending";
+        return projectStatusValue;
+    }
+
+    if (status.includes("Declined")) {
+        projectStatusValue = "Declined";
+        return projectStatusValue;
+    }
+
+    const allAccepted = status.every(s => s === "Accepted");
+    if (allAccepted) {
+        projectStatusValue = "For Approval";
+        return projectStatusValue;
+    }
+
+    if (status.includes("Accepted")) {
+        projectStatusValue = "Under Review";
+        return projectStatusValue;
+    }
+
+    console.log(projectStatusValue)
+    await updateProjectStatus(id, projectStatusValue)
+    return "Pending";
+}
+
 
 export default function ViewProposedProj() {
     const router = useRouter();
@@ -44,6 +80,14 @@ export default function ViewProposedProj() {
     const [showDetails, setShowDetails] = useState(false);
     const [project, setProject] = useState<project | null>(null);
     const [approvals, setApprovals] = useState<project_approvals[] | null>(null);
+    const [refresh, setRefresh] = useState(0);
+    const [editingRowId, setEditingRowId] = useState<number | null>(null);
+    const [formData, setFormData] = useState({
+        recipient: "",
+        status: "",
+        comments: ""
+    });
+    const [status, setStatus] = useState("action-pending")
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -53,12 +97,28 @@ export default function ViewProposedProj() {
             if (projectData) {
                 setProject(projectData);
                 setApprovals(approvalData);
+                setStatus(await checkStatuses(approvalData, id))
             }
-
-            
         };
         fetchProject();
-    }, [projectID]);
+    }, [projectID, refresh]);
+
+
+    const statusColors: Record<string, string> = {
+        Pending: "bg-yellow-500",
+        "For Revision": "bg-orange-500",
+        Declined: "bg-red-500",
+        Accepted: "bg-green-600",
+        "In Progress": "bg-blue-500",
+    };
+    const projectStatusColors: Record<string, string> = {
+        "Action Pending": "bg-orange-500 hover:bg-orange-600 focus:ring-orange-500",
+        "Declined": "bg-red-500 hover:bg-red-600 focus:ring-red-500",
+        "Under Review": "bg-yellow-500 hover:bg-yellow-600 focus:ring-yellow-500",
+        "For Approval": "bg-blue-500 hover:bg-blue-600 focus:ring-blue-500",
+        "Pending": "bg-gray-500 hover:bg-gray-600 focus:ring-gray-500",
+    };
+
 
 
     return (
@@ -129,17 +189,8 @@ export default function ViewProposedProj() {
                                     className="flex flex-col flex-1 mt-5 mx-10"
                                 >
                                     <div className="h-[10%]">
-                                        <Select>
-                                            <SelectTrigger className="w-[fit%] bg-[#FF7A00] cursor-pointer">
-                                                <SelectValue placeholder="Action Pending" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    <SelectItem value="under-review">Under Review</SelectItem>
-                                                    <SelectItem value="rejected">Rejected</SelectItem>
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
+                                        <h1 className={`w-48 text-white font-medium rounded-lg px-3 py-2 shadow-md transition-all duration-200 ease-in-out focus:ring-2 focus:outline-none ${projectStatusColors[status]}`}>{status}</h1>
+
                                     </div>
 
                                     <div className="flex-1 overflow-y-auto mb-5">
@@ -154,32 +205,181 @@ export default function ViewProposedProj() {
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
-                                                {approvals?.map((data, i) => (
-                                                    <TableRow key={data.id}>
-                                                        <TableCell className="text-center">{i + 1}</TableCell>
-                                                        <TableCell className="text-center">{data.recipient}</TableCell>
-                                                        <TableCell className="justify-items-center">
-                                                            <p className="text-center font-medium w-50 bg-[#052659] rounded-2xl text-white">
-                                                                {data.status}
-                                                            </p>
-                                                        </TableCell>
-                                                        <TableCell className="text-center text-[#1270B0] underline italic cursor-help">
-                                                            Hover to view
-                                                        </TableCell>
-                                                        <TableCell className="flex flex-row justify-center gap-2">
-                                                            <SquarePen className="cursor-pointer hover:bg-gray-300" />
-                                                            <Trash2 className="cursor-pointer hover:bg-gray-300" />
-                                                        </TableCell>
-                                                    </TableRow>
-                                                ))}
+                                                {approvals?.map((data, i) => {
+                                                    const isEditing = editingRowId === data.id;
+
+                                                    return (
+                                                        <TableRow key={data.id}>
+                                                            <TableCell className="text-center">{i + 1}</TableCell>
+
+                                                            {/* Recipient cell */}
+                                                            <TableCell className="text-center">
+                                                                {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        value={formData.recipient ?? ""}
+                                                                        onChange={(e) =>
+                                                                            setFormData({ ...formData, recipient: e.target.value })
+                                                                        }
+                                                                        className="border rounded p-1 w-full text-center"
+                                                                    />
+                                                                ) : (
+                                                                    data.recipient
+                                                                )}
+                                                            </TableCell>
+
+                                                            {/* Status cell */}
+                                                            <TableCell className="justify-items-center">
+                                                                {isEditing ? (
+                                                                    <Select
+                                                                        value={formData.status ?? "Pending"}
+                                                                        onValueChange={(value) => setFormData({ ...formData, status: value })}
+                                                                    >
+                                                                        <SelectTrigger className="w-full text-center bg-white border rounded">
+                                                                            <SelectValue placeholder="Select status" />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            <SelectGroup>
+                                                                                <SelectItem value="For Revision">For Revision</SelectItem>
+                                                                                <SelectItem value="Declined">Declined</SelectItem>
+                                                                                <SelectItem value="Accepted">Accepted</SelectItem>
+                                                                                <SelectItem value="In Progress">In Progress</SelectItem>
+                                                                            </SelectGroup>
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                ) : (
+                                                                    <p className={`text-center font-medium w-50 bg-[#052659] rounded-2xl text-white ${statusColors[data.status] ?? "bg-gray-400"}`}>
+                                                                        {data.status}
+                                                                    </p>
+                                                                )}
+                                                            </TableCell>
+
+                                                            {/* Placeholder column */}
+                                                            <TableCell>
+                                                                {isEditing ? (
+                                                                    <textarea
+                                                                        value={formData.comments || ""}
+                                                                        onChange={(e) =>
+                                                                            setFormData({ ...formData, comments: e.target.value })
+                                                                        }
+                                                                        className="border rounded p-1 w-full text-center bg-white resize-none"
+                                                                        rows={2}
+                                                                        placeholder="Enter comments..."
+                                                                    />
+                                                                ) : data.comments ? (
+                                                                    <HoverCard>
+                                                                        <HoverCardTrigger asChild>
+                                                                            <p className="text-center text-[#1270B0] italic underline cursor-help">
+                                                                                Hover to view
+                                                                            </p>
+                                                                        </HoverCardTrigger>
+                                                                        <HoverCardContent className="w-70 bg-white px-2 border border-gray-300 rounded-sm shadow-md">
+
+                                                                            <div className="space-y-2">
+                                                                                <p className="text-xs px-2 py-1">
+                                                                                    {data.comments?.trim() || "No Comments"}
+                                                                                </p>
+                                                                                <div className="text-muted-foreground text-xs text-end">
+                                                                                    {/* If you have a timestamp in your table, display it here */}
+                                                                                    {/* {data.updatedAt ? new Date(data.updatedAt).toLocaleDateString() : "No date"} */}
+                                                                                </div>
+                                                                            </div>
+                                                                        </HoverCardContent>
+                                                                    </HoverCard>
+                                                                ) : (
+                                                                    <p className="text-center text-gray-400">-</p>
+                                                                )}
+                                                            </TableCell>
+
+
+                                                            {/* Actions */}
+                                                            <TableCell className="flex justify-center gap-3">
+                                                                {isEditing ? (
+                                                                    <>
+                                                                        {/* Submit button */}
+                                                                        <button
+                                                                            className="px-3 py-1 rounded-md bg-green-600 text-white hover:bg-green-700"
+                                                                            onClick={async () => {
+                                                                                const success = await updateProjectApproval(data.id, formData);
+
+                                                                                if (success) {
+                                                                                    setEditingRowId(null);
+                                                                                    setRefresh((prev) => prev + 1);
+                                                                                    Swal.fire("Updated!", "Approval updated successfully.", "success");
+                                                                                } else {
+                                                                                    Swal.fire("Error!", "Failed to update approval.", "error");
+                                                                                }
+                                                                            }}
+                                                                        >
+                                                                            Save
+                                                                        </button>
+
+                                                                        {/* Cancel button */}
+                                                                        <button
+                                                                            className="px-3 py-1 rounded-md bg-gray-400 text-white hover:bg-gray-500"
+                                                                            onClick={() => setEditingRowId(null)}
+                                                                        >
+                                                                            Cancel
+                                                                        </button>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        {/* Edit button */}
+                                                                        <SquarePen
+                                                                            className="cursor-pointer rounded-md text-blue-600 hover:bg-blue-200 transition-colors p-0.5"
+                                                                            onClick={() => {
+                                                                                setEditingRowId(data.id);
+                                                                                setFormData({
+                                                                                    recipient: data.recipient,
+                                                                                    status: data.status,
+                                                                                    comments: data.comments,
+                                                                                });
+                                                                            }}
+                                                                        />
+
+                                                                        {/* Delete button */}
+                                                                        <Trash2
+                                                                            className="cursor-pointer rounded-md text-red-600 hover:bg-red-200 transition-colors p-0.5"
+                                                                            onClick={async () => {
+                                                                                const result = await Swal.fire({
+                                                                                    title: "Are you sure?",
+                                                                                    text: "This action cannot be undone.",
+                                                                                    icon: "warning",
+                                                                                    showCancelButton: true,
+                                                                                    confirmButtonColor: "#d33",
+                                                                                    cancelButtonColor: "#3085d6",
+                                                                                    confirmButtonText: "Yes, delete it!",
+                                                                                });
+
+                                                                                if (result.isConfirmed) {
+                                                                                    const success = await deleteProjectApproval(data.id);
+
+                                                                                    if (success) {
+                                                                                        setRefresh((prev) => prev + 1);
+                                                                                        Swal.fire("Deleted!", "The approval has been removed.", "success");
+                                                                                    } else {
+                                                                                        Swal.fire("Error!", "Failed to delete the approval.", "error");
+                                                                                    }
+                                                                                }
+                                                                            }}
+                                                                        />
+                                                                    </>
+                                                                )}
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    );
+                                                })}
                                             </TableBody>
                                         </Table>
-
                                         <div
-                                            className="flex flex-row h-10 w-full bg-[#E6F1FF] items-center justify-center gap-2 border-black border-dashed border-1 border-x-0 cursor-pointer hover:bg-gray-300"
-                                            onClick={() => addProjectApproval(project?.id)}>
-                                            <CirclePlus size="15px" />
-                                            <p>Add Recipient</p>
+                                            className="flex items-center justify-center gap-2 h-10 w-full rounded-md border border-dashed border-gray-400 bg-blue-50 text-blue-500 font-medium cursor-pointer transition-colors hover:bg-blue-100 hover:border-blue-500"
+                                            onClick={() => {
+                                                addProjectApproval(project?.id);
+                                                setRefresh((prev) => prev + 1);
+                                            }}
+                                        >
+                                            <CirclePlus size={16} />
+                                            <span>Add Recipient</span>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -189,14 +389,24 @@ export default function ViewProposedProj() {
                         <div className="mt-auto mr-5 mb-5">
                             <div className="flex flex-row gap-2 justify-end">
                                 <Button
-                                    className="bg-[#E6F1FF] text-black cursor-pointer hover:bg-black hover:text-[#E6F1FF]"
+                                    className="bg-[#E6F1FF] text-black cursor-pointer shadow-md transition-all duration-200 hover:scale-105 hover:bg-blue-500 hover:text-[#E6F1FF]"
                                     onClick={() => setShowDetails(!showDetails)}
                                 >
                                     {showDetails ? "View Project Status" : "View Project Details"}
                                 </Button>
-                                <Button className="bg-[#A3C4A8] text-black cursor-pointer hover:bg-black hover:text-[#A3C4A8]">
-                                    Mark as Approved
+                                <Button
+                                    className="bg-[#A3C4A8] text-black cursor-pointer shadow-md transition-all duration-200 hover:scale-105 hover:shadow-lg hover:text-accent hover:bg-green-800"
+                                >
+                                    Save
                                 </Button>
+                                {status === "For Approval" ? (
+                                    <Button
+                                        className="bg-[#A3C4A8] text-black cursor-pointer hover:bg-black hover:text-[#A3C4A8]"
+                                        onClick={() => console.log("Marking as approved...")}
+                                    >
+                                        Mark as Approved
+                                    </Button>) : (<></>)
+                                }
                             </div>
                         </div>
                     </div>
