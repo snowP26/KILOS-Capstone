@@ -114,7 +114,7 @@ export default function ViewProject() {
                                     {project.description}
                                 </p>
                             </div>
-                            </ScrollArea>
+
                             
 
                         </div>
@@ -123,7 +123,4 @@ export default function ViewProject() {
                 </div>
 
             </div>
-
-        </div>
-    )
-}
+            </div>)}
