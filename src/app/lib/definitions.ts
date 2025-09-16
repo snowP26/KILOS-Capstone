@@ -130,3 +130,12 @@ export type project = {
     imageURL: string,
     budget: number,
 }
+
+export type project_approvals = { 
+    id: number,
+    project_id: number,
+    recipient: string,
+    status: string,
+    comments: string,
+    status_update: string
+}
