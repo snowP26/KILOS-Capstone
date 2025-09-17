@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button"
 
 type CommunityBannerProps = {
   id: string;
+  onButtonClick: () => void;
+  isOpen: boolean;
 };
 
-export const CommunityBanner = ({ id }: CommunityBannerProps) => {
+export const CommunityBanner = ({ id, onButtonClick, isOpen }: CommunityBannerProps) => {
   return (
     <div className="flex flex-col h-full mb-20 mx-5 sm:flex sm:flex-col sm:h-full sm:w-fit sm:mb-20 md:flex md:flex-col md:h-full md:mx-20 md:mb-20 lg:flex lg:flex-row lg:h-60">
       <div className="h-50 w-full mb-5 rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)] relative mr-3 sm:w-full sm:h-80 lg:w-[70%] lg:h-full">
@@ -21,7 +23,11 @@ export const CommunityBanner = ({ id }: CommunityBannerProps) => {
           ea commodo consequat.
         </p>
         <div className="flex justify-center mb-3">
-          <Button className="bg-[#052659] cursor-pointer hover:text-[#052659] hover:bg-white hover:border-black hover:border">View Current Youth Officials</Button>
+          <Button className="bg-[#052659] cursor-pointer hover:text-[#052659] hover:bg-white hover:border-black hover:border"
+            onClick={onButtonClick}
+          >
+            {isOpen ? 'View Community Banner' : 'View Current Youth Officials'}
+          </Button>
         </div>
       </div>
     </div>

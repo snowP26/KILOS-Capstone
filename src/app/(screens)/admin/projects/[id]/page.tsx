@@ -112,7 +112,7 @@ export default function ViewProposedProj() {
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -50 }}
                                     transition={{ duration: 0.3 }}
-                                    className="bg-[#E6F1FF] w-auto flex-1 mx-5 mt-8 pt-5 px-10"
+                                    className="bg-[#E6F1FF] w-auto flex-1 mx-5 mt-8 mb-10 pt-5 px-10"
                                 >
                                     <p className="font-semibold text-2xl">Project Description:</p>
                                     <div className="my-2">

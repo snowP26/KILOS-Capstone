@@ -109,13 +109,14 @@ export default function ViewProject() {
                         <div className="bg-[#E6F1FF] w-auto h-full mx-4 my-4 xl:h-[90%] xl:mx-5 xl:mt-8 pt-2 xl:pt-5 xl:px-10">
                             <p className="font-semibold text-xl text-center xl:text-2xl xl:text-start">Project Description:</p>
                             <div className="mt-2 xl:h-[90%] xl:w-full">
-                                <p className="w-full h-100 xl:h-full overflow-y-auto pl-4 pr-6 xl:px-10">
-
-                                    {project.description}
-                                </p>
+                                <ScrollArea className="w-full h-100 pb-5 lg:pb-0">
+                                    <p className="xl:h-full pl-4 pr-6 xl:px-10">
+                                        {project.description}
+                                    </p>
+                                </ScrollArea>
                             </div>
 
-                            
+
 
                         </div>
 
@@ -123,4 +124,5 @@ export default function ViewProject() {
                 </div>
 
             </div>
-            </div>)}
+        </div>)
+}

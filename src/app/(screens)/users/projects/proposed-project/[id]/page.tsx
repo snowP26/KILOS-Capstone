@@ -81,7 +81,7 @@ export default function ViewProposedProject() {
             </Breadcrumb>
 
             <div className="mx-2 sm:mx-10 xl:mx-25">
-                <p className="font-bold text-xl xl:text-3xl mt-8 mb-2 xl:mb-6">{project?.title}</p>
+                <p className="font-bold text-xl mt-8 mb-2 mx-auto lg:mx-0 xl:text-3xl xl:mb-6">{project?.title}</p>
 
                 <div className="flex flex-col xl:flex-row gap-1 place-items-center min-h-fit max-h-screen">
                     {/* LEFT SIDE POSTER */}
@@ -138,7 +138,7 @@ export default function ViewProposedProject() {
                         ) : (
                             <label
                                 htmlFor="poster-upload"
-                                className="flex flex-col items-center justify-center w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130 border-2 border-dashed border-gray-400 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+                                className="flex flex-col items-center justify-center mt-2 w-[90%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130 border-2 border-dashed border-gray-400 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
                             >
                                 <svg
                                     className="w-10 h-10 text-gray-400 mb-2"
@@ -213,16 +213,16 @@ export default function ViewProposedProject() {
                             </div>
                             <hr className="border-t mt-8 border-gray-200 w-full" />
 
-                            <div className="min-h-fit max-h-105 mb-50 xl:mb-0 overflow-y-scroll w-full">
+                            <div className="min-h-fit max-h-105 xl:mb-0 w-full">
                                 {showDetails ? <ProjectDetails /> : <ProjectTable />}
                             </div>
                         </div>
 
                         <div>
-                            <div className="flex flex-row gap-2 justify-end mb-5 mx-20">
+                            <div className="flex flex-col items-center gap-2 justify-end mb-5 lg:flex-row lg:mx-20">
                                 <Button
                                     onClick={() => setShowDetails((prev) => !prev)}
-                                    className="bg-[#E6F1FF] text-black cursor-pointer hover:bg-black hover:text-[#E6F1FF]"
+                                    className="bg-[#E6F1FF] text-black cursor-pointer w-fit py-2.5 px-4 hover:bg-black hover:text-[#E6F1FF]"
                                 >
                                     {showDetails ? "View Project Status" : "View Project Details"}
                                 </Button>
