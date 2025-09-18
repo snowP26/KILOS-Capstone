@@ -160,7 +160,7 @@ export default function Projects() {
                 <div className="hidden lg:flex lg:flex-col lg:w-[30%] w-[20%] mr-5 mb-10">
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger onClick={() => setIsDialogOpen(true)}>
-                          <div className="w-full my-2 bg-[#93C2FF] text-black cursor-pointer rounded-md font-semibold py-1  hover:bg-black hover:text-[#93C2FF]">
+                            <div className="w-full my-2 bg-[#93C2FF] text-black cursor-pointer rounded-md font-semibold py-1  hover:bg-black hover:text-[#93C2FF]">
                                 Propose a Project
                             </div>
                         </DialogTrigger>
@@ -302,7 +302,7 @@ export default function Projects() {
                                     key={data.id}
                                     className="min-w-full"
                                 >
-                                    <ProposedProjCard Title={data.title} Description={data.description} Status={data.status} PhotoURL={data.imageURL}/>
+                                    <ProposedProjCard Title={data.title} Description={data.description} Status={data.status} PhotoURL={data.imageURL} />
                                 </div>
 
                             ))

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, SquarePen, Trash2, MessageSquareWarning, Save } from "lucide-react";
+import { ArrowLeft, Trash2, Save, Loader2, HelpCircle, Clock, XCircle, CheckCircle } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
     Breadcrumb,
@@ -26,23 +26,51 @@ export default function ViewProposedProject() {
     const slug = params?.id as string;
     const projectId = slug.split("-").pop();
 
-
     const [project, setProject] = useState<project | null>(null);
     const [showDetails, setShowDetails] = useState(false);
     const [tempPosterFile, setTempPosterFile] = useState<File | null>(null);
     const [refresh, setRefresh] = useState(0)
 
+    const [statusColor, setStatusColor] = useState("bg-gray-500");
+    const [statusIcon, setStatusIcon] = useState(<HelpCircle />);
+    const [editing, setEditing] = useState(false);
+    const [targetDate, setTargetDate] = useState<string>("")
+
+    const statusUI = (status: string) => {
+        switch (status.toLowerCase().trim()) {
+            case "pending":
+                setStatusColor("bg-yellow-500");
+                setStatusIcon(<Clock />);
+                break;
+            case "under review":
+                setStatusColor("bg-blue-500");
+                setStatusIcon(<Loader2 className="animate-spin" />);
+                break;
+            case "declined":
+                setStatusColor("bg-red-500");
+                setStatusIcon(<XCircle />);
+                break;
+            case "for approval":
+                setStatusColor("bg-green-600");
+                setStatusIcon(<CheckCircle />);
+                break;
+        }
+
+    }
 
     useEffect(() => {
         const fetchData = async () => {
+            console.log(projectId)
             if (projectId) {
                 const data = await getProposedProjectByID(projectId);
-                setProject(data && data.length > 0 ? data[0] : null);
+                setProject(data);
+                statusUI(data.status)
             }
         };
 
         setTempPosterFile(null)
         fetchData();
+
     }, [projectId, refresh]);
 
     return (
@@ -207,14 +235,72 @@ export default function ViewProposedProject() {
                     {/* RIGHT SIDE CONTENT */}
                     <div className="flex flex-col justify-between bg-white mb-10 w-[80%] xl:w-[80%] xl:h-155 xl:mt-10 xl:mb-0">
                         <div>
-                            <div className="bg-[#FFA500] mx-10 mt-5 text-white flex flex-row w-fit px-3 py-1 gap-1 rounded-md">
-                                <MessageSquareWarning />
-                                <p>Action Pending</p>
+                            <div className="mx-10 mt-5 flex flex-row justify-between items-center px-4 py-2 rounded-lg border border-gray-200 shadow-sm bg-gray-50 w-[90%]">
+                                {/* Left side: Status */}
+                                <div className={`flex items-center gap-2 font-medium ${statusColor} text-white px-2 py-1 rounded-md`}>
+                                    <div className="self-center">{statusIcon}</div>
+                                    <p className="capitalize">{project?.status}</p>
+                                </div>
+
+                                {/* Right side: Target Date */}
+                                {!editing ? (
+                                    <div className="flex flex-col items-end text-gray-700">
+                                        <span className="text-xs uppercase tracking-wide text-gray-500">
+                                            Target Implementation Date
+                                        </span>
+                                        <div className="flex items-center gap-3">
+                                            <p className="text-sm font-medium">
+                                                {targetDate ? new Date(targetDate).toLocaleDateString("en-GB",{
+                                                    day: "2-digit",
+                                                    month: "long",
+                                                    year: "numeric"
+                                                }) : "No target date set"}
+                                            </p>
+                                            <button
+                                                onClick={() => setEditing(true)}
+                                                className="cursor-pointer flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                                            >
+                                                Edit
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-end">
+                                        <span className="text-xs uppercase tracking-wide text-gray-500 mb-1">
+                                            Target Implementation Date
+                                        </span>
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                type="date"
+                                                value={targetDate}
+                                                onChange={(e) => setTargetDate(e.target.value)}
+                                                className="border border-gray-300 rounded-md px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+                                            />
+                                            <button
+                                                onClick={() => setEditing(false)}
+                                                className="cursor-pointer flex items-center gap-1 text-xs bg-green-500 text-white px-3 py-1.5 rounded-md shadow-sm hover:bg-green-600 transition-colors"
+                                            >
+                                                Save
+                                            </button>
+                                            <button
+                                                onClick={() => setEditing(false)}
+                                                className="cursor-pointer flex items-center gap-1 text-xs bg-gray-200 text-gray-700 px-3 py-1.5 rounded-md shadow-sm hover:bg-gray-300 transition-colors"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                        <span className="text-[11px] text-gray-400 mt-1">
+                                            This is the date the project is going to be implemented
+                                        </span>
+                                    </div>
+                                )}
                             </div>
+
+
                             <hr className="border-t mt-8 border-gray-200 w-full" />
 
                             <div className="min-h-fit max-h-105 mb-50 xl:mb-0 overflow-y-scroll w-full">
-                                {showDetails ? <ProjectDetails /> : <ProjectTable />}
+                                {showDetails ? <ProjectDetails /> : <ProjectTable id={project?.id} />}
                             </div>
                         </div>
 
