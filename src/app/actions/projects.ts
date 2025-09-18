@@ -110,6 +110,7 @@ export const postProject = async (e: FormEvent<HTMLFormElement>) => {
 export const getProjectByID = async (id: number | undefined) => {
     if(id == undefined) return null
 
+
     const { data, error } = await client.from("projects").select("*").eq("id", id)
 
     if(!data){
@@ -234,4 +235,22 @@ export const getApprovalsByID = async (id: number) => {
     }
 
     return data 
+}
+
+export const updateTargetDate = async (id: number, date: string) => {
+    if(!id) return 
+
+    console.log(date)
+
+    const { error } = await client 
+        .from("projects")
+        .update({"target_date": date}) 
+        .eq("id", id)
+
+    if(error) {
+        console.log("Error in updating your project target date: ", error)
+        return
+    }
+
+    return
 }

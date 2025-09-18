@@ -21,14 +21,14 @@ import { getProjectByID } from '@/src/app/actions/projects';
 
 export default function ViewProject() {
     const params = useParams();
-    const projectID = Array.isArray(params.id)
-        ? decodeURIComponent(params.id[0] ?? "")
-        : decodeURIComponent(params.id ?? "");
+    const slug = params?.id as string;
+    const projectID = Number(slug.split("-").pop());
     const router = useRouter();
     const [project, setProject] = useState<project | null>(null);
 
     useEffect(() => {
         const fetchProject = async () => {
+            console.log(projectID)
             const data = await getProjectByID(projectID);
             console.log("fetched:", data);
             setProject(data);

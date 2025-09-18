@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { SubmitDocCard } from "@/src/app/components/user/submit-docCard";
 import { project } from "@/src/app/lib/definitions";
-import { deleteProjectPhoto, getProposedProjectByID, uploadPhotoByID } from "@/src/app/actions/projects";
+import { deleteProjectPhoto, getProposedProjectByID, updateTargetDate, uploadPhotoByID } from "@/src/app/actions/projects";
 import { ProjectTable } from "@/src/app/components/user/table";
 import { ProjectDetails } from "@/src/app/components/user/project-details";
 import Swal from "sweetalert2";
@@ -192,7 +192,6 @@ export default function ViewProposedProject() {
                                         const file = e.target.files?.[0];
                                         if (file) {
                                             setTempPosterFile(file);
-                                            console.log("Selected file:", file);
                                         }
                                     }}
                                 />
@@ -273,7 +272,11 @@ export default function ViewProposedProject() {
                                             <input
                                                 type="date"
                                                 value={targetDate}
-                                                onChange={(e) => setTargetDate(e.target.value)}
+                                                onChange={async (e) => {
+                                                    setTargetDate(e.target.value)
+                                                    const dateString = new Date(targetDate).toISOString();
+                                                    updateTargetDate(project?.id ?? 0, dateString)
+                                                }}
                                                 className="border border-gray-300 rounded-md px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
                                             />
                                             <button

@@ -59,7 +59,7 @@ export default function Projects() {
                 <div className="flex flex-wrap justify-center gap-5">
                     {projects?.map((data) => (
                         <div
-                            onClick={() => router.push(`/users/projects/${data.title}`)}
+                            onClick={() => router.push(`/users/projects/${data.title}-${data.id}`)}
                             key={data.id}
                         >
                             <ProjectCard
@@ -141,7 +141,7 @@ export default function Projects() {
                         <div className="flex flex-wrap justify-center gap-5 lg:gap-3 xl:gap-5">
                             {projects?.map((data) => (
                                 <div
-                                    onClick={() => router.push(`/users/projects/${data.title}`)}
+                                    onClick={() => router.push(`/users/projects/${data.title}-${data.id}`)}
                                     key={data.id}
                                 >
                                     <ProjectCard
