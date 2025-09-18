@@ -5,7 +5,11 @@ import { getLocFromAuth } from "./convert";
 export const getPendingProjects = async () => {
     const location = await getLocFromAuth()
 
-    const { data, error } = await client.from("projects").select("*").in("status", ["For Approval", "Action Pending", "Declined"]).eq("location_id", location)
+    const { data, error } = await client.from("projects")
+        .select("*")
+        .neq("status", "Approved")
+        .eq("location_id", location)
+        .order("id", {ascending: false})
 
     if (error) {
         console.error("Error fetching projects:", error);
@@ -20,7 +24,7 @@ export const getPendingProjects = async () => {
 export const getProjectApprovals = async (id: number | undefined) => {
     if (!id) return []
 
-    const { data, error } = await client.from("project_approvals").select("*", ).eq("project_id", id).order("id", { ascending: true });
+    const { data, error } = await client.from("project_approvals").select("*").eq("project_id", id).order("id", { ascending: true });
 
     if (!data) {
         console.log("Project does not exist");

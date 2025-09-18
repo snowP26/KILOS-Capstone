@@ -48,26 +48,29 @@ const checkStatuses = async (approval: project_approvals[] | null, id: number) =
 
     if (status.includes("For Revision")) {
         projectStatusValue = "Action Pending";
+        await updateProjectStatus(id, projectStatusValue)
         return projectStatusValue;
     }
 
     if (status.includes("Declined")) {
         projectStatusValue = "Declined";
+        await updateProjectStatus(id, projectStatusValue)
         return projectStatusValue;
     }
 
     const allAccepted = status.every(s => s === "Accepted");
     if (allAccepted) {
         projectStatusValue = "For Approval";
+        await updateProjectStatus(id, projectStatusValue)
         return projectStatusValue;
     }
 
     if (status.includes("Accepted")) {
         projectStatusValue = "Under Review";
+            await updateProjectStatus(id, projectStatusValue)
         return projectStatusValue;
     }
 
-    console.log(projectStatusValue)
     await updateProjectStatus(id, projectStatusValue)
     return "Pending";
 }
@@ -76,7 +79,8 @@ const checkStatuses = async (approval: project_approvals[] | null, id: number) =
 export default function ViewProposedProj() {
     const router = useRouter();
     const params = useParams();
-    const projectID = Array.isArray(params.id) ? decodeURIComponent(params.id[0] ?? "") : decodeURIComponent(params.id ?? "");
+    const raw = Array.isArray(params.id) ? decodeURIComponent(params.id[0] ?? "") : decodeURIComponent(params.id ?? "");
+    const projectID = Number(raw.split("-").pop());
     const [showDetails, setShowDetails] = useState(false);
     const [project, setProject] = useState<project | null>(null);
     const [approvals, setApprovals] = useState<project_approvals[] | null>(null);
@@ -91,14 +95,16 @@ export default function ViewProposedProj() {
 
     useEffect(() => {
         const fetchProject = async () => {
+            if(!projectID) return
             const projectData = await getProjectByID(projectID);
-            const id = projectData.id
-            const approvalData = await getProjectApprovals(id);
+            const approvalData = await getProjectApprovals(projectID);
             if (projectData) {
                 setProject(projectData);
                 setApprovals(approvalData);
-                setStatus(await checkStatuses(approvalData, id))
+                setStatus(await checkStatuses(approvalData, projectID))
             }
+
+            console.log('project data: ', projectData)
         };
         fetchProject();
     }, [projectID, refresh]);
@@ -177,6 +183,7 @@ export default function ViewProposedProj() {
                                     <p className="font-semibold text-2xl">Project Description:</p>
                                     <div className="my-2">
                                         <p className="overflow-y-auto px-10">{project?.description}</p>
+                                        
                                     </div>
                                 </motion.div>
                             ) : (
@@ -396,6 +403,7 @@ export default function ViewProposedProj() {
                                 </Button>
                                 <Button
                                     className="bg-[#A3C4A8] text-black cursor-pointer shadow-md transition-all duration-200 hover:scale-105 hover:shadow-lg hover:text-accent hover:bg-green-800"
+                                    onClick={() => console.log(project?.imageURL)}
                                 >
                                     Save
                                 </Button>
