@@ -7,7 +7,6 @@ import { ArrowLeft } from 'lucide-react';
 import { SquarePen } from 'lucide-react';
 import { Trash2 } from 'lucide-react';
 import { Separator } from "@/components/ui/separator"
-import { ScrollArea } from '@/components/ui/scroll-area';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -76,10 +75,16 @@ export default function ViewProject() {
                 <div className="flex flex-col-reverse gap-3 sm:gap-5 sm:h-10 sm:flex-row">
                     <Button
                         className="text-black bg-[#A3C4A8] w-full h-8 sm:w-fit sm:h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]"
-                        onClick={() => router.push(`/users/projects/${project.title}/view-project-budget`)}
+                        onClick={() => router.push(`/users/projects/${(project.title).trim()}-${project.id}/view-project-budget`)}
                     >
                         View Budget Breakdown</Button>
-                    <p className="text-black bg-white rounded-2xl px-5 font-medium content-center w-fit h-8 sm:h-10">{project.target_date}</p>
+                    <p className="text-black bg-white rounded-2xl px-5 font-medium content-center w-fit h-8 sm:h-10">
+                        {new Date(project.target_date).toLocaleString("en-GB", {
+                            day: "2-digit",
+                            month: "long",
+                            year: "numeric"
+                        })}
+                    </p>
                 </div>
 
 
@@ -115,7 +120,7 @@ export default function ViewProject() {
                                 </p>
                             </div>
 
-                            
+
 
                         </div>
 
@@ -123,4 +128,5 @@ export default function ViewProject() {
                 </div>
 
             </div>
-            </div>)}
+        </div>)
+}
