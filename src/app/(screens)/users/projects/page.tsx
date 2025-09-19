@@ -86,7 +86,7 @@ export default function Projects() {
 
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger onClick={() => setIsDialogOpen(true)} asChild>
-                            <Button className="w-full my-2 bg-[#93C2FF] text-black cursor-pointer py-1 px-3 rounded-md font-semibold hover:bg-black hover:text-[#93C2FF] lg:hidden">
+                            <Button className="w-[90%] lg:w-full my-2 bg-[#93C2FF] text-black cursor-pointer py-1 px-3 rounded-md font-semibold hover:bg-black hover:text-[#93C2FF] lg:hidden">
                                 Propose a Project
                             </Button>
                         </DialogTrigger>

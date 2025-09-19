@@ -14,7 +14,14 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 import {
     Table,
     TableBody,
@@ -27,7 +34,7 @@ import {
 import { project } from '@/src/app/lib/definitions';
 import { getProjectByTitle } from '@/src/app/actions/projects';
 
-export default function ViewProject() {
+export default function ViewProjectBudget() {
     const router = useRouter();
     const params = useParams();
     const projectID = Array.isArray(params.id)
@@ -37,8 +44,8 @@ export default function ViewProject() {
     const [project, setProject] = useState<project | null>(null)
 
     useEffect(() => {
-        const setData = async() => {
-            if(projectID){
+        const setData = async () => {
+            if (projectID) {
                 const data = await getProjectByTitle(projectID)
                 setProject(data)
             }
@@ -48,7 +55,7 @@ export default function ViewProject() {
     }, [])
 
     return (
-        <div className="bg-[#E6F1FF] min-h-screen max-h-fit mt-10">
+        <div className="bg-[#E6F1FF] min-h-screen max-h-full mt-10">
             <Breadcrumb className="ml-5 xl:ml-20">
                 <BreadcrumbList>
                     <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.back()}>
@@ -108,7 +115,24 @@ export default function ViewProject() {
                                 <TableCell className="max-w-[150px] text-center">Product Name 1</TableCell>
                                 <TableCell className="text-center">Php 123,456,789</TableCell>
                                 <TableCell className="text-center">1</TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
+                                <TableCell className="flex justify-center">
+                                    <Dialog>
+                                        <DialogTrigger>
+                                            <Image className="cursor-pointer hover:bg-gray-300"/>
+                                        </DialogTrigger>
+                                        <DialogContent>
+                                            <DialogHeader>
+                                                <DialogTitle className="text-2xl text-center">Item 1 Receipt Photo</DialogTitle>
+                                                <DialogDescription >
+                                                    <hr className="border-t border-black w-full my-3" />
+                                                    <div className="bg-black aspect-3/4 object-cover">
+
+                                                    </div>
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                        </DialogContent>
+                                    </Dialog>
+                                </TableCell>
                                 <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
                             </TableRow>
                         </TableBody>

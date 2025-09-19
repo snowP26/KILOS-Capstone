@@ -83,8 +83,8 @@ export default function ViewProject() {
                 </div>
 
 
-                <div className="flex flex-col xl:flex-row gap-1 place-items-center min-h-fit max-h-screen">
-                    <div className="bg-white mt-10 w-[80%] h-full sm:h-150 xl:w-[35%] xl:h-155 justify-items-center place-content-center">
+                <div className="flex flex-col lg:flex-row gap-1 place-items-center min-h-fit max-h-screen">
+                    <div className="bg-white mt-10 w-[80%] h-full sm:h-150 lg:w-[35%] lg:h-155 justify-items-center place-content-center">
                         {
                             project.imageURL ? (
 
@@ -105,12 +105,12 @@ export default function ViewProject() {
                         </div>
                     </div>
 
-                    <div className="bg-white mb-10 w-[80%] xl:w-[80%] xl:h-155 xl:mt-10 xl:mb-0">
-                        <div className="bg-[#E6F1FF] w-auto h-full mx-4 my-4 xl:h-[90%] xl:mx-5 xl:mt-8 pt-2 xl:pt-5 xl:px-10">
-                            <p className="font-semibold text-xl text-center xl:text-2xl xl:text-start">Project Description:</p>
-                            <div className="mt-2 xl:h-[90%] xl:w-full">
+                    <div className="bg-white mb-10 w-[80%] lg:w-[80%] lg:h-155 lg:mt-10 lg:mb-0">
+                        <div className="bg-[#E6F1FF] w-auto h-full mx-4 my-4 lg:h-[90%] lg:mx-5 lg:mt-8 pt-2 lg:pt-5 lg:px-10">
+                            <p className="font-semibold text-xl text-center lg:text-2xl lg:text-start">Project Description:</p>
+                            <div className="mt-2 lg:h-[90%] lg:w-full">
                                 <ScrollArea className="w-full h-100 pb-5 lg:pb-0">
-                                    <p className="xl:h-full pl-4 pr-6 xl:px-10">
+                                    <p className="lg:h-full pl-4 pr-6 lg:px-10">
                                         {project.description}
                                     </p>
                                 </ScrollArea>

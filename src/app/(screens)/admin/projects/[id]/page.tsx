@@ -7,6 +7,7 @@ import { SquarePen } from 'lucide-react';
 import { Trash2 } from 'lucide-react';
 import { CirclePlus } from 'lucide-react';
 import { Separator } from "@/components/ui/separator"
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -55,17 +56,17 @@ export default function ViewProposedProj() {
                 setApprovals(approvalData);
             }
 
-            
+
         };
         fetchProject();
     }, [projectID]);
 
 
     return (
-        <div className="bg-[#E6F1FF] h-screen mt-10">
-            <Breadcrumb className="ml-20">
+        <div className="bg-[#E6F1FF] min-h-screen max-h-full mt-10">
+            <Breadcrumb className="ml-5 lg:ml-20">
                 <BreadcrumbList>
-                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.push("/admin/projects")}>
+                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.back()}>
                         <ArrowLeft color="black" />
                         <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
                             Return
@@ -85,25 +86,25 @@ export default function ViewProposedProj() {
                 </BreadcrumbList>
             </Breadcrumb>
 
-            <div className="mx-25">
-                <p className="font-bold text-3xl mt-8 mb-6">{project?.title}</p>
+            <div className="mx-2 sm:mx-10 xl:mx-25">
+                <p className="font-bold text-xl xl:text-3xl mt-8 mb-2 xl:mb-6">{project?.title}</p>
 
-                <Button className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push(`/admin/projects/${projectID}/view-budget-breakdown`)}>View Budget Breakdown</Button>
+                <Button className="text-black bg-[#A3C4A8] w-full h-8 sm:w-fit sm:h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push(`/admin/projects/${projectID}/view-budget-breakdown`)}>View Budget Breakdown</Button>
 
-                <div className="flex flex-row gap-1">
-                    <div className="bg-white mt-10 w-[35%] h-155 justify-items-center place-content-center">
+                <div className="flex flex-col lg:flex-row gap-1 place-items-center min-h-fit max-h-screen">
+                    <div className="bg-white mt-10 w-[80%] h-full sm:h-150 lg:w-[35%] lg:h-155 justify-items-center place-content-center">
                         {project?.imageURL ? (
-                            <img src={project.imageURL} className="bg-black mt-10 w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130" />
+                            <img src={project.imageURL} className="bg-black mt-10 w-[70%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130" />
                         ) : (
-                            <div className="mt-10 flex items-center justify-center w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130 rounded-[8px] bg-blue-100 text-blue-600 font-bold text-6xl shadow">
+                            <div className="mt-10 flex items-center justify-center w-[70%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 rounded-[8px] bg-blue-100 text-blue-600 font-bold text-6xl shadow">
                                 {project?.title?.charAt(0).toUpperCase()}
                             </div>
                         )
                         }
-                        <p className="font-medium text-xl text-[#17A1FA] mt-3 justify-self-start ml-15">Project Poster</p>
+                        <p className="font-medium text-xl text-[#17A1FA] my-3 justify-self-start ml-15">Project Poster</p>
                     </div>
 
-                    <div className="bg-white mt-10 w-[80%] h-155 flex flex-col">
+                    <div className="bg-white mb-10 w-[80%] lg:w-[80%] lg:h-155 lg:mt-10 lg:mb-0">
                         <AnimatePresence mode="wait">
                             {showDetails ? (
                                 <motion.div
@@ -112,11 +113,23 @@ export default function ViewProposedProj() {
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -50 }}
                                     transition={{ duration: 0.3 }}
-                                    className="bg-[#E6F1FF] w-auto flex-1 mx-5 mt-8 mb-10 pt-5 px-10"
+                                    className="bg-[#E6F1FF] w-auto h-full mx-4 my-4 lg:h-[80%] lg:mx-5 lg:mt-8 pt-2 lg:pt-5 lg:px-10"
                                 >
-                                    <p className="font-semibold text-2xl">Project Description:</p>
-                                    <div className="my-2">
-                                        <p className="overflow-y-auto px-10">{project?.description}</p>
+                                    <p className="font-semibold text-xl text-center lg:text-2xl lg:text-start">Project Description:</p>
+                                    <div className="mt-2 lg:h-[90%] lg:w-full">
+                                        <ScrollArea className="w-full h-100 pb-5 lg:pb-0">
+                                            <p className="lg:h-full pl-4 pr-6 lg:px-10">
+                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+                                                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
+
+                                                Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+
+                                                At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
+
+                                                Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus. Ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+                                            </p>
+                                        </ScrollArea>
                                     </div>
                                 </motion.div>
                             ) : (
@@ -126,7 +139,7 @@ export default function ViewProposedProj() {
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: 50 }}
                                     transition={{ duration: 0.3 }}
-                                    className="flex flex-col flex-1 mt-5 mx-10"
+                                    className="h-[80%] flex flex-col flex-1 mt-5 mb-5 mx-10"
                                 >
                                     <div className="h-[10%]">
                                         <Select>
@@ -142,7 +155,7 @@ export default function ViewProposedProj() {
                                         </Select>
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto mb-5">
+                                    <div className="flex-1 overflow-y-auto my-5 lg:mb-5">
                                         <Table className="bg-[#E6F1FF] w-full">
                                             <TableHeader>
                                                 <TableRow>
@@ -186,15 +199,15 @@ export default function ViewProposedProj() {
                             )}
                         </AnimatePresence>
 
-                        <div className="mt-auto mr-5 mb-5">
-                            <div className="flex flex-row gap-2 justify-end">
+                        <div className="mt-auto md:mr-5 mb-5">
+                            <div className="flex flex-col gap-2 justify-end items-center md:flex-row">
                                 <Button
-                                    className="bg-[#E6F1FF] text-black cursor-pointer hover:bg-black hover:text-[#E6F1FF]"
+                                    className="bg-[#E6F1FF] w-fit text-black cursor-pointer hover:bg-black hover:text-[#E6F1FF]"
                                     onClick={() => setShowDetails(!showDetails)}
                                 >
                                     {showDetails ? "View Project Status" : "View Project Details"}
                                 </Button>
-                                <Button className="bg-[#A3C4A8] text-black cursor-pointer hover:bg-black hover:text-[#A3C4A8]">
+                                <Button className="bg-[#A3C4A8] w-fit text-black cursor-pointer hover:bg-black hover:text-[#A3C4A8]">
                                     Mark as Approved
                                 </Button>
                             </div>

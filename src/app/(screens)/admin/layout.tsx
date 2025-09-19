@@ -4,15 +4,15 @@ import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { AdminNav } from "@/src/app/components/admin/nav";
 
-export default function UsersRootLayout({
+export default function AdminRootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-[#E6F1FF] flex flex-col">
+    <div className="min-h-screen bg-[#E6F1FF]">
       <AdminNav />
-      <div className="flex-1 p-6">
+      <div className="">
         <AnimatePresence mode="wait">
           <motion.div
             key={pathname} 
