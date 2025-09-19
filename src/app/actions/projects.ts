@@ -254,3 +254,10 @@ export const updateTargetDate = async (id: number, date: string) => {
 
     return
 }
+
+export const getProjectBudgetById = async (project_id: number) => {
+    const { data, error } = await client 
+        .from("project_budget")
+        .select("*")
+        .eq("project_id", project_id)
+}
