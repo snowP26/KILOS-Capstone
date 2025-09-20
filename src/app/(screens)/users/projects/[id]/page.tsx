@@ -128,6 +128,6 @@ export default function ViewProject() {
 
             </div>
 
-        </div>)
+        </div>)}
 
 
