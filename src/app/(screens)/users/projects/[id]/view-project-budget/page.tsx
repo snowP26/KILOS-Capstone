@@ -116,7 +116,7 @@ export default function ViewProject() {
                             </TableRow>
                         </TableHeader>
                         {budget.map((data) => (
-                            <TableBody>
+                            <TableBody key={data.id}>
                                 <TableRow>
                                     <TableCell className="flex justify-center">
                                         <p className="self-center text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">
