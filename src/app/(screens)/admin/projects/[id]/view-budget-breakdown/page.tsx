@@ -21,10 +21,8 @@ import { getProjectByID } from '@/src/app/actions/projects';
 
 export default function ViewProject() {
     const params = useParams();
-    const blob = Array.isArray(params.id)
-        ? decodeURIComponent(params.id[0] ?? "")
-        : decodeURIComponent(params.id ?? "");
-    const projectID = Number(blob.split("-").pop())
+    const raw = Array.isArray(params.id) ? decodeURIComponent(params.id[0] ?? "") : decodeURIComponent(params.id ?? "");
+    const projectID = Number(raw.split("-").pop());
     const router = useRouter();
     const [project, setProject] = useState<project | null>(null);
 
