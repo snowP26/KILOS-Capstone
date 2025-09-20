@@ -10,13 +10,13 @@ export const getProjects = async () => {
         .select("*")
         .eq("location_id", loc as number).eq("status", "Approved");
 
+
     if (error) {
         console.error("Error retrieving projects:", error);
         return [];
     }
 
     if (!data || data.length === 0) {
-        console.warn("No projects found for this location.");
         return [];
     }
 
@@ -26,12 +26,14 @@ export const getProjects = async () => {
 
 export const getProposedProjects = async () => {
     const loc = await getLocFromAuth();
-    console.log("loc:", loc);
+
 
     const { data, error } = await client
         .from("projects")
         .select("*")
-        .eq("location_id", loc as number).eq("status", "For Approval");
+        .eq("location_id", loc as number)
+        .neq("status", "Approved")
+        .order("id", {ascending: false});
 
     if (error) {
         console.error("Error retrieving projects:", error);
@@ -96,19 +98,22 @@ export const postProject = async (e: FormEvent<HTMLFormElement>) => {
         author: userID
     }]).select("id")
 
-    await uploadFile(file, title, data ? data[0].id : null)  
+    if(file){
 
+    await uploadFile(file, title, data ? data[0].id : null)  
+    }
     if(error) return console.log(error);
 
     console.log(`${userID}, ${location_id}, ${title}, ${description}`)
 }
 
-export const getProjectByID = async (projectID: string | undefined) => {
-    if(projectID == undefined) return null
+export const getProjectByID = async (id: number | undefined) => {
+    if(id == undefined) return null
 
-    const { data, error } = await client.from("projects").select("*").eq("title", projectID)
 
-    if(!data || data[0].length <= 0){
+    const { data, error } = await client.from("projects").select("*").eq("id", id)
+
+    if(!data){
         console.log("No Project found!")
         return null
     } 
@@ -125,7 +130,7 @@ export const getProposedProjectByID = async (id: number|string) => {
     const { data, error } = await client
         .from("projects")
         .select("*")
-        .eq("id", id).eq("status", "For Approval");
+        .eq("id", id).single();
 
     if (error) {
         console.error("Error retrieving projects:", error);
@@ -210,4 +215,49 @@ export const getProjectByTitle = async (title: string) => {
     }
 
     return data[0]
+}
+
+export const getApprovalsByID = async (id: number) => {
+
+    const {data, error} = await client
+        .from("project_approvals")
+        .select("*")
+        .eq("project_id", id);
+
+    if(!data){
+        console.log("No data has been found")
+        return [];
+    }
+
+    if(error) {
+        console.log("Error retrieving your approvals: ", error)
+        return [];
+    }
+
+    return data 
+}
+
+export const updateTargetDate = async (id: number, date: string) => {
+    if(!id) return 
+
+    console.log(date)
+
+    const { error } = await client 
+        .from("projects")
+        .update({"target_date": date}) 
+        .eq("id", id)
+
+    if(error) {
+        console.log("Error in updating your project target date: ", error)
+        return
+    }
+
+    return
+}
+
+export const getProjectBudgetById = async (project_id: number) => {
+    const { data, error } = await client 
+        .from("project_budget")
+        .select("*")
+        .eq("project_id", project_id)
 }

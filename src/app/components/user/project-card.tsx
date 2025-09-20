@@ -29,7 +29,11 @@ export const ProjectCard = ({ title, status, date, imgURL }: ProjectCardProps) =
                     {status}
                 </div>
                 <div className="w-fit px-3 py-1 rounded-[10px] text-xs bg-[#E6F1FF]">
-                    {date}
+                    {new Date(date).toLocaleString("en-GB", {
+                        day: "2-digit",
+                        month: "long",
+                        year:"numeric"
+                    })}
                 </div>
             </div>
         </div>

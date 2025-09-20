@@ -24,28 +24,31 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { project } from '@/src/app/lib/definitions';
-import { getProjectByTitle } from '@/src/app/actions/projects';
+import { project, project_budget } from '@/src/app/lib/definitions';
+import { getProjectByID } from '@/src/app/actions/projects';
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@radix-ui/react-dialog';
+import { DialogHeader } from '@/components/ui/dialog';
 
 export default function ViewProject() {
     const router = useRouter();
     const params = useParams();
-    const projectID = Array.isArray(params.id)
-        ? params.id[0]
-        : params.id;
+    const blob = Array.isArray(params.id) ? params.id[0] : params.id;
+
+    const projectID = blob ? Number(blob.split("-").pop()) : undefined;
 
     const [project, setProject] = useState<project | null>(null)
+    const [budget, setBudget] = useState<project_budget[]>([])
 
     useEffect(() => {
-        const setData = async() => {
-            if(projectID){
-                const data = await getProjectByTitle(projectID)
+        const setData = async () => {
+            if (projectID) {
+                const data = await getProjectByID(projectID)
                 setProject(data)
             }
         }
 
         setData()
-    }, [])
+    }, [projectID])
 
     return (
         <div className="bg-[#E6F1FF] min-h-screen max-h-fit mt-10">
@@ -66,7 +69,7 @@ export default function ViewProject() {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbLink href={`/users/projects/${projectID}`}>View Project</BreadcrumbLink>
+                        <BreadcrumbLink href={`/users/projects/${project?.title}-${projectID}`}>View Project</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
@@ -79,10 +82,22 @@ export default function ViewProject() {
                 <p className="font-bold text-xl xl:text-3xl mt-8 mb-2 xl:mb-6">{project?.title}</p>
 
                 <div className="flex flex-col md:flex-row gap-5 h-10 justify-between">
-                    <Button className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push(`/users/projects/${projectID}`)}>View Project Details</Button>
+                    <Button
+                        className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]"
+                        onClick={() => router.push(`/users/projects/${project?.title}-${projectID}`)}>
+                        View Project Details
+                    </Button>
                     <div className="flex flex-row gap-2">
                         <p className="text-black font-medium text-sm md:text-base content-center">Set Budget for Project:</p>
-                        <p className="text-[#28A745] text-base md:text-xl font-medium content-center">&#8369;999,999,999.00</p>
+                        <p className="text-[#28A745] text-base md:text-xl font-medium content-center">
+                            {project?.budget !== undefined
+                                ? new Intl.NumberFormat("en-PH", {
+                                    style: "currency",
+                                    currency: "PHP",
+                                    minimumFractionDigits: 2,
+                                }).format(project.budget)
+                                : "₱0.00"}
+                        </p>
                     </div>
 
                 </div>
@@ -100,59 +115,65 @@ export default function ViewProject() {
                                 <TableHead className="text-center">Photo</TableHead>
                             </TableRow>
                         </TableHeader>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell className="flex justify-center">
-                                    <p className="-center text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">For Approval</p>
-                                </TableCell>
-                                <TableCell className="max-w-[150px] text-center">Product Name 1</TableCell>
-                                <TableCell className="text-center">Php 123,456,789</TableCell>
-                                <TableCell className="text-center">1</TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
-                            </TableRow>
-                        </TableBody>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell className="flex justify-center">
-                                    <p className="text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">Approved</p>
-                                </TableCell>
-                                <TableCell className="max-w-[150px] text-center">Product Name 2</TableCell>
-                                <TableCell className="text-center">Php 123,456,789</TableCell>
-                                <TableCell className="text-center">1</TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
-                            </TableRow>
-                        </TableBody>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell className="flex justify-center">
-                                    <p className="text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">Rejected</p>
-                                </TableCell>
-                                <TableCell className="max-w-[150px] text-center">Product Name 3</TableCell>
-                                <TableCell className="text-center">Php 123,456,789</TableCell>
-                                <TableCell className="text-center">1</TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
-                            </TableRow>
-                        </TableBody>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell className="flex justify-center">
-                                    <p className="text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">Resubmit</p>
-                                </TableCell>
-                                <TableCell className="max-w-[150px] text-center">Product Name 4</TableCell>
-                                <TableCell className="text-center">Php 123,456,789</TableCell>
-                                <TableCell className="text-center">1</TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
-                            </TableRow>
-                        </TableBody>
+                        {budget.map((data) => (
+                            <TableBody key={data.id}>
+                                <TableRow>
+                                    <TableCell className="flex justify-center">
+                                        <p className="self-center text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">
+                                            {data.status}
+                                        </p>
+                                    </TableCell>
+                                    <TableCell className="max-w-[150px] text-center">{data.item}</TableCell>
+                                    <TableCell className="text-center">
+                                        {new Intl.NumberFormat("en-PH", {
+                                            style: "currency",
+                                            currency: "PHP",
+                                            minimumFractionDigits: 2,
+                                        }).format(data.price)}
+                                    </TableCell>
+                                    <TableCell className="text-center">{data.amount}</TableCell>
+                                    <TableCell className="flex justify-center">
+                                        <Dialog>
+                                            <DialogTrigger>
+                                                <Image className="cursor-pointer hover:bg-gray-300" />
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <DialogHeader>
+                                                    <DialogTitle className="text-2xl text-center">{data.item} Receipt Photo</DialogTitle>
+                                                    <DialogDescription>
+                                                        <hr className="border-t border-black w-full my-3" />
+                                                        <img src={data.receiptURL} className=" aspect-3/4 object-cover" />
+
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                            </DialogContent>
+                                        </Dialog>
+                                    </TableCell>
+                                    <TableCell className="justify-items-center">
+                                        <Dialog>
+                                            <DialogTrigger>
+                                                <Image className="cursor-pointer hover:bg-gray-300" />
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <DialogHeader>
+                                                    <DialogTitle className="text-2xl text-center">{data.item} Item Photo</DialogTitle>
+                                                    <DialogDescription>
+                                                        <hr className="border-t border-black w-full my-3" />
+                                                        <img src={data.receiptURL} className=" aspect-3/4 object-cover" />
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                            </DialogContent>
+                                        </Dialog>
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        ))
+
+                        }
+
                     </Table>
                 </div>
             </div>
-
-
         </div>
     )
 }
