@@ -2,7 +2,7 @@
 import { Search as SearchIcon } from "lucide-react";
 import LocationSelect from "./locselect";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+
 
 const Search = () => {
     return <SearchIcon size={24} />
@@ -30,7 +30,7 @@ export const Title = ({ onLocationChange}: TitleProps) => {
                 <a className="hidden sm:inline">ystem</a>
             </h1>
             <form className="flex flex-col gap-2 w-screen items-center justify-center md:flex-row" >
-                <LocationSelect onChange={onLocationChange}/>
+                <LocationSelect onChange={onLocationChange} widthClass="w-full"/>
                 <div className="relative w-full max-w-full sm:max-w-[400px] md:max-w-[683px]">
                     <div className="absolute inset-y-0 left-1 pl-3 flex items-center pointer-events-none">
                         <Search />

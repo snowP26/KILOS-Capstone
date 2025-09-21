@@ -16,8 +16,8 @@ export default function LoginPage() {
                     </div>
                 </div>
             </div>
-            <div className="bg-yellow relative hidden lg:block">
-                
+            <div className="bg-[#BDDBDB] relative hidden lg:block">
+                <img className="h-screen w-screen" src="/login.svg"/>
             </div>
         </div>
     )

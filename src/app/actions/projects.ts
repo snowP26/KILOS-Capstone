@@ -195,3 +195,19 @@ export const deleteProjectPhoto = async (id: number|string) => {
     console.log("Successfully deleted data.")
     return
 }
+
+export const getProjectByTitle = async (title: string) => {
+    const {data, error} = (await client.from("projects").select("*").eq("title", title));
+
+    if(data && data[0].length == 0){
+        console.log("No record was found")
+        return null
+    }
+
+    if(error){
+        console.log("Error retrieving your project: ", error)
+        return null
+    }
+
+    return data[0]
+}

@@ -128,4 +128,14 @@ export type project = {
     target_date: string,
     status: string,
     imageURL: string,
+    budget: number,
+}
+
+export type project_approvals = { 
+    id: number,
+    project_id: number,
+    recipient: string,
+    status: string,
+    comments: string,
+    status_update: string
 }

@@ -5,11 +5,11 @@ import { CommunityBanner } from "@/src/app/components/community/community-banner
 import { PostFeedbackCard } from "@/src/app/components/community/post-feedbackCard";
 import { useParams, notFound } from "next/navigation";
 import { commFeedback, locations } from "@/src/app/lib/definitions";
-import {  useEffect,  useState } from "react";
-import { getFeedback} from "@/src/app/actions/feedback";
+import { useEffect, useState } from "react";
+import { getFeedback } from "@/src/app/actions/feedback";
 import { locNameToID } from "@/src/app/actions/convert";
 import { FeedbackCard } from "@/src/app/components/community/feedbackCard";
-
+import { CurrentYoCard } from "@/src/app/components/community/current-YoCard";
 
 export default function Page() {
   const [refresh, setRefresh] = useState(0);
@@ -44,42 +44,67 @@ export default function Page() {
     fetchFeedbackData();
   }, [refresh, loc_name]);
 
+  const handleButtonClick = () => {
+    setOpen(prevOpen => !prevOpen);
+  };
+
   return (
     <div>
       <ComNav />
       <div className="mt-10">
-        <CommunityBanner id={loc_name} />
+        <CommunityBanner id={loc_name} onButtonClick={handleButtonClick} isOpen={open} />
       </div>
 
-      <p className="font-bold text-center text-2xl sm:text-2xl md:text-3xl lg:text-4xl">Community Feedback</p>
-      <div className="flex justify-center mt-5">
-        <PostFeedbackCard
-          loc_name={loc_name} 
-          setRefresh={setRefresh} 
-        />
-      </div>
+      {open ? (
+        <div className="text-center">
+          <p className="font-bold text-center text-2xl sm:text-2xl md:text-3xl lg:text-4xl">
+            Current Youth Officials
+          </p>
 
-      <div className="mx-25">
-        <div className="flex flex-wrap justify-center">
-          {feedback.map((data) => (
-            <FeedbackCard
-              key={data.id}
-              feedbackID={data.id}
-              header={data.header}
-              body={data.body}
-              date={new Date(data.created_at).toLocaleString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true,
-              })}
-              isWhite={false}
-            />
-          ))}
+          <div className="mx-25">
+            <div className="flex flex-wrap justify-center">
+              <CurrentYoCard />
+              <CurrentYoCard />
+              <CurrentYoCard />
+              <CurrentYoCard />
+              <CurrentYoCard />
+              <CurrentYoCard />
+              <CurrentYoCard />
+            </div>
+          </div>
         </div>
-      </div>
+      ) : (
+        <>
+          <p className="font-bold text-center text-2xl sm:text-2xl md:text-3xl lg:text-4xl">
+            Community Feedback
+          </p>
+          <div className="flex justify-center mt-5">
+            <PostFeedbackCard loc_name={loc_name} setRefresh={setRefresh} />
+          </div>
+
+          <div className="mx-25">
+            <div className="flex flex-wrap justify-center">
+              {feedback.map((data) => (
+                <FeedbackCard
+                  key={data.id}
+                  feedbackID={data.id}
+                  header={data.header}
+                  body={data.body}
+                  date={new Date(data.created_at).toLocaleString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
+                  isWhite={false}
+                />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

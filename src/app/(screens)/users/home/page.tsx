@@ -21,15 +21,15 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-[#E6F1FF] flex flex-col xl:flex xl:flex-row xl:h-[100vh] xl:mx-5">
-      <div className="mt-5 h-[80%] xl:rounded-2xl xl:border-black xl:border-2">
-        <p className="font-bold text-3xl text-center mt-5">Recent Feedback</p>
+    <div className="bg-[#E6F1FF] flex flex-col lg:flex lg:flex-row lg:h-[100vh] lg:mx-5">
+      <div className="mt-5 h-[80%] lg:rounded-2xl lg:border-black lg:border-2 lg:w-[20%]">
+        <p className="font-bold text-3xl lg:text-xl xl:text-3xl text-center mt-5">Recent Feedback</p>
 
         <ScrollArea className="sm:hidden lg:block">
           <div className="max-h-[350px] sm:h-auto lg:max-h-[570px]">
-            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-center xl:flex-col">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-center lg:flex-col">
               {feedback.map((data) => (
-              <div key={data.id} className="w-full flex justify-center sm:w-1/2 lg:w-1/3 xl:w-full">
+              <div key={data.id} className="w-full flex justify-center sm:w-1/2 lg:w-full">
 
                 <DbRecentFeedbackCard
                 header={data.header}
@@ -41,7 +41,7 @@ export default function Home() {
           </div>
         </ScrollArea>
         <div className="hidden sm:block lg:hidden max-h-[350px] sm:max-h-full xl:h-[690px]">
-          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-center xl:flex-col">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-center lg:flex-col">
             {feedback.map((data) => (
             <div key={data.id} className="w-full flex justify-center sm:w-1/2 lg:w-1/3 xl:w-full">
 
@@ -55,7 +55,8 @@ export default function Home() {
         </div>
 
       </div>
-      <div className="mt-10 w-[90%] self-center xl:w-[90%] xl:mt-0 xl:self-start">
+      
+      <div className="mt-10 w-[90%] self-center lg:w-[90%] lg:mt-0 lg:self-start">
         <DbCalendarCard />
       </div>
     </div>
