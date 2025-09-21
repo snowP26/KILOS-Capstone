@@ -1,11 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button'
-import { ArrowLeft } from 'lucide-react';
-import { Image } from 'lucide-react';
-import { Separator } from "@/components/ui/separator"
+import React, { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, SquarePen, Image } from "lucide-react";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -13,152 +11,164 @@ import {
     BreadcrumbList,
     BreadcrumbPage,
     BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+} from "@/components/ui/breadcrumb";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectGroup,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
-import { project } from '@/src/app/lib/definitions';
-import { getProjectByID } from '@/src/app/actions/projects';
 
+} from "@/components/ui/table";
+import { project, project_budget } from "@/src/app/lib/definitions";
+import { getProjectBudgetById, getProjectByID } from "@/src/app/actions/projects";
 export default function ViewProjectBudget() {
-    const params = useParams();
-    const projectID = Array.isArray(params.id)
-        ? decodeURIComponent(params.id[0] ?? "")
-        : decodeURIComponent(params.id ?? "");
+
+
     const router = useRouter();
+    const params = useParams();
+    const blob = Array.isArray(params.id) ? decodeURIComponent(params.id[0] ?? "") : decodeURIComponent(params.id ?? "");
+    const projectID = Number(blob.split("-").pop());
     const [project, setProject] = useState<project | null>(null);
+    const [projectBudget, setProjectBudget] = useState<project_budget[]>([]);
 
     useEffect(() => {
-        const fetchProject = async () => {
-            const data = await getProjectByID(projectID);
-            console.log("fetched:", data);
-            setProject(data);
-        };
-        fetchProject();
-    }, [projectID]);
+        const getData = async () => {
+            const projectData = await getProjectByID(projectID);
+            const projectBudgetData = await getProjectBudgetById(projectID);
 
-    useEffect(() => {
-        if (project) {
-            console.log("project updated:", project);
+            if (projectData) setProject(projectData);
+            if (projectBudgetData) setProjectBudget(projectBudgetData);
         }
-    }, [project]);
 
-    if (!project) {
-        return <h1>Not found</h1>
-    }
+
+        getData()
+
+    }, [projectID])
+
 
     return (
-        <div className="bg-[#E6F1FF] min-h-screen max-h-full mt-10">
-            <Breadcrumb className="ml-5 xl:ml-20">
-                <BreadcrumbList>
-                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.back()}>
-                        <ArrowLeft color="black" />
-                        <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
-                            Return
-                        </div>
-                    </Button>
-                    <div className="h-5 w-3">
-                        <Separator className="bg-gray-500" orientation="vertical" />
+        <div className="bg-[#E6F1FF] min-h-screen py-10">
+            {/* Breadcrumb */}
+            <div className="mx-20">
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            <Button
+                                className="group gap-1 bg-transparent px-0 hover:bg-transparent"
+                                variant="ghost"
+                                onClick={() => router.back()}
+                            >
+                                <ArrowLeft className="h-5 w-5 text-gray-700" />
+                                <span className="hidden group-hover:inline-block transition-all">
+                                    Return
+                                </span>
+                            </Button>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href="/admin/projects">
+                                Proposed Projects
+                            </BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href={`/admin/projects/${project?.title}-${project?.id}`}>
+                                View Proposed Project
+                            </BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbPage className="font-semibold">
+                                View Budget Breakdown
+                            </BreadcrumbPage>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
+            </div>
+
+            <div className="mx-20 mt-10 space-y-8">
+                {/* Title + Budget Section */}
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                    <h1 className="font-bold text-2xl md:text-3xl xl:text-3xl mt-8 mb-2 xl:mb-6">
+                        {project?.title}
+                    </h1>
+
+                    <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-lg shadow-sm">
+                        <p className="text-gray-700 font-medium">Set Budget:</p>
+                        <p className="text-[#28A745] text-lg md:text-xl font-bold">
+                            ₱999,999,999.00
+                        </p>
+                        <SquarePen
+                            size="18px"
+                            className="cursor-pointer text-gray-600 hover:text-black"
+                        />
                     </div>
-
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href="/users/projects">Current Projects</BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href={`/users/projects/${projectID}`}>View Project</BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                        <BreadcrumbPage className="font-bold">View Project Budget</BreadcrumbPage>
-                    </BreadcrumbItem>
-                </BreadcrumbList>
-            </Breadcrumb>
-
-            <div className="mx-2 sm:mx-10 xl:mx-25">
-                <p className="font-bold text-xl xl:text-3xl mt-8 mb-2 xl:mb-6">{project?.title}</p>
-
-                <div className="flex flex-col md:flex-row gap-5 h-10 justify-between">
-                    <Button className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push(`/users/projects/${projectID}`)}>View Project Details</Button>
-                    <div className="flex flex-row gap-2">
-                        <p className="text-black font-medium text-sm md:text-base content-center">Set Budget for Project:</p>
-                        <p className="text-[#28A745] text-base md:text-xl font-medium content-center">&#8369;999,999,999.00</p>
-                    </div>
-
                 </div>
 
-                <div className="mt-20 xl:mt-10">
-                    <Table className="bg-white w-[100%]">
-                        <TableCaption className="mt-2">Breakdown of project materials used in the project.</TableCaption>
+
+                {/* Table */}
+                <div className="bg-white rounded-xl shadow-md overflow-hidden">
+                    <Table>
                         <TableHeader>
-                            <TableRow>
-                                <TableHead className="text-center w-50">Status</TableHead>
+                            <TableRow className="bg-gray-100">
+                                <TableHead className="text-center w-40">Status</TableHead>
                                 <TableHead className="text-center">Item Name</TableHead>
                                 <TableHead className="text-center">Price</TableHead>
-                                <TableHead className="text-center">Amt.</TableHead>
+                                <TableHead className="text-center">Amount</TableHead>
                                 <TableHead className="text-center">Receipt</TableHead>
                                 <TableHead className="text-center">Photo</TableHead>
                             </TableRow>
                         </TableHeader>
+
                         <TableBody>
-                            <TableRow>
-                                <TableCell className="flex justify-center">
-                                    <p className="-center text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">For Approval</p>
-                                </TableCell>
-                                <TableCell className="max-w-[150px] text-center">Product Name 1</TableCell>
-                                <TableCell className="text-center">Php 123,456,789</TableCell>
-                                <TableCell className="text-center">1</TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
-                            </TableRow>
-                        </TableBody>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell className="flex justify-center">
-                                    <p className="text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">Approved</p>
-                                </TableCell>
-                                <TableCell className="max-w-[150px] text-center">Product Name 2</TableCell>
-                                <TableCell className="text-center">Php 123,456,789</TableCell>
-                                <TableCell className="text-center">1</TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
-                            </TableRow>
-                        </TableBody>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell className="flex justify-center">
-                                    <p className="text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">Rejected</p>
-                                </TableCell>
-                                <TableCell className="max-w-[150px] text-center">Product Name 3</TableCell>
-                                <TableCell className="text-center">Php 123,456,789</TableCell>
-                                <TableCell className="text-center">1</TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
-                            </TableRow>
-                        </TableBody>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell className="flex justify-center">
-                                    <p className="text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">Resubmit</p>
-                                </TableCell>
-                                <TableCell className="max-w-[150px] text-center">Product Name 4</TableCell>
-                                <TableCell className="text-center">Php 123,456,789</TableCell>
-                                <TableCell className="text-center">1</TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
-                                <TableCell className="justify-items-center"><Image className="cursor-pointer hover:bg-gray-300" /></TableCell>
-                            </TableRow>
+                            {projectBudget.map((data) => (
+                                <TableRow key={data.id}>
+                                    <TableCell className="text-center">
+                                        <Select>
+                                            <SelectTrigger className="w-fit mx-auto">
+                                                <SelectValue placeholder="FOR APPROVAL" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectItem value="approved" className="text-[#28A745]">
+                                                        APPROVED
+                                                    </SelectItem>
+                                                    <SelectItem value="rejected" className="text-[#A7282A]">
+                                                        REJECTED
+                                                    </SelectItem>
+                                                    <SelectItem value="resubmit" className="text-[#FF6904]">
+                                                        RESUBMIT
+                                                    </SelectItem>
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    </TableCell>
+                                    <TableCell className="text-center">{data.item_name}</TableCell>
+                                    <TableCell className="text-center">{data.price}</TableCell>
+                                    <TableCell className="text-center">{data.amt}</TableCell>
+                                    <TableCell className="text-center">
+                                        <Image className="mx-auto cursor-pointer hover:text-gray-700" />
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <Image className="mx-auto cursor-pointer hover:text-gray-700" />
+                                    </TableCell>
+                                </TableRow>
+                            ))}
                         </TableBody>
                     </Table>
+
                 </div>
             </div>
-
-
         </div>
-    )
+    );
 }

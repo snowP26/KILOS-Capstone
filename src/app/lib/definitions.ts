@@ -139,3 +139,14 @@ export type project_approvals = {
     comments: string,
     status_update: string
 }
+
+export type project_budget = {
+    id: number,
+    project_id: number,
+    status: string,
+    item_name: string,
+    price: number,
+    amt: number,
+    receiptURL: string,
+    photoURL: string
+}
