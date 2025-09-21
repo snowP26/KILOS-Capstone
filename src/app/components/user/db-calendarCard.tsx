@@ -234,7 +234,91 @@ export const DbCalendarCard = () => {
                     </DialogHeader>
                     <hr className="border-t border-black w-full" />
 
-                    <h1 className="text-3xl py-10 text-gray-400 text-center font-medium">No events for today!</h1>
+
+                    <ul className="max-h-[500px]">
+                        {currentEvents.length <= 0 && (
+                            <h1 className="text-3xl py-10 text-gray-400 text-center font-medium">No events for today!</h1>
+                        )}
+                        <div className="w-full flex flex-wrap justify-center gap-5 mb-5">
+                            {currentEvents.length > 0 && currentEvents.map((event: EventApi) => (
+                                <li key={event.id} >
+                                    <Dialog>
+                                        <DialogTrigger>
+
+                                            <div className="bg-purple-400 w-full p-5 mt-2 rounded-2xl cursor-pointer">
+                                                <div className="font-bold text-xl text-center w-full truncate">
+                                                    {event.title}
+                                                </div>
+                                                <div className="flex flex-row">
+                                                    <p className="pr-1">Host:</p>
+                                                    <p>Mayor Kurt Sereno</p>
+                                                </div>
+                                                <div className="flex flex-row">
+                                                    <p className="pr-1">Date:</p>
+                                                    <div>
+                                                        {formatDate(event.start!, {
+                                                            year: "numeric",
+                                                            month: "short",
+                                                            day: "numeric",
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </DialogTrigger>
+                                        <DialogContent className="bg-[#E6F1FF] w-full">
+                                            <DialogHeader>
+                                                <DialogTitle className="text-start text-xl lg:text-3xl lg:text-center">
+                                                    Meeting Title
+                                                </DialogTitle>
+                                                <hr className="border-t border-black w-full lg:w-full" />
+                                                <div className="flex flex-wrap gap-2 justify-center text-center">
+                                                    <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                                                        <p className="text-sm">
+                                                            Mayor Kurt Sereno
+                                                        </p>
+                                                    </div>
+                                                    <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                                                        <p className="text-sm">
+                                                            Meeting Modality
+                                                        </p>
+                                                    </div>
+                                                    <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                                                        <p className="text-sm">
+                                                            Meeting Date
+                                                        </p>
+                                                    </div>
+                                                    <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                                                        <p className="text-sm">
+                                                            Meeting Time
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-white text-balance h-100 mt-2 rounded-[20px]">
+                                                    <ScrollArea className="h-[90%] m-3 ">
+                                                        <p className="p-5">
+                                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc at gravida fermentum, erat turpis malesuada leo, vel commodo sapien turpis nec lorem. Integer sit amet est nec purus tincidunt aliquet. Aenean porta vehicula neque, in tempor ex tincidunt at. Suspendisse potenti. Proin quis lorem vehicula, tincidunt neque sed, fermentum elit. Ut dapibus eros eget mauris volutpat, nec tempus justo tempor. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Sed congue magna sed metus pulvinar, quis cursus nulla lacinia. Aliquam erat volutpat. Donec non lacus at arcu fermentum venenatis. Quisque vitae hendrerit purus. Nulla convallis lorem a justo dapibus, nec dignissim sapien accumsan.
+
+                                                            Mauris porttitor, augue id tincidunt dignissim, justo augue sagittis leo, a tincidunt arcu metus ac lorem. Curabitur rhoncus lorem a lacus blandit, sit amet gravida ligula laoreet. Suspendisse imperdiet lacus ut blandit dignissim. Sed iaculis libero ut enim congue, nec tincidunt metus bibendum. Morbi pulvinar tellus vel turpis rhoncus imperdiet. Nulla facilisi. Vestibulum iaculis fringilla felis, ac varius elit fringilla nec. Nam sodales lectus eros, at iaculis diam malesuada non. Integer ornare justo libero, at tincidunt nisl dapibus ut.
+
+                                                            Curabitur rutrum, magna sed varius convallis, enim est efficitur eros, nec sollicitudin nisi sapien non metus. Etiam volutpat, lacus sed bibendum tempor, magna magna malesuada augue, vel dapibus metus neque a nisl. Duis eget tempor eros. Etiam vel eros in elit tristique sagittis ac nec urna. Nullam in sem quis magna cursus vehicula. Nam a orci sapien. Sed fermentum imperdiet pulvinar. Nam sodales nisi et mauris bibendum, et volutpat dolor tristique. Cras vulputate nunc in nulla tincidunt, at pulvinar velit porttitor.
+
+                                                            Vivamus mattis posuere diam a scelerisque. Nulla ornare nisl eu urna gravida accumsan. Sed sodales magna in turpis finibus facilisis. Duis et purus ut velit pharetra dapibus. Quisque pretium laoreet justo nec vehicula. Morbi ultrices nulla eget sagittis viverra. Aliquam efficitur justo in libero fermentum rutrum. Cras at porttitor sapien. Vestibulum volutpat, risus in commodo vulputate, mi risus hendrerit purus, a bibendum diam mi vel risus. Sed luctus diam sed magna porta, nec pulvinar metus tincidunt.
+
+                                                            Vivamus mattis posuere diam a scelerisque. Nulla ornare nisl eu urna gravida accumsan. Sed sodales magna in turpis finibus facilisis. Duis et purus ut velit pharetra dapibus. Quisque pretium laoreet justo nec vehicula. Morbi ultrices nulla eget sagittis viverra. Aliquam efficitur justo in libero fermentum rutrum. Cras at porttitor sapien. Vestibulum volutpat, risus in commodo vulputate, mi risus hendrerit purus, a bibendum diam mi vel risus. Sed luctus diam sed magna porta, nec pulvinar metus tincidunt.
+                                                        </p>
+                                                    </ScrollArea>
+
+                                                </div>
+
+                                            </DialogHeader>
+                                        </DialogContent>
+                                    </Dialog>
+                                </li>
+                            ))}
+                        </div>
+
+                    </ul>
                     <Dialog>
                         <DialogTrigger asChild>
                             <Button className="bg-[#E6F1FF] place-self-end w-fit text-black cursor-pointer border-1 border-black border-dashed hover:text-white">

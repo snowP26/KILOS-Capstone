@@ -10,8 +10,8 @@ type CommunityBannerProps = {
 export const CommunityBanner = ({ id, onButtonClick, isOpen }: CommunityBannerProps) => {
   return (
     <div className="flex flex-col h-full mb-20 mx-5 sm:flex sm:flex-col sm:h-full sm:w-fit sm:mb-20 md:flex md:flex-col md:h-full md:mx-20 md:mb-20 lg:flex lg:flex-row lg:h-60">
-      <div className="h-50 w-full mb-5 rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)] relative mr-3 sm:w-full sm:h-80 lg:w-[70%] lg:h-full">
-        {/* <Image src="" alt=""></Image> */}
+      <div className="h-50 w-full mb-5 rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)] relative mr-3 sm:w-full sm:h-[56.25%] lg:w-[70%] lg:h-full">
+        <img src="/NagaYOBanner.svg" alt="" className="object-cover w-full h-full rounded-md"></img>
         <p className="text-2xl font-medium ml-3 absolute bottom-0 left-0 pl-2 pb-2">{id}</p>
       </div>
 
