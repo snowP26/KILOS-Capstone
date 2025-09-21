@@ -19,10 +19,10 @@ export default function SubmitOrdinances() {
     const router = useRouter();
 
     return (
-        <div className="bg-[#E6F1FF] h-screen mt-10">
-            <Breadcrumb className="ml-20">
+        <div className="bg-[#E6F1FF] min-h-screen max-h-screen mt-10">
+            <Breadcrumb className="ml-5 lg:ml-20">
                 <BreadcrumbList>
-                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.push("/admin/ordinances")}>
+                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.back()}>
                         <ArrowLeft color="black" />
                         <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
                             Return
@@ -43,18 +43,18 @@ export default function SubmitOrdinances() {
             </Breadcrumb>
 
 
-                <p className="font-bold text-3xl mt-8 mb-2 ml-30">Submit an Ordinance</p>
+                <p className="font-bold text-2xl mt-8 mb-2 ml-5 lg:text-3xl lg:ml-30">Submit an Ordinance</p>
                 <hr className="border-t border-black w-[90%] mx-auto my-3" />
 
                 <div className="justify-items-center mt-10">
-                    <div className="bg-white w-[70%] px-20 rounded-[16px] py-10 shadow-lg/30">
+                    <div className="bg-white w-[90%] lg:w-[70%] px-5 lg:px-20 rounded-[16px] py-10 shadow-lg/30">
 
-                        <form className="w-[70%]">
+                        <form className="w-full">
                             <p className="font-semibold">Ordinance Title</p>
                             <Input className="bg-[#E6F1FF] placeholder:italic" placeholder="eg. An ordinance..." />
                         </form>
 
-                        <form className="w-100 mt-5">
+                        <form className="w-full lg:w-[70%] mt-5">
                             <p className="font-semibold">Ordinance Year and Ordinance Number</p>
                             <Input className="bg-[#E6F1FF] placeholder:italic" placeholder="eg. 2000 - 001" />
                         </form>
@@ -82,8 +82,8 @@ export default function SubmitOrdinances() {
                         </form>
 
 
-                        <div className="place-self-end">
-                            <Button className="bg-[#A3C4A8] text-black hover:font-bold rounded-[16px] cursor-pointer hover:bg-accent hover:text-accent-foreground hover:border-[#a3c4a8] hover:border-1 transition-all">
+                        <div className="mt-15 place-self-center lg:mt-0 lg:place-self-end">
+                            <Button className="bg-[#A3C4A8] text-black hover:font-bold rounded-[16px] cursor-pointer hover:bg-black hover:text-[#A3C4A8] transition-all">
                                 Submit Ordinance/Resolution
                             </Button>
                         </div>

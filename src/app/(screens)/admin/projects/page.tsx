@@ -29,9 +29,9 @@ export default function Projects() {
 
   return (
     <div className="bg-[#E6F1FF] min-h-dvh">
-      <p className="font-bold text-3xl m-10">Proposed Projects</p>
+      <p className="font-bold text-3xl m-5 lg:m-10">Proposed Projects</p>
 
-      <div className="flex flex-wrap justify-center gap-5">
+      <div className="flex flex-wrap justify-center gap-5 lg:gap-3 xl:gap-5">
         {paginatedProjects.map((project) => (
           <div
             key={project.id}

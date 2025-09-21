@@ -48,7 +48,7 @@ export const OrdinancesLandingCard = ({ title, description, author, id }: ordina
                 </div>
             </div>
 
-            <div className="flex flex-row mt-8 mb-2 ml-10 text-xs sm:text-sm">
+            <div className="flex flex-row mt-8 mb-2 pb-4 ml-10 text-xs sm:text-sm">
                 <p className="font-semibold mr-2">Ordinance Author:</p>
                 <p className="italic text-gray-600 group-hover:text-gray-800 transition-colors">{authorName}</p>
             </div>

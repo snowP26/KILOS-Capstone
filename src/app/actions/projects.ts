@@ -256,8 +256,16 @@ export const updateTargetDate = async (id: number, date: string) => {
 }
 
 export const getProjectBudgetById = async (project_id: number) => {
+
     const { data, error } = await client 
         .from("project_budget")
         .select("*")
         .eq("project_id", project_id)
+
+    if(error) {
+        console.log("error retrieving your project's budget data: ", error)
+        return []
+    }
+    console.log(data)
+    return data;
 }

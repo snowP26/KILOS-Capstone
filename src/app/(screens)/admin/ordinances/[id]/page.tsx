@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, CircleCheck } from "lucide-react";
@@ -46,6 +47,8 @@ import { getPendingOrdinanceFile } from "@/src/app/actions/ordinances";
 import { getDisplayName } from "@/src/app/actions/convert";
 
 export default function SubmitOrdinances() {
+  const router = useRouter();
+
   const params = useParams();
   const id = params.id as string;
   const [refresh, setRefresh] = useState(0);
@@ -105,12 +108,12 @@ export default function SubmitOrdinances() {
   }, [refresh, id]);
 
   return (
-    <div className="bg-[#E6F1FF] h-screen mt-10">
-      <Breadcrumb className="ml-20">
+    <div className="bg-[#E6F1FF] min-h-screen max-h-full mt-10">
+      <Breadcrumb className="ml-5 lg:ml-20">
         <BreadcrumbList>
           <Button
             className="group gap-0 relative bg-[#E6F1FF] cursor-pointer"
-            variant="link"
+            variant="link" onClick={() => router.back()}
           >
             <ArrowLeft color="black" />
             <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
@@ -135,16 +138,16 @@ export default function SubmitOrdinances() {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="mx-25">
-        <p className="font-bold text-3xl mt-8 mb-2 ml-30">
+      <div className="lg:mx-25">
+        <p className="font-bold text-2xl ml-5 mt-8 mb-2 lg:text-3xl lg:ml-30">
           Ordinance {ordinance?.title}
         </p>
         <hr className="border-t border-black w-[90%] mx-auto mt-3 mb-2" />
-        <p className="text-md mb-2 ml-30">{ordinance?.description}</p>
+        <p className="text-sm ml-10 mb-2 lg:text-md lg:ml-30">{ordinance?.description}</p>
 
-        <div className="mx-20 mt-10">
+        <div className="mt-10 mx-5 lg:mx-20">
           <Table className="bg-white w-full rounded-lg overflow-hidden shadow-md border">
-            <TableCaption className="mt-2 text-sm text-gray-500">
+            <TableCaption className="mt-2 mb-2 lg:mb-0 text-sm text-gray-500">
               Status of Proposed Ordinance for Each Reading
             </TableCaption>
             <TableHeader className="bg-gray-100">
@@ -198,15 +201,14 @@ export default function SubmitOrdinances() {
                       </Select>
                     ) : (
                       <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          a.status === "pending"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : a.status === "in progress"
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${a.status === "pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : a.status === "in progress"
                             ? "bg-blue-100 text-blue-800"
                             : a.status === "approved"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
                       >
                         {a.status.toUpperCase()}
                       </span>
@@ -320,7 +322,7 @@ export default function SubmitOrdinances() {
           </Table>
         </div>
         {files ? (
-          <div className="mx-20 mt-10">
+          <div className="mt-10 flex justify-center lg:justify-start lg:mx-20">
             <div
               className="bg-white py-2 px-10 w-fit mt-2 flex flex-row gap-2 rounded-[8px]"
               onClick={() => {
@@ -333,8 +335,8 @@ export default function SubmitOrdinances() {
             </div>
           </div>
         ) : (
-          <div>
-            <h1>No files</h1>
+          <div className="flex justify-center lg:justify-start">
+            <h1 className="mt-10 lg:mt-5 lg:mx-20 bg-white py-2 px-10 w-fit font-semibold italic rounded-[8px]">No files attached.</h1>
           </div>
         )}
 

@@ -144,9 +144,9 @@ export type project_budget = {
     id: number,
     project_id: number,
     status: string,
-    item: string,
+    item_name: string,
     price: number,
-    amount: number,
+    amt: number,
     receiptURL: string,
     photoURL: string
 }

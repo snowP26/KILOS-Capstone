@@ -9,10 +9,14 @@ const locations = [
   { name: "Pili", value: "3" },
 ];
 
+
+
 export default function LocationSelect({
   onChange,
+  widthClass,
 }: {
   onChange: (location: string | null) => void;
+  widthClass: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<typeof locations[0] | null>(null);
@@ -35,8 +39,10 @@ export default function LocationSelect({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const [condition, setCondition] = useState('A');
+
   return (
-    <div ref={dropdownRef} className="relative w-full sm:w-48">
+    <div ref={dropdownRef} className={`z-10 relative w-48 ${widthClass}`}>
       {/* Button */}
       <button
         type="button"
@@ -47,9 +53,8 @@ export default function LocationSelect({
           {selected ? selected.name : "Location"}
         </span>
         <ChevronDown
-          className={`h-5 w-5 transform transition-transform duration-200 ${
-            isOpen ? "rotate-180" : "rotate-0"
-          }`}
+          className={`h-5 w-5 transform transition-transform duration-200 ${isOpen ? "rotate-180" : "rotate-0"
+            }`}
         />
       </button>
 
@@ -60,11 +65,10 @@ export default function LocationSelect({
             <div
               key={idx}
               onClick={() => handleSelect(location)}
-              className={`flex cursor-pointer items-center px-4 py-2 text-sm transition-colors hover:bg-blue-50 ${
-                selected?.value === location.value
+              className={`flex cursor-pointer items-center px-4 py-2 text-sm transition-colors hover:bg-blue-50 ${selected?.value === location.value
                   ? "bg-blue-100 font-semibold text-blue-700"
                   : "text-gray-700"
-              }`}
+                }`}
             >
               {selected?.value === location.value && (
                 <Check className="mr-2 h-4 w-4 text-blue-600" />

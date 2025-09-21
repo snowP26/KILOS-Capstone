@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ImagePlus } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 export default function Projects() {
@@ -47,7 +48,25 @@ export default function Projects() {
     }, [isDialogOpen]);
 
     if (loading) {
-        return <p className="p-5">Loading...</p>;
+        return (
+            <main className="p-5 bg-[#E6F1FF] min-h-screen">
+                <p className="font-bold text-3xl mb-5">Loading Projects...</p>
+
+                {/* Skeleton cards */}
+                <div className="flex flex-wrap justify-center gap-5">
+                    {[...Array(3)].map((_, i) => (
+                        <div
+                            key={i}
+                            className="flex flex-col items-center w-72 h-100 bg-white rounded-lg shadow-md p-4"
+                        >
+                            <Skeleton className="h-32 w-full rounded-md mb-3" />
+                            <Skeleton className="h-5 w-3/4 mb-2" />
+                            <Skeleton className="h-4 w-1/2" />
+                        </div>
+                    ))}
+                </div>
+            </main>
+        );
     }
 
     let content;
@@ -85,10 +104,10 @@ export default function Projects() {
                     <hr className="border-t border-gray-400 w-[90%] mx-auto my-2 lg:hidden" />
 
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                        <DialogTrigger onClick={() => setIsDialogOpen(true)}>
-                            <div className="w-full my-2 bg-[#93C2FF] text-black cursor-pointer py-1 px-3 rounded-md font-semibold hover:bg-black hover:text-[#93C2FF] lg:hidden">
+                        <DialogTrigger onClick={() => setIsDialogOpen(true)} asChild>
+                            <Button className="w-[90%] lg:w-full my-2 bg-[#93C2FF] text-black cursor-pointer py-1 px-3 rounded-md font-semibold hover:bg-black hover:text-[#93C2FF] lg:hidden">
                                 Propose a Project
-                            </div>
+                            </Button>
                         </DialogTrigger>
 
                         <DialogContent>
@@ -159,10 +178,11 @@ export default function Projects() {
 
                 <div className="hidden lg:flex lg:flex-col lg:w-[30%] w-[20%] mr-5 mb-10">
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                        <DialogTrigger onClick={() => setIsDialogOpen(true)}>
-                            <div className="w-full my-2 bg-[#93C2FF] text-black cursor-pointer rounded-md font-semibold py-1  hover:bg-black hover:text-[#93C2FF]">
+
+                        <DialogTrigger onClick={() => setIsDialogOpen(true)} asChild>
+                            <Button className="w-full my-2 bg-[#93C2FF] text-black cursor-pointer rounded-md font-semibold py-1  hover:bg-black hover:text-[#93C2FF]">
                                 Propose a Project
-                            </div>
+                            </Button>
                         </DialogTrigger>
 
                         <DialogContent>

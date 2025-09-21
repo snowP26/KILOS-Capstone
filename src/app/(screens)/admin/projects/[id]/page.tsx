@@ -7,6 +7,7 @@ import { SquarePen } from 'lucide-react';
 import { Trash2 } from 'lucide-react';
 import { CirclePlus } from 'lucide-react';
 import { Separator } from "@/components/ui/separator"
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -104,7 +105,6 @@ export default function ViewProposedProj() {
                 setStatus(await checkStatuses(approvalData, projectID))
             }
 
-            console.log('project data: ', projectData)
         };
         fetchProject();
     }, [projectID, refresh]);
@@ -128,10 +128,10 @@ export default function ViewProposedProj() {
 
 
     return (
-        <div className="bg-[#E6F1FF] h-screen mt-10">
-            <Breadcrumb className="ml-20">
+        <div className="bg-[#E6F1FF] min-h-screen max-h-full mt-10">
+            <Breadcrumb className="ml-5 lg:ml-20">
                 <BreadcrumbList>
-                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.push("/admin/projects")}>
+                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.back()}>
                         <ArrowLeft color="black" />
                         <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
                             Return
@@ -151,25 +151,25 @@ export default function ViewProposedProj() {
                 </BreadcrumbList>
             </Breadcrumb>
 
-            <div className="mx-25">
-                <p className="font-bold text-3xl mt-8 mb-6">{project?.title}</p>
+            <div className="mx-2 sm:mx-10 xl:mx-25">
+                <p className="font-bold text-xl xl:text-3xl mt-8 mb-2 xl:mb-6">{project?.title}</p>
+                <Button className="text-black bg-[#A3C4A8] w-full h-8 sm:w-fit sm:h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push(`/admin/projects/${project?.title}-${project?.id}/view-budget-breakdown`)}>View Budget Breakdown</Button>
 
-                <Button className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push(`/admin/projects/${projectID}/view-budget-breakdown`)}>View Budget Breakdown</Button>
 
-                <div className="flex flex-row gap-1">
-                    <div className="bg-white mt-10 w-[35%] h-155 justify-items-center place-content-center">
+                <div className="flex flex-col lg:flex-row gap-1 place-items-center min-h-fit max-h-screen">
+                    <div className="bg-white mt-10 w-[80%] h-full sm:h-150 lg:w-[35%] lg:h-155 justify-items-center place-content-center">
                         {project?.imageURL ? (
-                            <img src={project.imageURL} className="bg-black mt-10 w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130" />
+                            <img src={project.imageURL} className="bg-black mt-10 w-[70%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130" />
                         ) : (
-                            <div className="mt-10 flex items-center justify-center w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130 rounded-[8px] bg-blue-100 text-blue-600 font-bold text-6xl shadow">
+                            <div className="mt-10 flex items-center justify-center w-[70%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 rounded-[8px] bg-blue-100 text-blue-600 font-bold text-6xl shadow">
                                 {project?.title?.charAt(0).toUpperCase()}
                             </div>
                         )
                         }
-                        <p className="font-medium text-xl text-[#17A1FA] mt-3 justify-self-start ml-15">Project Poster</p>
+                        <p className="font-medium text-xl text-[#17A1FA] my-3 justify-self-start ml-15">Project Poster</p>
                     </div>
 
-                    <div className="bg-white mt-10 w-[80%] h-155 flex flex-col">
+                    <div className="bg-white mb-10 w-[80%] lg:w-[80%] lg:h-155 lg:mt-10 lg:mb-0">
                         <AnimatePresence mode="wait">
                             {showDetails ? (
                                 <motion.div
@@ -178,12 +178,16 @@ export default function ViewProposedProj() {
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -50 }}
                                     transition={{ duration: 0.3 }}
-                                    className="bg-[#E6F1FF] w-auto flex-1 mx-5 mt-8 pt-5 px-10"
+                                    className="bg-[#E6F1FF] w-auto h-full mx-4 my-4 lg:h-[80%] lg:mx-5 lg:mt-8 pt-2 lg:pt-5 lg:px-10"
                                 >
-                                    <p className="font-semibold text-2xl">Project Description:</p>
-                                    <div className="my-2">
-                                        <p className="overflow-y-auto px-10">{project?.description}</p>
-                                        
+
+                                    <p className="font-semibold text-xl text-center lg:text-2xl lg:text-start">Project Description:</p>
+                                    <div className="mt-2 lg:h-[90%] lg:w-full">
+                                        <ScrollArea className="w-full h-100 pb-5 lg:pb-0">
+                                            <p className="lg:h-full pl-4 pr-6 lg:px-10">
+                                                {project?.description}
+                                            </p>
+                                        </ScrollArea>
                                     </div>
                                 </motion.div>
                             ) : (
@@ -193,14 +197,14 @@ export default function ViewProposedProj() {
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: 50 }}
                                     transition={{ duration: 0.3 }}
-                                    className="flex flex-col flex-1 mt-5 mx-10"
+                                    className="h-[80%] flex flex-col flex-1 mt-5 mb-5 mx-10"
                                 >
                                     <div className="h-[10%]">
                                         <h1 className={`w-48 text-white font-medium rounded-lg px-3 py-2 shadow-md transition-all duration-200 ease-in-out focus:ring-2 focus:outline-none ${projectStatusColors[status]}`}>{status}</h1>
 
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto mb-5">
+                                    <div className="flex-1 overflow-y-auto my-5 lg:mb-5">
                                         <Table className="bg-[#E6F1FF] w-full">
                                             <TableHeader>
                                                 <TableRow>
@@ -393,28 +397,30 @@ export default function ViewProposedProj() {
                             )}
                         </AnimatePresence>
 
-                        <div className="mt-auto mr-5 mb-5">
-                            <div className="flex flex-row gap-2 justify-end">
+                        <div className="mt-auto md:mr-5 mb-5">
+                            <div className="flex flex-col gap-2 justify-end items-center md:flex-row">
                                 <Button
-                                    className="bg-[#E6F1FF] text-black cursor-pointer shadow-md transition-all duration-200 hover:scale-105 hover:bg-blue-500 hover:text-[#E6F1FF]"
+                                    className="bg-[#E6F1FF] w-fit text-black cursor-pointer hover:bg-blue-500 hover:text-[#E6F1FF]"
+
                                     onClick={() => setShowDetails(!showDetails)}
                                 >
                                     {showDetails ? "View Project Status" : "View Project Details"}
                                 </Button>
-                                <Button
+                                {/* <Button
                                     className="bg-[#A3C4A8] text-black cursor-pointer shadow-md transition-all duration-200 hover:scale-105 hover:shadow-lg hover:text-accent hover:bg-green-800"
                                     onClick={() => console.log(project?.imageURL)}
                                 >
-                                    Save
-                                </Button>
+                                    Savesss
+                                </Button> */}
                                 {status === "For Approval" ? (
                                     <Button
-                                        className="bg-[#A3C4A8] text-black cursor-pointer hover:bg-black hover:text-[#A3C4A8]"
+                                        className="bg-[#A3C4A8] w-fit text-black cursor-pointer hover:bg-blue-500 hover:text-[#A3C4A8]"
                                         onClick={() => console.log("Marking as approved...")}
                                     >
                                         Mark as Approved
                                     </Button>) : (<></>)
                                 }
+
                             </div>
                         </div>
                     </div>
