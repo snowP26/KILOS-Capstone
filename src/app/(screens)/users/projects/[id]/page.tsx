@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { project } from '@/src/app/lib/definitions';
 import { getProjectByID } from '@/src/app/actions/projects';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function ViewProject() {
     const params = useParams();
@@ -130,4 +131,4 @@ export default function ViewProject() {
 
         </div>)
 
-
+                    }

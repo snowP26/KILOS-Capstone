@@ -150,11 +150,11 @@ export default function ViewProjectBudget() {
                                             <DialogContent>
                                                 <DialogHeader>
                                                     <DialogTitle className="text-2xl text-center">{data.item_name} Receipt Photo</DialogTitle>
-                                                    <DialogDescription>
+                                                    
                                                         <hr className="border-t border-black w-full my-3" />
                                                         <img src={data.receiptURL} className=" aspect-3/4 object-cover" />
 
-                                                    </DialogDescription>
+                                                    
                                                 </DialogHeader>
                                             </DialogContent>
                                         </Dialog>
@@ -167,10 +167,10 @@ export default function ViewProjectBudget() {
                                             <DialogContent>
                                                 <DialogHeader>
                                                     <DialogTitle className="text-2xl text-center">{data.item_name} Item Photo</DialogTitle>
-                                                    <DialogDescription>
+                                                    
                                                         <hr className="border-t border-black w-full my-3" />
                                                         <img src={data.receiptURL} className=" aspect-3/4 object-cover" />
-                                                    </DialogDescription>
+                                                    
                                                 </DialogHeader>
                                             </DialogContent>
                                         </Dialog>
