@@ -25,7 +25,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { project, project_budget } from '@/src/app/lib/definitions';
-import { getProjectByID } from '@/src/app/actions/projects';
+import { getProjectBudgetById, getProjectByID } from '@/src/app/actions/projects';
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@radix-ui/react-dialog';
 import { DialogHeader } from '@/components/ui/dialog';
 
@@ -44,6 +44,8 @@ export default function ViewProject() {
             if (projectID) {
                 const data = await getProjectByID(projectID)
                 setProject(data)
+                const budget = await getProjectBudgetById(projectID);
+                setBudget(budget)
             }
         }
 
@@ -123,7 +125,7 @@ export default function ViewProject() {
                                             {data.status}
                                         </p>
                                     </TableCell>
-                                    <TableCell className="max-w-[150px] text-center">{data.item}</TableCell>
+                                    <TableCell className="max-w-[150px] text-center">{data.item_name}</TableCell>
                                     <TableCell className="text-center">
                                         {new Intl.NumberFormat("en-PH", {
                                             style: "currency",
@@ -131,7 +133,7 @@ export default function ViewProject() {
                                             minimumFractionDigits: 2,
                                         }).format(data.price)}
                                     </TableCell>
-                                    <TableCell className="text-center">{data.amount}</TableCell>
+                                    <TableCell className="text-center">{data.amt}</TableCell>
                                     <TableCell className="flex justify-center">
                                         <Dialog>
                                             <DialogTrigger>
@@ -139,7 +141,7 @@ export default function ViewProject() {
                                             </DialogTrigger>
                                             <DialogContent>
                                                 <DialogHeader>
-                                                    <DialogTitle className="text-2xl text-center">{data.item} Receipt Photo</DialogTitle>
+                                                    <DialogTitle className="text-2xl text-center">{data.item_name} Receipt Photo</DialogTitle>
                                                     <DialogDescription>
                                                         <hr className="border-t border-black w-full my-3" />
                                                         <img src={data.receiptURL} className=" aspect-3/4 object-cover" />
@@ -149,14 +151,14 @@ export default function ViewProject() {
                                             </DialogContent>
                                         </Dialog>
                                     </TableCell>
-                                    <TableCell className="justify-items-center">
+                                    <TableCell className="justify-items-center border-black border-2">
                                         <Dialog>
                                             <DialogTrigger>
                                                 <Image className="cursor-pointer hover:bg-gray-300" />
                                             </DialogTrigger>
                                             <DialogContent>
                                                 <DialogHeader>
-                                                    <DialogTitle className="text-2xl text-center">{data.item} Item Photo</DialogTitle>
+                                                    <DialogTitle className="text-2xl text-center">{data.item_name} Item Photo</DialogTitle>
                                                     <DialogDescription>
                                                         <hr className="border-t border-black w-full my-3" />
                                                         <img src={data.receiptURL} className=" aspect-3/4 object-cover" />
