@@ -22,11 +22,11 @@ export default function Ordinances() {
   }, [refresh]);
 
   return (
-    <div className="bg-[#E6F1FF] min-h-screen mt-10">
-      <p className="font-bold text-3xl mt-8 mb-7 ml-30">Proposed Ordinances</p>
+    <div className="bg-[#E6F1FF] min-h-screen max-h-full mt-10">
+      <p className="font-bold text-2xl text-center mt-8 mb-7 lg:text-start lg:text-3xl lg:ml-30">Proposed Ordinances</p>
 
-      <div className="mx-30 mb-3 place-self-end">
-        <Button className="text-white bg-[#052659] h-10 cursor-pointer hover:bg-white hover:text-[#052659]">
+      <div className="flex justify-center lg:mx-30 mb-3 lg:place-self-end">
+        <Button className="text-white bg-[#052659] h-10 cursor-pointer hover:bg-white hover:text-[#052659]" variant="link" onClick={() => router.push("/admin/ordinances/submit-doc")}>
           Submit an Ordinance
         </Button>
       </div>
@@ -34,7 +34,7 @@ export default function Ordinances() {
       {ordinances.map((data) => (
         <div
             key={data.id}
-          className="bg-white rounded-[8px] border drop-shadow-lg p-5 mx-30 mb-3 cursor-pointer hover:shadow-xl transition-all hover:border-blue-300"
+          className="bg-white rounded-[8px] border drop-shadow-lg p-5 mx-5 lg:mx-30 mb-3 cursor-pointer hover:shadow-xl transition-all hover:border-blue-300"
           onClick={() => router.push(`/admin/ordinances/${data.title}`)}
         >
           <p className="font-semibold text-2xl">Ordinance {data.title}</p>

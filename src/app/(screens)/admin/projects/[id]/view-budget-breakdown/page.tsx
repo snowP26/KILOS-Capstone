@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, SquarePen, Image } from "lucide-react";
 import {
     Breadcrumb,
@@ -28,11 +27,13 @@ import {
     TableHead,
     TableHeader,
     TableRow,
+
 } from "@/components/ui/table";
 import { project, project_budget } from "@/src/app/lib/definitions";
 import { getProjectBudgetById, getProjectByID } from "@/src/app/actions/projects";
+export default function ViewProjectBudget() {
 
-export default function ViewBudgetBrkdwn() {
+
     const router = useRouter();
     const params = useParams();
     const blob = Array.isArray(params.id) ? decodeURIComponent(params.id[0] ?? "") : decodeURIComponent(params.id ?? "");
@@ -49,6 +50,7 @@ export default function ViewBudgetBrkdwn() {
             if (projectBudgetData) setProjectBudget(projectBudgetData);
         }
 
+
         getData()
 
     }, [projectID])
@@ -64,7 +66,7 @@ export default function ViewBudgetBrkdwn() {
                             <Button
                                 className="group gap-1 bg-transparent px-0 hover:bg-transparent"
                                 variant="ghost"
-                                onClick={() => router.push(`/admin/projects/${project?.title}-${project?.id}`)}
+                                onClick={() => router.back()}
                             >
                                 <ArrowLeft className="h-5 w-5 text-gray-700" />
                                 <span className="hidden group-hover:inline-block transition-all">
@@ -80,7 +82,7 @@ export default function ViewBudgetBrkdwn() {
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                            <BreadcrumbLink href="/admin/projects/[id]">
+                            <BreadcrumbLink href={`/admin/projects/${project?.title}-${project?.id}`}>
                                 View Proposed Project
                             </BreadcrumbLink>
                         </BreadcrumbItem>
@@ -97,7 +99,7 @@ export default function ViewBudgetBrkdwn() {
             <div className="mx-20 mt-10 space-y-8">
                 {/* Title + Budget Section */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                    <h1 className="font-bold text-2xl md:text-3xl">
+                    <h1 className="font-bold text-2xl md:text-3xl xl:text-3xl mt-8 mb-2 xl:mb-6">
                         {project?.title}
                     </h1>
 
@@ -112,6 +114,7 @@ export default function ViewBudgetBrkdwn() {
                         />
                     </div>
                 </div>
+
 
                 {/* Table */}
                 <div className="bg-white rounded-xl shadow-md overflow-hidden">

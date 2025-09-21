@@ -14,7 +14,14 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 import {
     Table,
     TableBody,
@@ -26,10 +33,9 @@ import {
 } from "@/components/ui/table"
 import { project, project_budget } from '@/src/app/lib/definitions';
 import { getProjectBudgetById, getProjectByID } from '@/src/app/actions/projects';
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@radix-ui/react-dialog';
-import { DialogHeader } from '@/components/ui/dialog';
 
-export default function ViewProject() {
+
+export default function ViewProjectBudget() {
     const router = useRouter();
     const params = useParams();
     const blob = Array.isArray(params.id) ? params.id[0] : params.id;
@@ -43,6 +49,7 @@ export default function ViewProject() {
         const setData = async () => {
             if (projectID) {
                 const data = await getProjectByID(projectID)
+
                 setProject(data)
                 const budget = await getProjectBudgetById(projectID);
                 setBudget(budget)
@@ -53,7 +60,7 @@ export default function ViewProject() {
     }, [projectID])
 
     return (
-        <div className="bg-[#E6F1FF] min-h-screen max-h-fit mt-10">
+        <div className="bg-[#E6F1FF] min-h-screen max-h-full mt-10">
             <Breadcrumb className="ml-5 xl:ml-20">
                 <BreadcrumbList>
                     <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.back()}>
@@ -117,6 +124,7 @@ export default function ViewProject() {
                                 <TableHead className="text-center">Photo</TableHead>
                             </TableRow>
                         </TableHeader>
+
                         {budget.map((data) => (
                             <TableBody key={data.id}>
                                 <TableRow>
@@ -172,7 +180,6 @@ export default function ViewProject() {
                         ))
 
                         }
-
                     </Table>
                 </div>
             </div>

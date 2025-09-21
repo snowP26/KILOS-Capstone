@@ -104,10 +104,10 @@ export default function Projects() {
                     <hr className="border-t border-gray-400 w-[90%] mx-auto my-2 lg:hidden" />
 
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                        <DialogTrigger onClick={() => setIsDialogOpen(true)}>
-                            <div className="w-full my-2 bg-[#93C2FF] text-black cursor-pointer py-1 px-3 rounded-md font-semibold hover:bg-black hover:text-[#93C2FF] lg:hidden">
+                        <DialogTrigger onClick={() => setIsDialogOpen(true)} asChild>
+                            <Button className="w-[90%] lg:w-full my-2 bg-[#93C2FF] text-black cursor-pointer py-1 px-3 rounded-md font-semibold hover:bg-black hover:text-[#93C2FF] lg:hidden">
                                 Propose a Project
-                            </div>
+                            </Button>
                         </DialogTrigger>
 
                         <DialogContent>
@@ -178,10 +178,11 @@ export default function Projects() {
 
                 <div className="hidden lg:flex lg:flex-col lg:w-[30%] w-[20%] mr-5 mb-10">
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                        <DialogTrigger onClick={() => setIsDialogOpen(true)}>
-                            <div className="w-full my-2 bg-[#93C2FF] text-black cursor-pointer rounded-md font-semibold py-1  hover:bg-black hover:text-[#93C2FF]">
+
+                        <DialogTrigger onClick={() => setIsDialogOpen(true)} asChild>
+                            <Button className="w-full my-2 bg-[#93C2FF] text-black cursor-pointer rounded-md font-semibold py-1  hover:bg-black hover:text-[#93C2FF]">
                                 Propose a Project
-                            </div>
+                            </Button>
                         </DialogTrigger>
 
                         <DialogContent>

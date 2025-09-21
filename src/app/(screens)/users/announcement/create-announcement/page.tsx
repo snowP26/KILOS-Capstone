@@ -67,10 +67,10 @@ export default function CreateAnnouncement() {
     };
 
     return (
-        <div className="bg-[#E6F1FF] min-h-screen max-h-fit mt-10">
-            <Breadcrumb className="ml-20">
+        <div className="bg-[#E6F1FF] min-h-screen max-h-full mt-10 pb-10">
+            <Breadcrumb className="ml-5 lg:ml-20">
                 <BreadcrumbList>
-                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.push("/users/announcement")}>
+                    <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.back()}>
                         <ArrowLeft color="black" />
                         <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
                             Return
@@ -90,16 +90,16 @@ export default function CreateAnnouncement() {
                 </BreadcrumbList>
             </Breadcrumb>
 
-            <p className="font-bold text-3xl mt-8 mb-2 ml-30">Create Announcements</p>
+            <p className="font-bold text-2xl mt-8 mb-2 ml-5 lg:text-3xl lg:ml-30">Create Announcements</p>
             <hr className="border-t border-black w-[90%] mx-auto my-3" />
 
-            <form className="justify-items-center mt-10" ref={formRef} onSubmit={async (e) => {
+            <form className="justify-items-center mt-10 mb-10 lg:mb-0" ref={formRef} onSubmit={async (e) => {
                 await postAnnouncements(e, formRef);
                 router.push("/users/announcement");
             }}>
-                <div className="bg-white w-[70%] px-20 rounded-[16px] py-10 shadow-lg/30">
-                    <div className="flex flex-row justify-between">
-                        <div className="w-100">
+                <div className="bg-white w-[90%] lg:w-[70%] px-5 lg:px-20 rounded-[16px] py-10 shadow-lg/30">
+                    <div className="flex flex-col lg:flex-row lg:justify-between">
+                        <div className="w-full lg:w-[50%]">
                             <p className="font-semibold">Header</p>
                             <Input 
                                 className="bg-[#E6F1FF] placeholder:italic" 
@@ -107,7 +107,7 @@ export default function CreateAnnouncement() {
                                 name="title"
                             />
                         </div>
-                        <div className="flex flex-row items-center gap-2">
+                        <div className="flex flex-col mt-5 gap-0 lg:flex-row lg:items-center lg:gap-2">
                             <p className="font-semibold">Category:</p>
                             <Select name="type" required>
                                 <SelectTrigger className="w-[180px] bg-[#E6F1FF] cursor-pointer">
@@ -140,7 +140,7 @@ export default function CreateAnnouncement() {
                     
                     {!selectedFile && (
                     <div
-                        className="flex h-[150px] w-[600px] mt-3 items-center justify-center rounded-md border border-dashed border-gray-400 text-sm cursor-pointer hover:bg-gray-100"
+                        className="flex h-[150px] lg:w-[600px] mt-3 items-center justify-center rounded-md border border-dashed border-gray-400 text-sm cursor-pointer hover:bg-gray-100"
                         onClick={handleClick}
                     >
                         <div className="flex flex-row gap-2">
@@ -193,7 +193,7 @@ export default function CreateAnnouncement() {
                         </div>
                     )}
 
-                    <div className="place-self-end mt-6">
+                    <div className="place-self-center lg:place-self-end mt-6">
                         <Button className="bg-[#A3C4A8] text-black font-bold rounded-[16px] cursor-pointer hover:bg-black hover:text-[#A3C4A8]">
                             Submit Announcement
                         </Button>
