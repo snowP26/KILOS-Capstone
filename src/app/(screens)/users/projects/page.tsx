@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ImagePlus } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 export default function Projects() {
@@ -47,7 +48,25 @@ export default function Projects() {
     }, [isDialogOpen]);
 
     if (loading) {
-        return <p className="p-5">Loading...</p>;
+        return (
+            <main className="p-5 bg-[#E6F1FF] min-h-screen">
+                <p className="font-bold text-3xl mb-5">Loading Projects...</p>
+
+                {/* Skeleton cards */}
+                <div className="flex flex-wrap justify-center gap-5">
+                    {[...Array(3)].map((_, i) => (
+                        <div
+                            key={i}
+                            className="flex flex-col items-center w-72 h-100 bg-white rounded-lg shadow-md p-4"
+                        >
+                            <Skeleton className="h-32 w-full rounded-md mb-3" />
+                            <Skeleton className="h-5 w-3/4 mb-2" />
+                            <Skeleton className="h-4 w-1/2" />
+                        </div>
+                    ))}
+                </div>
+            </main>
+        );
     }
 
     let content;

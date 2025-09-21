@@ -154,7 +154,7 @@ export default function ViewProposedProj() {
             <div className="mx-25">
                 <p className="font-bold text-3xl mt-8 mb-6">{project?.title}</p>
 
-                <Button className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push(`/admin/projects/${projectID}/view-budget-breakdown`)}>View Budget Breakdown</Button>
+                <Button className="text-black bg-[#A3C4A8] h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push(`/admin/projects/${project?.title}-${project?.id}/view-budget-breakdown`)}>View Budget Breakdown</Button>
 
                 <div className="flex flex-row gap-1">
                     <div className="bg-white mt-10 w-[35%] h-155 justify-items-center place-content-center">
@@ -401,12 +401,12 @@ export default function ViewProposedProj() {
                                 >
                                     {showDetails ? "View Project Status" : "View Project Details"}
                                 </Button>
-                                <Button
+                                {/* <Button
                                     className="bg-[#A3C4A8] text-black cursor-pointer shadow-md transition-all duration-200 hover:scale-105 hover:shadow-lg hover:text-accent hover:bg-green-800"
                                     onClick={() => console.log(project?.imageURL)}
                                 >
-                                    Save
-                                </Button>
+                                    Savesss
+                                </Button> */}
                                 {status === "For Approval" ? (
                                     <Button
                                         className="bg-[#A3C4A8] text-black cursor-pointer hover:bg-black hover:text-[#A3C4A8]"
