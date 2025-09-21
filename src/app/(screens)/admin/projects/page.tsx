@@ -35,7 +35,7 @@ export default function Projects() {
         {paginatedProjects.map((project) => (
           <div
             key={project.id}
-            onClick={() => router.push(`/admin/projects/${project.id}`)}
+            onClick={() => router.push(`/admin/projects/${project.title}-${project.id}`)}
             className="cursor-pointer"
           >
             <ProjectCard
