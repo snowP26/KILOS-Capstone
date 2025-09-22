@@ -1,6 +1,6 @@
 import client from "@/src/api/client";
 import { getLocFromAuth, getUserID, locIDtoName } from "./convert";
-import { FormEvent } from "react";
+import { FormEvent, RefObject } from "react";
 
 export const getProjects = async () => {
     const loc = await getLocFromAuth();
@@ -33,7 +33,7 @@ export const getProposedProjects = async () => {
         .select("*")
         .eq("location_id", loc as number)
         .neq("status", "Approved")
-        .order("id", {ascending: false});
+        .order("id", { ascending: false });
 
     if (error) {
         console.error("Error retrieving projects:", error);
@@ -50,9 +50,9 @@ export const getProposedProjects = async () => {
 };
 
 const uploadFile = async (file: File, title: string, projectID: number | null) => {
-    if(!file) {
+    if (!file) {
         console.log("walang file na nilagay");
-        return 
+        return
     }
 
     const location_id = await getLocFromAuth()
@@ -61,18 +61,18 @@ const uploadFile = async (file: File, title: string, projectID: number | null) =
 
     const { error: bucketError } = await client.storage.from("projects").upload(`files/${location}/${filename}`, file, { upsert: true })
 
-    if(bucketError){
+    if (bucketError) {
         console.log(`Error with uploadFile fucntion ${bucketError}`)
         return
     }
 
-    const { error: dbError} = await client.from("project_files").insert([{
+    const { error: dbError } = await client.from("project_files").insert([{
         project_id: projectID,
         filepath: `files/${location}/${filename}`,
         filename: filename,
     }])
 
-    if(dbError) {
+    if (dbError) {
         console.log("Error with Database insert: ", dbError)
         return
     }
@@ -98,27 +98,27 @@ export const postProject = async (e: FormEvent<HTMLFormElement>) => {
         author: userID
     }]).select("id")
 
-    if(file){
+    if (file) {
 
-    await uploadFile(file, title, data ? data[0].id : null)  
+        await uploadFile(file, title, data ? data[0].id : null)
     }
-    if(error) return console.log(error);
+    if (error) return console.log(error);
 
     console.log(`${userID}, ${location_id}, ${title}, ${description}`)
 }
 
 export const getProjectByID = async (id: number | undefined) => {
-    if(id == undefined) return null
+    if (id == undefined) return null
 
 
     const { data, error } = await client.from("projects").select("*").eq("id", id)
 
-    if(!data){
+    if (!data) {
         console.log("No Project found!")
         return null
-    } 
+    }
 
-    if(error){
+    if (error) {
         console.log("Error in fetching project", error)
         return null
     }
@@ -126,7 +126,7 @@ export const getProjectByID = async (id: number | undefined) => {
     return data[0]
 }
 
-export const getProposedProjectByID = async (id: number|string) => {
+export const getProposedProjectByID = async (id: number | string) => {
     const { data, error } = await client
         .from("projects")
         .select("*")
@@ -146,13 +146,13 @@ export const getProposedProjectByID = async (id: number|string) => {
     return data;
 };
 
-export const uploadPhotoByID = async (id: number|string, file: File) => {
+export const uploadPhotoByID = async (id: number | string, file: File) => {
     const locID = await getLocFromAuth();
     const locName = await locIDtoName(locID);
     const filepath = `photos/${locName}/${id}`
 
-    const { error: storageError } = await client.storage.from("projects").upload(filepath, file, {upsert: true})
-    if(storageError){
+    const { error: storageError } = await client.storage.from("projects").upload(filepath, file, { upsert: true })
+    if (storageError) {
         console.log("Error in uploading your photo: ", storageError)
         return
     }
@@ -168,10 +168,10 @@ export const uploadPhotoByID = async (id: number|string, file: File) => {
         return;
     }
 
-    const { error } = await client.from("projects").update([{imageURL: publicURL}]).eq("id", id);
+    const { error } = await client.from("projects").update([{ imageURL: publicURL }]).eq("id", id);
     console.log("Test:", id)
 
-    if(error){
+    if (error) {
         console.log("Error in uploading to the database schema: ", error)
         return
     }
@@ -179,20 +179,20 @@ export const uploadPhotoByID = async (id: number|string, file: File) => {
     return
 }
 
-export const deleteProjectPhoto = async (id: number|string) => {
+export const deleteProjectPhoto = async (id: number | string) => {
     const locID = await getLocFromAuth();
     const locName = await locIDtoName(locID);
     const filepath = `photos/${locName}/${id}`
-    const { error: storageError } = await client.storage.from("projects").remove([filepath]) 
-    
-    if(storageError){
+    const { error: storageError } = await client.storage.from("projects").remove([filepath])
+
+    if (storageError) {
         console.log("Error deleting photo in storage: ", storageError);
         return;
     }
 
-    const { error: dbError } = await client.from("projects").update({imageURL: null}).eq("id", id);
+    const { error: dbError } = await client.from("projects").update({ imageURL: null }).eq("id", id);
 
-    if(dbError){
+    if (dbError) {
         console.log("Error in deleting imgUrl in db: ", dbError)
         return
     }
@@ -202,14 +202,14 @@ export const deleteProjectPhoto = async (id: number|string) => {
 }
 
 export const getProjectByTitle = async (title: string) => {
-    const {data, error} = (await client.from("projects").select("*").eq("title", title));
+    const { data, error } = (await client.from("projects").select("*").eq("title", title));
 
-    if(data && data[0].length == 0){
+    if (data && data[0].length == 0) {
         console.log("No record was found")
         return null
     }
 
-    if(error){
+    if (error) {
         console.log("Error retrieving your project: ", error)
         return null
     }
@@ -219,35 +219,35 @@ export const getProjectByTitle = async (title: string) => {
 
 export const getApprovalsByID = async (id: number) => {
 
-    const {data, error} = await client
+    const { data, error } = await client
         .from("project_approvals")
         .select("*")
         .eq("project_id", id);
 
-    if(!data){
+    if (!data) {
         console.log("No data has been found")
         return [];
     }
 
-    if(error) {
+    if (error) {
         console.log("Error retrieving your approvals: ", error)
         return [];
     }
 
-    return data 
+    return data
 }
 
 export const updateTargetDate = async (id: number, date: string) => {
-    if(!id) return 
+    if (!id) return
 
     console.log(date)
 
-    const { error } = await client 
+    const { error } = await client
         .from("projects")
-        .update({"target_date": date}) 
+        .update({ "target_date": date })
         .eq("id", id)
 
-    if(error) {
+    if (error) {
         console.log("Error in updating your project target date: ", error)
         return
     }
@@ -257,15 +257,196 @@ export const updateTargetDate = async (id: number, date: string) => {
 
 export const getProjectBudgetById = async (project_id: number) => {
 
-    const { data, error } = await client 
+    const { data, error } = await client
         .from("project_budget")
         .select("*")
         .eq("project_id", project_id)
 
-    if(error) {
+    if (error) {
         console.log("error retrieving your project's budget data: ", error)
         return []
     }
     console.log(data)
     return data;
 }
+
+export const addBudget = async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement | null>, project: string, projectID: number) => {
+    e.preventDefault();
+
+    if (!formRef.current) {
+        console.error("Form reference is missing");
+        return;
+    }
+
+    const authLoc = await getLocFromAuth();
+    const loc = authLoc ? await locIDtoName(authLoc) : "unknown";
+    const form = e.currentTarget as HTMLFormElement
+    const formdata = new FormData(formRef.current);
+
+    const item = formdata.get("item_name") as string;
+    const price = Number(formdata.get("price"));
+    const amt = Number(formdata.get("amt"))
+    const receipt = formdata.get("receipt") as File
+    const item_photo = formdata.get("item_photo") as File
+    let receiptURL = null;
+    let itemURL = null;
+
+    if (receipt && receipt.size > 0) {
+        const filename = `${loc}_${item}_receipt_${Date.now()}`;
+        const { error } = await client
+            .storage
+            .from("projects")
+            .upload(`photos/${loc}/${project}/receipts/${filename}`, receipt, { upsert: false });
+
+        if (error) {
+            console.log("Error saving to receipt bucket", error);
+            return;
+        }
+
+        // Get public URL
+        const { data: publicUrlData } = client
+            .storage
+            .from("projects")
+            .getPublicUrl(`photos/${loc}/${project}/receipts/${filename}`);
+
+        receiptURL = publicUrlData.publicUrl;
+    }
+
+    if (item_photo && item_photo.size > 0) {
+        const filename = `${loc}_${item}_${Date.now()}`;
+        const { error } = await client
+            .storage
+            .from("projects")
+            .upload(`photos/${loc}/${project}/items/${filename}`, item_photo, { upsert: false });
+
+        if (error) {
+            console.log("Error saving to receipt bucket", error);
+            return;
+        }
+
+        // Get public URL
+        const { data: publicUrlData } = client
+            .storage
+            .from("projects")
+            .getPublicUrl(`photos/${loc}/${project}/items/${filename}`);
+
+        itemURL = publicUrlData.publicUrl;
+    }
+
+    const { error } = await client
+        .from("project_budget")
+        .insert([{
+            project_id: projectID,
+            status: "For Approval",
+            item_name: item,
+            price: price,
+            amt: amt,
+            receiptURL: receiptURL,
+            photoURL: itemURL
+        }])
+
+    if (error) {
+        console.log("Error inserting budget record: ", error);
+        return
+    }
+
+    if (formRef.current) {
+        formRef.current.reset()
+    }
+}
+
+export const uploadReceipt = async (budgetID: number, file: File, project: string) => {
+    const locNumber = await getLocFromAuth()
+    const loc = await locIDtoName(locNumber);
+
+    // loc_itemname_dateNow
+    const { data: budgetData, error: budgetError} = await client.from("project_budget").select("item_name").eq("id", budgetID);
+
+    if(budgetError) {
+        console.log("Error in retrieving the budget: ", budgetError)
+        return
+    }
+
+    const itemName = budgetData[0].item_name
+    const filename = `${loc}_${itemName}_${Date.now()}`
+    const filepath = `photos/${loc}/${project}/items/${filename}-receipt`
+
+    const { error: bucketError } = await client
+        .storage
+        .from("projects")
+        .upload(filepath, file)
+
+    if(bucketError){
+        console.log(`Error in saving file to the bucket: ${bucketError}`)
+    }
+
+    const { data: publicUrlData } = client
+        .storage
+        .from("projects")
+        .getPublicUrl(filepath);
+
+    const receiptURL = publicUrlData.publicUrl;
+    
+    const { data: clientData, error: clientError } = await client
+        .from("project_budget")
+        .update({ receiptURL })      
+        .eq("id", budgetID)            
+        .select();
+
+    if (clientError) {
+        console.error("Error uploading receipt:", clientError);
+        return null;
+    }
+
+    return clientData;
+};
+
+export const uploadItemPhoto = async (budgetID: number, file: File, project: string) => {
+
+    // get the location
+    const locNumber = await getLocFromAuth()
+    const loc = await locIDtoName(locNumber);
+
+    // get the item_name
+    const { data: budgetData, error: budgetError} = await client.from("project_budget").select("item_name").eq("id", budgetID);
+
+    if(budgetError) {
+        console.log("Error in retrieving the budget: ", budgetError)
+        return
+    }
+
+    const itemName = budgetData[0].item_name
+    const filename = `${loc}_${itemName}_${Date.now()}`
+    const filepath = `photos/${loc}/${project}/items/${filename}-item-photo`
+
+    console.log("filepath: ", filepath)
+
+    const { error: bucketError } = await client
+        .storage
+        .from("projects")
+        .upload(filepath, file)
+
+    if(bucketError){
+        console.log(`Error in saving file to the bucket: ${bucketError}`)
+    }
+
+    const { data: publicUrlData } = client
+        .storage
+        .from("projects")
+        .getPublicUrl(filepath);
+
+    const photoURL = publicUrlData.publicUrl;
+    
+    const { data: clientData, error: clientError } = await client
+        .from("project_budget")
+        .update({ photoURL })      
+        .eq("id", budgetID)            
+        .select();
+
+    if (clientError) {
+        console.error("Error uploading receipt:", clientError);
+        return null;
+    }
+
+    return clientData;
+};

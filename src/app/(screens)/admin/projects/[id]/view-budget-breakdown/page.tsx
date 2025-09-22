@@ -41,6 +41,7 @@ export default function ViewProjectBudget() {
     const [project, setProject] = useState<project | null>(null);
     const [projectBudget, setProjectBudget] = useState<project_budget[]>([]);
 
+
     useEffect(() => {
         const getData = async () => {
             const projectData = await getProjectByID(projectID);
