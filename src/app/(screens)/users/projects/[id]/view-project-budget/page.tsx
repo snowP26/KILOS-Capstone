@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button'
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, CirclePlus, Trash2 } from 'lucide-react';
 import { Image } from 'lucide-react';
 import { Separator } from "@/components/ui/separator"
 import {
@@ -32,18 +32,21 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { project, project_budget } from '@/src/app/lib/definitions';
-import { getProjectBudgetById, getProjectByID } from '@/src/app/actions/projects';
+import { addBudget, getProjectBudgetById, getProjectByID, uploadItemPhoto, uploadReceipt } from '@/src/app/actions/projects';
+import { useUserRole } from '@/src/app/actions/role';
+import { DialogClose } from '@radix-ui/react-dialog';
 
 
 export default function ViewProjectBudget() {
     const router = useRouter();
     const params = useParams();
     const blob = Array.isArray(params.id) ? params.id[0] : params.id;
-
     const projectID = blob ? Number(blob.split("-").pop()) : undefined;
-
-    const [project, setProject] = useState<project | null>(null)
-    const [budget, setBudget] = useState<project_budget[]>([])
+    const [project, setProject] = useState<project | null>(null);
+    const [budget, setBudget] = useState<project_budget[]>([]);
+    const { role } = useUserRole();
+    const normalizedRole = role?.trim().toLowerCase()
+    const formRef = useRef<HTMLFormElement>(null)
 
     useEffect(() => {
         const setData = async () => {
@@ -58,6 +61,8 @@ export default function ViewProjectBudget() {
 
         setData()
     }, [projectID])
+
+    if (!projectID || !project) return <h1>empty</h1>
 
     return (
         <div className="bg-[#E6F1FF] min-h-screen max-h-full mt-10">
@@ -124,12 +129,11 @@ export default function ViewProjectBudget() {
                                 <TableHead className="text-center">Photo</TableHead>
                             </TableRow>
                         </TableHeader>
-
-                        {budget.map((data) => (
-                            <TableBody key={data.id}>
-                                <TableRow>
-                                    <TableCell className="flex justify-center">
-                                        <p className="self-center text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">
+                        <TableBody >
+                            {budget.map((data) => (
+                                <TableRow key={data.id}>
+                                    <TableCell className="flex justify-center self-center">
+                                        <p className="text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">
                                             {data.status}
                                         </p>
                                     </TableCell>
@@ -142,44 +146,231 @@ export default function ViewProjectBudget() {
                                         }).format(data.price)}
                                     </TableCell>
                                     <TableCell className="text-center">{data.amt}</TableCell>
-                                    <TableCell className="flex justify-center">
-                                        <Dialog>
-                                            <DialogTrigger>
-                                                <Image className="cursor-pointer hover:bg-gray-300" />
-                                            </DialogTrigger>
-                                            <DialogContent>
-                                                <DialogHeader>
-                                                    <DialogTitle className="text-2xl text-center">{data.item_name} Receipt Photo</DialogTitle>
-                                                    
-                                                        <hr className="border-t border-black w-full my-3" />
-                                                        <img src={data.receiptURL} className=" aspect-3/4 object-cover" />
+                                    <TableCell className="flex justify-center text-center">
+                                        {data.receiptURL ? (
+                                            <div className="flex flex-row items-center gap-2">
+                                                <Dialog>
+                                                    <DialogTrigger asChild>
+                                                        <button className="p-2 bg-gray-100 rounded-md hover:bg-gray-200 transition cursor-pointer">
+                                                            <Image className="w-7 h-7 text-blue-600 " />
+                                                        </button>
+                                                    </DialogTrigger>
+                                                    <DialogContent className="sm:max-w-[500px]">
+                                                        <DialogHeader>
+                                                            <DialogTitle className="text-2xl text-center">
+                                                                {data.item_name} Receipt Photo
+                                                            </DialogTitle>
+                                                            <hr className="border-t border-black w-full my-3" />
+                                                            <img
+                                                                src={data.receiptURL}
+                                                                className="rounded-md shadow-md max-h-[400px] mx-auto object-contain"
+                                                                alt={`${data.item_name} Receipt`}
+                                                            />
+                                                        </DialogHeader>
+                                                    </DialogContent>
+                                                </Dialog>
 
-                                                    
-                                                </DialogHeader>
-                                            </DialogContent>
-                                        </Dialog>
+                                                {/* Delete Photo */}
+                                                {normalizedRole == 'treasurer' && (
+                                                    <button
+                                                        className="text-xs cursor-pointer bg-red-500 rounded-sm transition-transform duration-300 hover:scale-110 hover:bg-red-600"
+                                                        onClick={async (e) => {
+                                                            ;
+                                                        }}
+                                                    >
+                                                        <Trash2 className="p-1" color="white" />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ) : (normalizedRole == 'treasurer' ? (
+                                            <label className="flex items-center cursor-pointer">
+                                                <span className="px-3 py-2 bg-gray-100 border rounded-md hover:bg-gray-200 cursor-pointer w-fit">
+                                                    Upload Item Photo
+                                                </span>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="hidden"
+                                                    onChange={async (e) => {
+                                                        const file = e.target.files?.[0];
+                                                        if (!file) return;
+                                                        await uploadReceipt(data.id, file, project?.title ?? "unknown");
+                                                    }}
+                                                />
+                                            </label>
+                                        ) : (
+                                            <h1>No photo available</h1>
+                                        )
+                                        )}
                                     </TableCell>
-                                    <TableCell className="justify-items-center border-black border-2">
+                                    <TableCell className="justify-items-center">
+                                        {data.photoURL ? (
+                                            <div className="flex flex-row items-center gap-2">
+                                                <Dialog>
+                                                    <DialogTrigger asChild>
+                                                        <button className="p-2 bg-gray-100 rounded-md hover:bg-gray-200 transition cursor-pointer">
+                                                            <Image className="w-7 h-7 text-blue-600 " />
+                                                        </button>
+                                                    </DialogTrigger>
+                                                    <DialogContent className="sm:max-w-[500px]">
+                                                        <DialogHeader>
+                                                            <DialogTitle className="text-2xl text-center">
+                                                                {data.item_name} Photo
+                                                            </DialogTitle>
+                                                            <hr className="border-t border-black w-full my-3" />
+                                                            <img
+                                                                src={data.photoURL}
+                                                                className="rounded-md shadow-md max-h-[400px] mx-auto object-contain"
+                                                                alt={`${data.item_name} Photo`}
+                                                            />
+                                                        </DialogHeader>
+                                                    </DialogContent>
+                                                </Dialog>
+
+                                                {/* Delete Photo */}
+                                                {normalizedRole == 'treasurer' && (
+                                                    <button
+                                                        className="text-xs cursor-pointer bg-red-500 rounded-sm transition-transform duration-300 hover:scale-110 hover:bg-red-600"
+                                                        onClick={async (e) => {
+                                                            ;
+                                                        }}
+                                                    >
+                                                        <Trash2 className="p-1" color="white" />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ) : (normalizedRole == 'treasurer' ? (
+                                            <label className="flex items-center cursor-pointer">
+                                                <span className="px-3 py-2 bg-gray-100 border rounded-md hover:bg-gray-200 cursor-pointer w-fit">
+                                                    Upload Item Photo
+                                                </span>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="hidden"
+                                                    onChange={async (e) => {
+                                                        const file = e.target.files?.[0];
+                                                        if (!file) return;
+                                                        await uploadItemPhoto(data.id, file, project?.title ?? "unknown");
+                                                    }}
+                                                />
+                                            </label>
+                                        ) : (
+                                            <h1>No photo available</h1>
+                                        )
+                                        )}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+
+                            {normalizedRole == 'treasurer' && (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="px-2 py-1">
                                         <Dialog>
-                                            <DialogTrigger>
-                                                <Image className="cursor-pointer hover:bg-gray-300" />
+                                            <DialogTrigger asChild>
+                                                <button
+                                                    className="w-full flex items-center justify-center py-3 rounded-md border border-dashed border-gray-400 bg-blue-50 text-blue-500 font-medium cursor-pointer transition-colors hover:bg-blue-100 hover:border-blue-500"
+                                                >
+                                                    <CirclePlus size={16} />
+                                                    <span>Add Item</span>
+                                                </button>
                                             </DialogTrigger>
-                                            <DialogContent>
+
+                                            <DialogContent className="sm:max-w-[500px]">
                                                 <DialogHeader>
-                                                    <DialogTitle className="text-2xl text-center">{data.item_name} Item Photo</DialogTitle>
-                                                    
-                                                        <hr className="border-t border-black w-full my-3" />
-                                                        <img src={data.receiptURL} className=" aspect-3/4 object-cover" />
-                                                    
+                                                    <DialogTitle className="text-xl font-semibold">Add New Item</DialogTitle>
+                                                    <DialogDescription>
+                                                        Fill in the details below to add a new item to the project budget.
+                                                    </DialogDescription>
                                                 </DialogHeader>
+
+                                                {/* Form */}
+                                                <form
+                                                    className="space-y-4 mt-4"
+                                                    ref={formRef}
+                                                    onSubmit={async (e) => {
+                                                        await addBudget(e, formRef, project.title, projectID)
+                                                    }}
+                                                >
+                                                    {/* Item Name */}
+                                                    <div className="flex flex-col gap-2">
+                                                        <label className="font-medium">Item Name</label>
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Enter item name"
+                                                            className="border rounded-md p-2"
+                                                            name="item_name"
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                    {/* Price */}
+                                                    <div className="flex flex-col gap-2">
+                                                        <label className="font-medium">Price (₱)</label>
+                                                        <input
+                                                            type="number"
+                                                            placeholder="0.00"
+                                                            step="1.00"
+                                                            className="border rounded-md p-2"
+                                                            name="price"
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                    {/* Amount */}
+                                                    <div className="flex flex-col gap-2">
+                                                        <label className="font-medium">Amount</label>
+                                                        <input
+                                                            type="number"
+                                                            placeholder="0"
+                                                            className="border rounded-md p-2"
+                                                            name="amt"
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                    {/* Receipt Upload */}
+                                                    <div className="flex flex-col gap-2">
+                                                        <label className="font-medium">Receipt</label>
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            className="border rounded-md p-2 cursor-pointer"
+                                                            name="receipt"
+                                                        />
+                                                    </div>
+
+                                                    {/* Item Photo Upload */}
+                                                    <div className="flex flex-col gap-2">
+                                                        <label className="font-medium">Item Photo</label>
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            className="border rounded-md p-2 cursor-pointer"
+                                                            name="item_photo"
+                                                        />
+                                                    </div>
+
+
+                                                    {/* Actions */}
+                                                    <div className="flex justify-end gap-2 mt-6">
+                                                        <DialogClose asChild>
+                                                            <Button variant="outline" className="cursor-pointer">
+                                                                Cancel
+                                                            </Button>
+                                                        </DialogClose>
+                                                        <Button className="bg-[#052659] text-white hover:bg-[#1A3A6D] cursor-pointer" type="submit">
+                                                            Save Item
+                                                        </Button>
+                                                    </div>
+                                                </form>
                                             </DialogContent>
                                         </Dialog>
                                     </TableCell>
                                 </TableRow>
-                            </TableBody>
-                        ))
+                            )}
+                        </TableBody>
 
-                        }
                     </Table>
                 </div>
             </div>
