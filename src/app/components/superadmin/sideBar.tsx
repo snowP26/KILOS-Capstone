@@ -25,19 +25,18 @@ const data = {
             title: "Positions",
             url: "#",
             icon: UserRound,
-            isActive: true,
             items: [
                 {
                     title: "Bula",
-                    url: "#",
+                    url: "../../../superadmin/positions/[id]/",
                 },
                 {
                     title: "Naga City",
-                    url: "#",
+                    url: "../../../superadmin/positions/[id]/",
                 },
                 {
                     title: "Pili",
-                    url: "#",
+                    url: "../../../superadmin/positions/[id]/",
                 },
             ],
         },
@@ -48,15 +47,15 @@ const data = {
             items: [
                 {
                     title: "Bula",
-                    url: "#",
+                    url: "../../../superadmin/locations/[id]/",
                 },
                 {
                     title: "Naga City",
-                    url: "#",
+                    url: "../../../superadmin/locations/[id]/",
                 },
                 {
                     title: "Pili",
-                    url: "#",
+                    url: "../../../superadmin/locations/[id]/",
                 },
             ],
         },
@@ -64,21 +63,12 @@ const data = {
 }
 
 export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
     return (
         <Sidebar collapsible="icon" {...props}>
-            <SidebarHeader
-                className="
-    sticky top-0 bg-background px-4 py-2 duration-300 ease-in-out
-    overflow-hidden"
-            >
-                <h1 className="text-[#C1E8FF] font-bold text-3xl">KILOS</h1>
-            </SidebarHeader>
-            <SidebarContent>
+            <SidebarContent className="text-white">
                 <NavItems items={data.navItems} />
             </SidebarContent>
-            <SidebarFooter>
-
-            </SidebarFooter>
             <SidebarRail />
         </Sidebar>
     )

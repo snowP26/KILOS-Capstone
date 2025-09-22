@@ -27,8 +27,15 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-
 } from "@/components/ui/table";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 import { project, project_budget } from "@/src/app/lib/definitions";
 import { getProjectBudgetById, getProjectByID } from "@/src/app/actions/projects";
 export default function ViewProjectBudget() {
@@ -135,7 +142,7 @@ export default function ViewProjectBudget() {
                                 <TableRow key={data.id}>
                                     <TableCell className="text-center">
                                         <Select>
-                                            <SelectTrigger className="w-fit mx-auto">
+                                            <SelectTrigger className="w-fit mx-auto cursor-pointer">
                                                 <SelectValue placeholder="FOR APPROVAL" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -157,10 +164,32 @@ export default function ViewProjectBudget() {
                                     <TableCell className="text-center">{data.price}</TableCell>
                                     <TableCell className="text-center">{data.amt}</TableCell>
                                     <TableCell className="text-center">
-                                        <Image className="mx-auto cursor-pointer hover:text-gray-700" />
+                                        <Dialog>
+                                            <DialogTrigger>
+                                                <Image className="cursor-pointer hover:bg-gray-300" />
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <DialogHeader>
+                                                    <DialogTitle className="text-2xl text-center">{data.item_name} Receipt Photo</DialogTitle>
+                                                    <hr className="border-t border-black w-full my-3" />
+                                                    <img src={data.receiptURL} className=" aspect-3/4 object-cover" />
+                                                </DialogHeader>
+                                            </DialogContent>
+                                        </Dialog>
                                     </TableCell>
                                     <TableCell className="text-center">
-                                        <Image className="mx-auto cursor-pointer hover:text-gray-700" />
+                                        <Dialog>
+                                            <DialogTrigger>
+                                                <Image className="cursor-pointer hover:bg-gray-300" />
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <DialogHeader>
+                                                    <DialogTitle className="text-2xl text-center">{data.item_name} Receipt Photo</DialogTitle>
+                                                    <hr className="border-t border-black w-full my-3" />
+                                                    <img src={data.receiptURL} className=" aspect-3/4 object-cover" />
+                                                </DialogHeader>
+                                            </DialogContent>
+                                        </Dialog>
                                     </TableCell>
                                 </TableRow>
                             ))}
