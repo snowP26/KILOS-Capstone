@@ -32,7 +32,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { project, project_budget } from '@/src/app/lib/definitions';
-import { addBudget, getProjectBudgetById, getProjectByID, uploadItemPhoto, uploadReceipt } from '@/src/app/actions/projects';
+import { addBudget, deletePhoto, getProjectBudgetById, getProjectByID, uploadItemPhoto, uploadReceipt } from '@/src/app/actions/projects';
 import { useUserRole } from '@/src/app/actions/role';
 import { DialogClose } from '@radix-ui/react-dialog';
 
@@ -45,8 +45,9 @@ export default function ViewProjectBudget() {
     const [project, setProject] = useState<project | null>(null);
     const [budget, setBudget] = useState<project_budget[]>([]);
     const { role } = useUserRole();
-    const normalizedRole = role?.trim().toLowerCase()
-    const formRef = useRef<HTMLFormElement>(null)
+    const normalizedRole = role?.trim().toLowerCase();
+    const formRef = useRef<HTMLFormElement>(null);
+    const [refresh, setRefresh] = useState(0)
 
     useEffect(() => {
         const setData = async () => {
@@ -60,7 +61,7 @@ export default function ViewProjectBudget() {
         }
 
         setData()
-    }, [projectID])
+    }, [projectID, refresh])
 
     if (!projectID || !project) return <h1>empty</h1>
 
@@ -175,7 +176,8 @@ export default function ViewProjectBudget() {
                                                     <button
                                                         className="text-xs cursor-pointer bg-red-500 rounded-sm transition-transform duration-300 hover:scale-110 hover:bg-red-600"
                                                         onClick={async (e) => {
-                                                            ;
+                                                            await deletePhoto(data.id, false);
+                                                            setRefresh((prev) => prev+1);
                                                         }}
                                                     >
                                                         <Trash2 className="p-1" color="white" />
@@ -195,6 +197,7 @@ export default function ViewProjectBudget() {
                                                         const file = e.target.files?.[0];
                                                         if (!file) return;
                                                         await uploadReceipt(data.id, file, project?.title ?? "unknown");
+                                                        setRefresh((prev) => prev+1);
                                                     }}
                                                 />
                                             </label>
@@ -232,7 +235,8 @@ export default function ViewProjectBudget() {
                                                     <button
                                                         className="text-xs cursor-pointer bg-red-500 rounded-sm transition-transform duration-300 hover:scale-110 hover:bg-red-600"
                                                         onClick={async (e) => {
-                                                            ;
+                                                            await deletePhoto(data.id, true)
+                                                            setRefresh((prev) => prev+1);
                                                         }}
                                                     >
                                                         <Trash2 className="p-1" color="white" />
@@ -252,6 +256,7 @@ export default function ViewProjectBudget() {
                                                         const file = e.target.files?.[0];
                                                         if (!file) return;
                                                         await uploadItemPhoto(data.id, file, project?.title ?? "unknown");
+                                                        setRefresh((prev) => prev+1);
                                                     }}
                                                 />
                                             </label>

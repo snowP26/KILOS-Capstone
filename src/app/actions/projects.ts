@@ -360,23 +360,23 @@ export const uploadReceipt = async (budgetID: number, file: File, project: strin
     const loc = await locIDtoName(locNumber);
 
     // loc_itemname_dateNow
-    const { data: budgetData, error: budgetError} = await client.from("project_budget").select("item_name").eq("id", budgetID);
+    const { data: budgetData, error: budgetError } = await client.from("project_budget").select("item_name").eq("id", budgetID);
 
-    if(budgetError) {
+    if (budgetError) {
         console.log("Error in retrieving the budget: ", budgetError)
         return
     }
 
     const itemName = budgetData[0].item_name
-    const filename = `${loc}_${itemName}_${Date.now()}`
-    const filepath = `photos/${loc}/${project}/items/${filename}-receipt`
+    const filename = `${loc}_${itemName}_receipt_${Date.now()}`
+    const filepath = `photos/${loc}/${project}/items/${filename}`
 
     const { error: bucketError } = await client
         .storage
         .from("projects")
         .upload(filepath, file)
 
-    if(bucketError){
+    if (bucketError) {
         console.log(`Error in saving file to the bucket: ${bucketError}`)
     }
 
@@ -386,11 +386,11 @@ export const uploadReceipt = async (budgetID: number, file: File, project: strin
         .getPublicUrl(filepath);
 
     const receiptURL = publicUrlData.publicUrl;
-    
+
     const { data: clientData, error: clientError } = await client
         .from("project_budget")
-        .update({ receiptURL })      
-        .eq("id", budgetID)            
+        .update({ receiptURL })
+        .eq("id", budgetID)
         .select();
 
     if (clientError) {
@@ -408,16 +408,16 @@ export const uploadItemPhoto = async (budgetID: number, file: File, project: str
     const loc = await locIDtoName(locNumber);
 
     // get the item_name
-    const { data: budgetData, error: budgetError} = await client.from("project_budget").select("item_name").eq("id", budgetID);
+    const { data: budgetData, error: budgetError } = await client.from("project_budget").select("item_name").eq("id", budgetID);
 
-    if(budgetError) {
+    if (budgetError) {
         console.log("Error in retrieving the budget: ", budgetError)
         return
     }
 
     const itemName = budgetData[0].item_name
-    const filename = `${loc}_${itemName}_${Date.now()}`
-    const filepath = `photos/${loc}/${project}/items/${filename}-item-photo`
+    const filename = `${loc}_${itemName}_item-photo_${Date.now()}`
+    const filepath = `photos/${loc}/${project}/items/${filename}`
 
     console.log("filepath: ", filepath)
 
@@ -426,7 +426,7 @@ export const uploadItemPhoto = async (budgetID: number, file: File, project: str
         .from("projects")
         .upload(filepath, file)
 
-    if(bucketError){
+    if (bucketError) {
         console.log(`Error in saving file to the bucket: ${bucketError}`)
     }
 
@@ -436,11 +436,11 @@ export const uploadItemPhoto = async (budgetID: number, file: File, project: str
         .getPublicUrl(filepath);
 
     const photoURL = publicUrlData.publicUrl;
-    
+
     const { data: clientData, error: clientError } = await client
         .from("project_budget")
-        .update({ photoURL })      
-        .eq("id", budgetID)            
+        .update({ photoURL })
+        .eq("id", budgetID)
         .select();
 
     if (clientError) {
@@ -450,3 +450,46 @@ export const uploadItemPhoto = async (budgetID: number, file: File, project: str
 
     return clientData;
 };
+
+
+export const deletePhoto = async (itemID: number, item: boolean) => {
+    const basePath = `storage/v1/object/public/projects/`;
+
+    const col = item ? 'photoURL' : 'receiptURL'
+
+    const { data: dbData, error: dbError } = await client
+        .from("project_budget")
+        .select(col)
+        .eq("id", itemID)
+
+
+    if (dbError) {
+        console.log("Error fetching URL: ", dbError)
+        return
+    }
+
+    if (!dbData) return console.log("No Data found.")
+
+    const photoURL = (dbData[0] as Record<string, string | null>)[col]
+    if (!photoURL) return
+
+    let filePath = photoURL?.includes(basePath) ? photoURL.split(basePath)[1] : photoURL;
+
+    const { error: bucketError } = await client.storage.from("projects").remove([filePath])
+    if (bucketError) {
+        console.log('Error deleting in bucket: ', bucketError)
+        return
+    }
+
+    const { error: updateError } = await client
+        .from("project_budget")
+        .update({ [col]: null })
+        .eq("id", itemID);
+
+    if (updateError) {
+        console.log("Error updating DB column:", updateError);
+        return;
+    }
+
+    console.log(`Deleted file and cleared ${col} for itemID: ${itemID}`);
+}
