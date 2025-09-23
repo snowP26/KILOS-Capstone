@@ -115,7 +115,7 @@ export const FeedbackCard = ({
 
                 {/* Comment content */}
                 <div className="flex-1 bg-white rounded-xl p-3 text-black shadow">
-                  <div className="flex justify-between items-center mb-1">
+                  <div className="md:flex justify-between items-center mb-1">
                     <p className="text-sm font-semibold">{name}</p>
                     <p className="text-xs text-gray-400">
                       {new Date(data.created_at).toLocaleString("en-US", {

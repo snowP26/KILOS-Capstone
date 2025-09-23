@@ -8,8 +8,8 @@ export const ProjectDetails = () => {
             </p>
 
             {/* Scrollable text area */}
-            <ScrollArea className="h-150 lg:h-80 mt-2">
-                <div className="flex-1 px-3">
+            <ScrollArea className="h-150 lg:h-80 mt-2 p-5 xl:p-0">
+                <div className=" flex-1">
                     <p className="text-sm leading-relaxed pr-4">
                         Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
                         <br /><br />

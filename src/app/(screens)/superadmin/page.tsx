@@ -31,7 +31,7 @@ export default async function SAPage() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
+                  <BreadcrumbLink className="hover:text-gray-500 cursor-default">
                     Manage Positions and Locations
                   </BreadcrumbLink>
                 </BreadcrumbItem>

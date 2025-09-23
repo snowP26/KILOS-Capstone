@@ -40,7 +40,7 @@ export function NavItems({
 
     return (
         <SidebarGroup>
-            <SidebarGroupLabel><h1 className="text-[#C1E8FF] font-bold text-3xl">KILOS</h1></SidebarGroupLabel>
+            <SidebarGroupLabel><h1 className="text-[#C1E8FF] font-bold text-3xl cursor-pointer" onClick={() => router.push("/superadmin/")}>KILOS</h1></SidebarGroupLabel>
             <SidebarMenu className="mt-5">
                 {items.map((item) => (
                     <Collapsible

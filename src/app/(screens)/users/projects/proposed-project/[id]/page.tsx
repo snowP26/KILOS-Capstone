@@ -74,7 +74,7 @@ export default function ViewProposedProject() {
     }, [projectId, refresh]);
 
     return (
-        <div className="bg-[#E6F1FF] h-fit xl:h-screen mt-10">
+        <div className="bg-[#E6F1FF] h-fit xl:h-screen mt-10 pb-10">
             <Breadcrumb className="xl:ml-20">
                 <BreadcrumbList>
                     <Button
@@ -111,11 +111,11 @@ export default function ViewProposedProject() {
             <div className="mx-2 sm:mx-10 xl:mx-25">
                 <p className="font-bold text-xl mt-8 mb-2 mx-auto lg:mx-0 xl:text-3xl xl:mb-6">{project?.title}</p>
 
-                <div className="flex flex-col xl:flex-row gap-1 place-items-center min-h-fit max-h-screen">
+                <div className="flex flex-col lg:flex-row gap-1 place-items-center min-h-fit max-h-screen">
                     {/* LEFT SIDE POSTER */}
-                    <div className="bg-white mt-10 w-[80%] h-full sm:h-150 xl:w-[35%] xl:h-155 justify-items-center place-content-center">
+                    <div className="bg-white mt-10 w-[90%] h-full sm:h-150 lg:w-[35%] lg:h-155 justify-items-center place-content-center">
                         {project?.imageURL ? (
-                            <div className="relative w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130 flex items-center justify-center">
+                            <div className="relative w-[70%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 flex items-center justify-center">
                                 <img
                                     src={`${project.imageURL}?t=${new Date().getTime()}`}
                                     alt="Project Poster"
@@ -156,7 +156,7 @@ export default function ViewProposedProject() {
                             </div>
 
                         ) : tempPosterFile ? (
-                            <div className="flex flex-col items-center justify-center w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130 overflow-hidden">
+                            <div className="flex flex-col items-center justify-center w-[70%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 overflow-hidden">
                                 <img
                                     src={URL.createObjectURL(tempPosterFile)}
                                     alt="Temp Poster Preview"
@@ -166,7 +166,7 @@ export default function ViewProposedProject() {
                         ) : (
                             <label
                                 htmlFor="poster-upload"
-                                className="flex flex-col items-center justify-center mt-2 w-[90%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130 border-2 border-dashed border-gray-400 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+                                className="flex flex-col items-center justify-center mt-2 w-[90%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 border-2 border-dashed border-gray-400 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
                             >
                                 <svg
                                     className="w-10 h-10 text-gray-400 mb-2"
@@ -232,9 +232,9 @@ export default function ViewProposedProject() {
                     </div>
 
                     {/* RIGHT SIDE CONTENT */}
-                    <div className="flex flex-col justify-between bg-white mb-10 w-[80%] xl:w-[80%] xl:h-155 xl:mt-10 xl:mb-0">
+                    <div className="flex flex-col justify-between bg-white mb-10 w-[90%] xl:w-[80%] lg:h-155 lg:mt-10 lg:mb-0">
                         <div>
-                            <div className="mx-10 mt-5 flex flex-row justify-between items-center px-4 py-2 rounded-lg border border-gray-200 shadow-sm bg-gray-50 w-[90%]">
+                            <div className="place-self-center md:mx-10 mt-5 flex flex-col md:flex-row justify-between items-center px-4 py-2 rounded-lg border border-gray-200 shadow-sm bg-gray-50 w-[90%]">
                                 {/* Left side: Status */}
                                 <div className={`flex items-center gap-2 font-medium ${statusColor} text-white px-2 py-1 rounded-md`}>
                                     <div className="self-center">{statusIcon}</div>
@@ -249,7 +249,7 @@ export default function ViewProposedProject() {
                                         </span>
                                         <div className="flex items-center gap-3">
                                             <p className="text-sm font-medium">
-                                                {targetDate ? new Date(targetDate).toLocaleDateString("en-GB",{
+                                                {targetDate ? new Date(targetDate).toLocaleDateString("en-GB", {
                                                     day: "2-digit",
                                                     month: "long",
                                                     year: "numeric"
@@ -264,11 +264,11 @@ export default function ViewProposedProject() {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col items-end">
+                                    <div className="flex flex-col items-center md:items-end mt-2 md:mt-0">
                                         <span className="text-xs uppercase tracking-wide text-gray-500 mb-1">
                                             Target Implementation Date
                                         </span>
-                                        <div className="flex items-center gap-2">
+                                        <div className="md:flex items-center gap-2">
                                             <input
                                                 type="date"
                                                 value={targetDate}
@@ -279,20 +279,24 @@ export default function ViewProposedProject() {
                                                 }}
                                                 className="border border-gray-300 rounded-md px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
                                             />
-                                            <button
-                                                onClick={() => setEditing(false)}
-                                                className="cursor-pointer flex items-center gap-1 text-xs bg-green-500 text-white px-3 py-1.5 rounded-md shadow-sm hover:bg-green-600 transition-colors"
-                                            >
-                                                Save
-                                            </button>
-                                            <button
-                                                onClick={() => setEditing(false)}
-                                                className="cursor-pointer flex items-center gap-1 text-xs bg-gray-200 text-gray-700 px-3 py-1.5 rounded-md shadow-sm hover:bg-gray-300 transition-colors"
-                                            >
-                                                Cancel
-                                            </button>
+                                            <div className="flex justify-center mt-2 md:mt-0 gap-2">
+                                                <button
+                                                    onClick={() => setEditing(false)}
+                                                    className="cursor-pointer flex items-center gap-1 text-xs bg-green-500 text-white px-3 py-1.5 rounded-md shadow-sm hover:bg-green-600 transition-colors"
+                                                >
+                                                    Save
+                                                </button>
+                                                <button
+                                                    onClick={() => setEditing(false)}
+                                                    className="cursor-pointer flex items-center gap-1 text-xs bg-gray-200 text-gray-700 px-3 py-1.5 rounded-md shadow-sm hover:bg-gray-300 transition-colors"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+
+
                                         </div>
-                                        <span className="text-[11px] text-gray-400 mt-1">
+                                        <span className="text-xs text-gray-400 text-center">
                                             This is the date the project is going to be implemented
                                         </span>
                                     </div>
@@ -300,9 +304,9 @@ export default function ViewProposedProject() {
                             </div>
 
 
-                            <hr className="border-t mt-8 border-gray-200 w-full" />
+                            <hr className="border-t mt-3 border-gray-200 w-full" />
 
-                            <div className="min-h-fit max-h-105 mb-50 xl:mb-0 overflow-y-scroll w-full">
+                            <div className="min-h-fit max-h-105 xl:mb-0 overflow-y-scroll w-full">
                                 {showDetails ? <ProjectDetails /> : <ProjectTable id={project?.id} />}
 
                             </div>

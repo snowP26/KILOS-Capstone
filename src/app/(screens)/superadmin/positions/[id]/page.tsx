@@ -50,7 +50,7 @@ export default async function PositionsID() {
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="#">
+                                    <BreadcrumbLink className="hover:text-gray-500 cursor-default">
                                         Manage Positions
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>

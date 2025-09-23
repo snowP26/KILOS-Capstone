@@ -62,7 +62,7 @@ export default async function LocationsID() {
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="#">
+                                    <BreadcrumbLink className="hover:text-gray-500 cursor-default">
                                         Manage Locations
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
