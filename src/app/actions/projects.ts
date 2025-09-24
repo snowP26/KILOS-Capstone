@@ -493,3 +493,43 @@ export const deletePhoto = async (itemID: number, item: boolean) => {
 
     console.log(`Deleted file and cleared ${col} for itemID: ${itemID}`);
 }
+
+export const updateBudgetStatus = async (
+    budgetID: number,
+    status: string,
+    comment?: string | null
+) => {
+    if (!budgetID) {
+        console.log("No budgetID provided")
+        return false
+    }
+
+    // allowed statuses
+    const allowed = ["for approval", "approved", "rejected", "resubmit"]
+    if (!allowed.includes(status)) {
+        console.log(`Invalid status: ${status}. Allowed: ${allowed.join(", ")}`)
+        return false
+    }
+
+    // normalize comment: only keep it for Rejected or Resubmit
+    let finalComment: string | null = null
+    if (status === "Rejected" || status === "Resubmit") {
+        finalComment = comment ?? null
+    }
+
+    const { error } = await client
+        .from("project_budget")
+        .update({
+            status: status,
+            comment: finalComment
+        })
+        .eq("id", budgetID)
+
+    if (error) {
+        console.log("Error updating budget status: ", error)
+        return false
+    }
+
+    console.log(`Updated budgetID ${budgetID} to ${status} ${finalComment ? "with comment" : ""}`)
+    return true
+}
