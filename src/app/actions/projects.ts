@@ -504,12 +504,6 @@ export const updateBudgetStatus = async (
         return false
     }
 
-    // allowed statuses
-    const allowed = ["for approval", "approved", "rejected", "resubmit"]
-    if (!allowed.includes(status)) {
-        console.log(`Invalid status: ${status}. Allowed: ${allowed.join(", ")}`)
-        return false
-    }
 
     // normalize comment: only keep it for Rejected or Resubmit
     let finalComment: string | null = null

@@ -8,7 +8,7 @@ type recentFeedback = {
 
 export const DbRecentFeedbackCard = ({ header, date } : recentFeedback) => {
   return (
-    <div className="my-3 p-5 lg:w-[70%] bg-[#C1E8FF] rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
+    <div className="p-5 lg:w-[70%] bg-[#C1E8FF] rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
         <div className="mb-2">
             <Quote fill='black' size={15}/>
         </div>

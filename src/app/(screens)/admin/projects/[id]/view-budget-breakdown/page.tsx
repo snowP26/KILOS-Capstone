@@ -39,7 +39,7 @@ import { project, project_budget } from "@/src/app/lib/definitions";
 import {
     getProjectBudgetById,
     getProjectByID,
-    updateBudgetStatus, 
+    updateBudgetStatus,
 } from "@/src/app/actions/projects";
 
 export default function ViewProjectBudget() {
@@ -55,6 +55,7 @@ export default function ViewProjectBudget() {
     const [editedRows, setEditedRows] = useState<
         Record<number, { status: string; comment?: string }>
     >({});
+    const [editingRowId, setEditingRowId] = useState<number | null>(null);
 
     useEffect(() => {
         const getData = async () => {
@@ -82,13 +83,24 @@ export default function ViewProjectBudget() {
         }));
     };
 
+    const handleEdit = (id: number) => {
+        setEditingRowId(id);
+        // preload the current values into editedRows
+        const row = projectBudget.find((item) => item.id === id);
+        if (row) {
+            setEditedRows((prev) => ({
+                ...prev,
+                [id]: { status: row.status, comment: row.comment || "" },
+            }));
+        }
+    };
+
     const handleSave = async (id: number) => {
         const row = editedRows[id];
         if (!row) return;
 
         const success = await updateBudgetStatus(id, row.status, row.comment || "");
         if (success) {
-            // Update UI
             setProjectBudget((prev) =>
                 prev.map((item) =>
                     item.id === id
@@ -100,6 +112,7 @@ export default function ViewProjectBudget() {
                 const { [id]: _, ...rest } = prev;
                 return rest;
             });
+            setEditingRowId(null); // exit edit mode
         }
     };
 
@@ -169,66 +182,84 @@ export default function ViewProjectBudget() {
                     <Table>
                         <TableHeader>
                             <TableRow className="bg-gray-100">
-                                <TableHead className="text-center w-40">Status</TableHead>
+                                <TableHead className="text-center">Status</TableHead>
                                 <TableHead className="text-center">Item Name</TableHead>
                                 <TableHead className="text-center">Price</TableHead>
                                 <TableHead className="text-center">Amount</TableHead>
                                 <TableHead className="text-center">Receipt</TableHead>
                                 <TableHead className="text-center">Photo</TableHead>
-                                <TableHead className="text-center w-32">Actions</TableHead>
+                                <TableHead className="text-center">Comments</TableHead>
+                                <TableHead className="text-center">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
 
                         <TableBody>
                             {projectBudget.map((data) => {
+                                const isEditing = editingRowId === data.id;
                                 const edited = editedRows[data.id];
                                 const currentStatus = edited?.status || data.status || "";
+
                                 return (
                                     <TableRow key={data.id}>
                                         {/* Status */}
                                         <TableCell className="text-center">
-                                            <Select
-                                                value={currentStatus}
-                                                onValueChange={(val) => handleStatusChange(data.id, val)}
-                                            >
-                                                <SelectTrigger className="w-fit mx-auto">
-                                                    <SelectValue placeholder="FOR APPROVAL" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectGroup>
-                                                        <SelectItem value="approved" className="text-[#28A745]">
-                                                            For Approval
-                                                        </SelectItem>
-                                                        <SelectItem value="approved" className="text-[#28A745]">
-                                                            Approved
-                                                        </SelectItem>
-                                                        <SelectItem value="rejected" className="text-[#A7282A]">
-                                                            Rejected
-                                                        </SelectItem>
-                                                        <SelectItem value="resubmit" className="text-[#FF6904]">
-                                                            Resubmit
-                                                        </SelectItem>
-                                                    </SelectGroup>
-                                                </SelectContent>
-                                            </Select>
-
-                                            {/* Show comment input if rejected or resubmit */}
-                                            {(currentStatus === "rejected" ||
-                                                currentStatus === "resubmit") && (
-                                                    <Input
-                                                        placeholder="Add comment..."
-                                                        className="mt-2"
-                                                        value={edited?.comment || data.comment || ""}
-                                                        onChange={(e) =>
-                                                            handleCommentChange(data.id, e.target.value)
+                                            {isEditing ? (
+                                                <>
+                                                    <Select
+                                                        value={currentStatus}
+                                                        onValueChange={(val) =>
+                                                            handleStatusChange(data.id, val)
                                                         }
-                                                    />
-                                                )}
+                                                    >
+                                                        <SelectTrigger className="w-fit mx-auto">
+                                                            <SelectValue placeholder="For Approval" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectGroup>
+                                                                <SelectItem value="For Approval">
+                                                                    For Approval
+                                                                </SelectItem>
+                                                                <SelectItem value="Approved">
+                                                                    Approved
+                                                                </SelectItem>
+                                                                <SelectItem value="Rejected">
+                                                                    Rejected
+                                                                </SelectItem>
+                                                                <SelectItem value="Resubmit">
+                                                                    Resubmit
+                                                                </SelectItem>
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </>
+                                            ) : (
+                                                <span
+                                                    className={`px-3 py-1 rounded-full text-md font-semibold
+                                                            ${data.status === "Approved"
+                                                            ? "bg-green-100 text-green-800"
+                                                            : data.status === "Rejected"
+                                                                ? "bg-red-100 text-red-800"
+                                                                : data.status === "Resubmit"
+                                                                    ? "bg-orange-100 text-orange-800"
+                                                                    : "bg-gray-100 text-gray-800" // For Approval or default
+                                                        }`}
+                                                >
+                                                    {data.status}
+                                                </span>
+                                            )}
                                         </TableCell>
 
                                         {/* Other row data */}
                                         <TableCell className="text-center">{data.item_name}</TableCell>
-                                        <TableCell className="text-center">{data.price}</TableCell>
+                                        <TableCell className="text-center">
+                                            {project?.budget !== undefined
+                                            ? new Intl.NumberFormat("en-PH", {
+                                                style: "currency",
+                                                currency: "PHP",
+                                                minimumFractionDigits: 2,
+                                            }).format(project.budget)
+                                            : "₱0.00"}
+                                            </TableCell>
                                         <TableCell className="text-center">{data.amt}</TableCell>
 
                                         {/* Receipt */}
@@ -283,17 +314,45 @@ export default function ViewProjectBudget() {
                                             )}
                                         </TableCell>
 
+                                        {/* Comments */}
+                                        <TableCell className="text-center">
+                                            {isEditing ? (
+                                                    <Input
+                                                        placeholder="Add comment..."
+                                                        className="mt-2 "
+                                                        value={edited?.comment || ""}
+                                                        onChange={(e) =>
+                                                            handleCommentChange(data.id, e.target.value)
+                                                        }
+                                                    />
+                                            ) : (
+                                                <span className="text-sm text-gray-600">
+                                                    {data.comment || "—"}
+                                                </span>
+                                            )}
+                                        </TableCell>
+
                                         {/* Actions */}
                                         <TableCell className="text-center">
-                                            <Button
-                                                size="sm"
-                                                onClick={() => handleSave(data.id)}
-                                                disabled={!editedRows[data.id]}
-                                                className="gap-2"
-                                            >
-                                                <Save className="w-4 h-4" />
-                                                Save
-                                            </Button>
+                                            {isEditing ? (
+                                                <Button
+                                                    size="sm"
+                                                    onClick={() => handleSave(data.id)}
+                                                    className="gap-2"
+                                                >
+                                                    <Save className="w-4 h-4" />
+                                                    Save
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    size="sm"
+                                                    onClick={() => handleEdit(data.id)}
+                                                    className="gap-2"
+                                                >
+                                                    <SquarePen className="w-4 h-4" />
+                                                    Edit
+                                                </Button>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 );

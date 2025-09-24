@@ -39,6 +39,28 @@ export default function Ordinances() {
 
   const normalizedRole = role?.trim().toLowerCase();
 
+  const EmptyState = () => (
+    <div className="flex flex-col items-center justify-center py-20 px-5 text-center">
+      <p className="text-xl font-semibold text-gray-700 mb-2">
+        No Ordinances Available
+      </p>
+      <p className="text-gray-500 max-w-md mb-6">
+        Looks like there are no ordinances at the moment.
+        {normalizedRole === "legislative"
+          ? " You can start by submitting a new one."
+          : " Please check back later for updates."}
+      </p>
+
+      {normalizedRole === "legislative" && (
+        <Button
+          className="bg-[#052659] text-white cursor-pointer hover:bg-white hover:text-[#052659] hover:border-[1px] hover:border-black"
+          onClick={() => router.push("/users/ordinances/submit-doc")}
+        >
+          Submit Ordinance
+        </Button>
+      )}
+    </div>
+  );
   // Skeleton component
   const SkeletonList = () => (
     <div className="mt-5 space-y-4 px-40">
@@ -150,8 +172,13 @@ export default function Ordinances() {
           </Select>
         </div>
 
-        {/* Ordinances or Skeleton */}
-        {loadingOrdinances ? <SkeletonList /> : <OrdinanceList />}
+        {loadingOrdinances ? (
+          <SkeletonList />
+        ) : ordinances.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <OrdinanceList />
+        )}
       </div>
     );
   }
