@@ -148,5 +148,6 @@ export type project_budget = {
     price: number,
     amt: number,
     receiptURL: string,
-    photoURL: string
+    photoURL: string,
+    comment: string | undefined
 }
