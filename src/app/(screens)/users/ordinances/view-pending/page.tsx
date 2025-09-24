@@ -31,7 +31,7 @@ export default function ViewPending() {
 
     return (
         <div className="bg-[#E6F1FF] min-h-screen max-h-fit mt-10">
-            <Breadcrumb className="ml-20">
+            <Breadcrumb className="ml-5 lg:ml-20">
                 <BreadcrumbList>
                     <Button className="group gap-0 relative bg-[#E6F1FF] cursor-pointer" variant="link" onClick={() => router.push("/users/ordinances")}>
                         <ArrowLeft color="black" />
@@ -53,12 +53,12 @@ export default function ViewPending() {
                 </BreadcrumbList>
             </Breadcrumb>
 
-            <p className="font-bold text-3xl mt-8 mb-2 ml-30">My Pending Ordinances & Resolutions</p>
+            <p className="font-bold text-2xl lg:text-3xl mt-8 mb-2 ml-5 lg:ml-30 text-balance">My Pending Ordinances & Resolutions</p>
             <hr className="border-t border-black w-[90%] mx-auto mt-3 mb-10" />
 
             {ordinances.map((data) => (
-                <div key={data.id} className="bg-white rounded-[8px] border drop-shadow-lg p-5 mx-30 mb-3 cursor-pointer hover:shadow-xl transition-all hover:border-blue-300" onClick={() => router.push(`/users/ordinances/view-pending/${data.title}`)}>
-                    <p className="font-semibold text-2xl">Ordinance {data.title}</p>
+                <div key={data.id} className="bg-white rounded-[8px] border drop-shadow-lg p-5 mx-5 lg:mx-30 mb-3 cursor-pointer hover:shadow-xl transition-all hover:border-blue-300" onClick={() => router.push(`/users/ordinances/view-pending/${data.title}`)}>
+                    <p className="font-semibold text-2xl truncate">Ordinance {data.title}</p>
                     <p className="max-w-350 truncate text-sm overflow-clip pt-2">
                         {data.description}
                     </p>

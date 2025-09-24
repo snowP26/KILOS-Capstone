@@ -42,7 +42,7 @@ export default function SubmitDoc() {
 
     return (
         <div className="bg-[#E6F1FF] min-h-screen max-h-fit mt-10">
-            <Breadcrumb className="ml-20">
+            <Breadcrumb className="ml-5 lg:ml-20">
                 <BreadcrumbList>
                     <Button
                         className="group gap-0 relative bg-[#E6F1FF] cursor-pointer"
@@ -74,19 +74,18 @@ export default function SubmitDoc() {
                 </BreadcrumbList>
             </Breadcrumb>
 
-            <p className="font-bold text-3xl mt-8 mb-2 ml-30">Submit an Ordinance</p>
+            <p className="font-bold text-2xl lg:text-3xl mt-8 mb-2 mx-5 lg:ml-30">Submit an Ordinance</p>
             <hr className="border-t border-black w-[90%] mx-auto my-3" />
 
-            <div className="justify-items-center mt-10">
-                <form
-                    className="bg-white w-[70%] px-20 rounded-[16px] py-10 shadow-lg/30"
-                    ref={formRef}
-                    onSubmit={(e) => {
-                        postOrdinance(e, formRef);
-                        router.push("/users/ordinances");
-                    }}
+            <form className="justify-items-center mt-10 mb-10 lg:mb-0" ref={formRef}
+                onSubmit={(e) => {
+                    postOrdinance(e, formRef);
+                    router.push("/users/ordinances");
+                }}>
+                <div
+                    className="bg-white w-[90%] lg:w-[70%] px-5 lg:px-20 rounded-[16px] py-10 shadow-lg/30"
                 >
-                    <div className="w-[70%]">
+                    <div className="lg:w-[70%]">
                         <p className="font-semibold">Ordinance Title</p>
                         <Input
                             className="bg-[#E6F1FF] placeholder:italic"
@@ -99,14 +98,14 @@ export default function SubmitDoc() {
                         <p className="font-semibold">Ordinance Year and Number</p>
                         <div className="flex flex-row space-x-2">
                             <Input
-                                className="bg-[#E6F1FF] placeholder:italic w-[30%]"
+                                className="bg-[#E6F1FF] placeholder:italic lg:w-[30%]"
                                 placeholder="eg. 2000"
                                 name="title-year"
                                 maxLength={4}
                             />
                             <strong>-</strong>
                             <Input
-                                className="bg-[#E6F1FF] placeholder:italic w-[25%]"
+                                className="bg-[#E6F1FF] placeholder:italic lg:w-[25%]"
                                 placeholder="eg. 001"
                                 name="title-number"
                                 maxLength={4}
@@ -122,7 +121,7 @@ export default function SubmitDoc() {
                     {/* Drop Zone (hidden when file is selected) */}
                     {!selectedFile && (
                         <div
-                            className="flex h-[150px] w-[600px] mt-3 items-center justify-center rounded-md border border-dashed border-gray-400 text-sm cursor-pointer hover:bg-gray-100"
+                            className="flex h-[150px] lg:w-[600px] mt-3 items-center justify-center rounded-md border border-dashed border-gray-400 text-sm cursor-pointer hover:bg-gray-100"
                             onClick={() => fileInputRef.current?.click()}
                         >
                             <div className="flex flex-row gap-2">
@@ -132,7 +131,7 @@ export default function SubmitDoc() {
                                 <div className="flex flex-col">
                                     <div className="flex flex-row gap-1">
                                         <p className="font-semibold">
-                                            Drop your Ordinance Document or{" "}
+                                            Drop your file or{" "}
                                         </p>
                                         <p className="text-[#3B4EFF] font-semibold underline">
                                             Browse
@@ -178,12 +177,12 @@ export default function SubmitDoc() {
                     )}
 
                     <div className="place-self-end mt-5">
-                        <Button className="bg-[#A3C4A8] text-black hover:font-bold rounded-[16px] cursor-pointer hover:bg-accent hover:text-accent-foreground hover:border-[#a3c4a8] hover:border-1 transition-all">
+                        <Button className="bg-[#A3C4A8] text-black font-bold hover:font-bold rounded-[16px] cursor-pointer hover:bg-accent hover:text-accent-foreground hover:border-[#a3c4a8] hover:border-1 transition-all">
                             Submit Ordinance/Resolution
                         </Button>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     );
 }

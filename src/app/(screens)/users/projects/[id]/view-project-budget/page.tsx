@@ -30,6 +30,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
+
 } from "@/components/ui/table";
 import { project, project_budget } from "@/src/app/lib/definitions";
 import {
@@ -42,6 +43,7 @@ import {
 } from "@/src/app/actions/projects";
 import { useUserRole } from "@/src/app/actions/role";
 import { Skeleton } from "@/components/ui/skeleton";
+
 
 export default function ViewProjectBudget() {
     const router = useRouter();
@@ -352,6 +354,7 @@ export default function ViewProjectBudget() {
                             {normalizedRole == 'treasurer' && (
                                 <TableRow>
                                     <TableCell colSpan={6} className="px-2 py-1">
+
                                         <Dialog>
                                             <DialogTrigger asChild>
                                                 <button
@@ -364,10 +367,11 @@ export default function ViewProjectBudget() {
 
                                             <DialogContent className="sm:max-w-[500px]">
                                                 <DialogHeader>
-                                                    <DialogTitle className="text-xl font-semibold">Add New Item</DialogTitle>
+                            <DialogTitle className="text-xl font-semibold">Add New Item</DialogTitle>
                                                     <DialogDescription>
                                                         Fill in the details below to add a new item to the project budget.
                                                     </DialogDescription>
+
                                                 </DialogHeader>
 
                                                 {/* Form */}
@@ -458,8 +462,18 @@ export default function ViewProjectBudget() {
                             )}
                         </TableBody>
 
+
                     </Table>
+                    <div
+                        className="flex items-center justify-center gap-2 h-10 w-full border-t border-b border-dashed border-gray-400 bg-white text-blue-500 font-medium cursor-pointer transition-colors hover:bg-blue-100 hover:border-blue-500"
+
+                    >
+                        <CirclePlus size={16} />
+                        <span>Add Item</span>
+                    </div>
                 </div>
+
+
             </div>
         </div>
     );

@@ -35,6 +35,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+
 import { project, project_budget } from "@/src/app/lib/definitions";
 import {
     getProjectBudgetById,
@@ -117,9 +118,9 @@ export default function ViewProjectBudget() {
     };
 
     return (
-        <div className="bg-[#E6F1FF] min-h-screen py-10">
+        <div className="bg-[#E6F1FF] min-h-screen max-h-full py-10">
             {/* Breadcrumb */}
-            <div className="mx-20">
+            <div className="mx-5 xl:mx-20">
                 <Breadcrumb>
                     <BreadcrumbList>
                         <BreadcrumbItem>
@@ -158,7 +159,7 @@ export default function ViewProjectBudget() {
                 </Breadcrumb>
             </div>
 
-            <div className="mx-20 mt-10 space-y-8">
+            <div className="mx-5 lg:mx-20 mt-10 space-y-8">
                 {/* Title + Budget Section */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                     <h1 className="font-bold text-2xl md:text-3xl xl:text-3xl mt-8 mb-2 xl:mb-6">
@@ -166,7 +167,7 @@ export default function ViewProjectBudget() {
                     </h1>
 
                     <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-lg shadow-sm">
-                        <p className="text-gray-700 font-medium">Set Budget:</p>
+                        <p className="text-gray-700 text-xs md:text-base font-medium">Set Budget:</p>
                         <p className="text-[#28A745] text-lg md:text-xl font-bold">
                             ₱999,999,999.00
                         </p>
@@ -194,6 +195,7 @@ export default function ViewProjectBudget() {
                         </TableHeader>
 
                         <TableBody>
+
                             {projectBudget.map((data) => {
                                 const isEditing = editingRowId === data.id;
                                 const edited = editedRows[data.id];

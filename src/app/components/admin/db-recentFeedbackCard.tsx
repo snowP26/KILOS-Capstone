@@ -3,14 +3,14 @@ import { Quote } from 'lucide-react';
 
 export const DbRecentFeedbackCard = () => {
   return (
-    <div className="my-3 p-5 lg:w-[70%] bg-[#C1E8FF] rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
+    <div className="my-3 p-5 w-[70%] bg-[#C1E8FF] rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
         
         <div className="mb-2">
             <Quote fill='black' size={15}/>
         </div>
         
 
-        <p className="font-semibold text-xl text-center break-words xl:text-sm">
+        <p className="font-semibold text-xl text-center break-words lg:text-sm">
             Sari po su pagkaon sadto munisipyo?
         </p>
 
