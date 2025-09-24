@@ -2,10 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft } from 'lucide-react';
-import { SquarePen } from 'lucide-react';
-import { Trash2 } from 'lucide-react';
-import { CirclePlus } from 'lucide-react';
+import { ArrowLeft, SquarePen, Trash2, CirclePlus } from 'lucide-react';
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
