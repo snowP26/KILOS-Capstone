@@ -473,7 +473,7 @@ export const deletePhoto = async (itemID: number, item: boolean) => {
     const photoURL = (dbData[0] as Record<string, string | null>)[col]
     if (!photoURL) return
 
-    let filePath = photoURL?.includes(basePath) ? photoURL.split(basePath)[1] : photoURL;
+    const filePath = photoURL?.includes(basePath) ? photoURL.split(basePath)[1] : photoURL;
 
     const { error: bucketError } = await client.storage.from("projects").remove([filePath])
     if (bucketError) {
