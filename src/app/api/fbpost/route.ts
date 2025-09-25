@@ -29,7 +29,7 @@ export async function POST(req: Request) {
 
   if(locationError) return NextResponse.json({ error: "No official of email: ", authEmail }, { status: 401 })
 
-  let locID = Number(locationData.location)
+  const locID = Number(locationData.location)
   console.log("locID: ", locID)
 
   function generateAppSecretProof(token: string, appSecret: string) {
