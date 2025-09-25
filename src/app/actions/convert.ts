@@ -47,10 +47,11 @@ export const getLocFromAuth = async () => {
     .single();
 
   if (error) {
-    console.log("There seems to be an error with the youth official", error);
+    console.log("There seems to be an error with the youth official: ", error);
     return 0;
   }
 
+  console.log("Location ID found:", data?.location);
   return data.location as number;
 };
 
