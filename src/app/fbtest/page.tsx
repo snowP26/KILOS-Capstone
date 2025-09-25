@@ -20,13 +20,13 @@ export default function FacebookPoster() {
             const data = await res.json();
 
             if (data.id) {
-                setStatus("✅ Successfully posted to Facebook!");
+                setStatus("✅Successfully posted to Facebook!");
             } else {
                 setStatus("❌ Failed to post: " + JSON.stringify(data));
             }
         } catch (err) {
             console.error(err);
-            setStatus("⚠️ Error posting message.");
+            setStatus("Error posting message.");
         }
     };
 
