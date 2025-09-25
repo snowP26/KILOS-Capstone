@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { CirclePlus } from "lucide-react"
 
 import {
     ColumnDef,
@@ -68,7 +69,7 @@ export function DataTable<TData, TValue>({
 
     return (
         <div>
-            <div className="flex items-center mx-5 lg:mx-0 py-4">
+            <div className="flex justify-between items-center mx-5 lg:mx-0 py-4">
                 <Input
                     placeholder="Filter emails..."
                     value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
@@ -77,34 +78,45 @@ export function DataTable<TData, TValue>({
                     }
                     className="max-w-sm"
                 />
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto bg-[#1D1A1A] text-white cursor-pointer">
-                            Columns
+                <div className="flex flex-row items-center">
+                    <div className="flex items-center py-4">
+                        <Button variant="outline" className="bg-[#1D1A1A] text-white cursor-pointer ml-auto mr-5 lg:ml-auto">
+                            <div className="flex flex-row gap-2 items-center">
+                                <CirclePlus />
+                                <p>Add a Position</p>
+                            </div>
                         </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        {table
-                            .getAllColumns()
-                            .filter(
-                                (column) => column.getCanHide()
-                            )
-                            .map((column) => {
-                                return (
-                                    <DropdownMenuCheckboxItem
-                                        key={column.id}
-                                        className="capitalize"
-                                        checked={column.getIsVisible()}
-                                        onCheckedChange={(value) =>
-                                            column.toggleVisibility(!!value)
-                                        }
-                                    >
-                                        {column.id}
-                                    </DropdownMenuCheckboxItem>
+                    </div>
+                    <DropdownMenu >
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" className="ml-auto bg-[#1D1A1A] text-white cursor-pointer">
+                                Columns
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            {table
+                                .getAllColumns()
+                                .filter(
+                                    (column) => column.getCanHide()
                                 )
-                            })}
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                                .map((column) => {
+                                    return (
+                                        <DropdownMenuCheckboxItem
+                                            key={column.id}
+                                            className="capitalize"
+                                            checked={column.getIsVisible()}
+                                            onCheckedChange={(value) =>
+                                                column.toggleVisibility(!!value)
+                                            }
+                                        >
+                                            {column.id}
+                                        </DropdownMenuCheckboxItem>
+                                    )
+                                })}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+
             </div>
             <div className="overflow-hidden mx-5 lg:mx-0 rounded-md border">
                 <Table>

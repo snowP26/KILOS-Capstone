@@ -30,6 +30,7 @@ async function getData(): Promise<Users[]> {
             role: "Executive",
             email: "m@example.com",
             password: "asdasdas",
+            regisCode: "ADZXC2132"
         },
         {
             id: "002",
@@ -40,6 +41,7 @@ async function getData(): Promise<Users[]> {
             role: "Treasurer",
             email: "m+1@example.com",
             password: "asdasdas",
+            regisCode: "ZX23ENAS41"
         },
     ]
 }

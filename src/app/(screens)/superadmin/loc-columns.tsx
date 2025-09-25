@@ -24,6 +24,7 @@ export type Users = {
     role: string
     email: string
     password: string
+    regisCode: string
 }
 
 export const locColumns: ColumnDef<Users>[] = [
@@ -91,6 +92,10 @@ export const locColumns: ColumnDef<Users>[] = [
     {
         accessorKey: "password",
         header: "Password",
+    },
+    {
+        accessorKey: "regisCode",
+        header: () => <div className="text-center">Registration Code</div>
     },
     {
         id: "actions",

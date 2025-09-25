@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import {
-    UserRound,
     MapPin,
 } from "lucide-react"
 
@@ -21,25 +20,6 @@ import {
 // This is sample data.
 const data = {
     navItems: [
-        {
-            title: "Positions",
-            url: "#",
-            icon: UserRound,
-            items: [
-                {
-                    title: "Bula",
-                    url: "../../../superadmin/positions/[id]/",
-                },
-                {
-                    title: "Naga City",
-                    url: "../../../superadmin/positions/[id]/",
-                },
-                {
-                    title: "Pili",
-                    url: "../../../superadmin/positions/[id]/",
-                },
-            ],
-        },
         {
             title: "Locations",
             url: "#",
