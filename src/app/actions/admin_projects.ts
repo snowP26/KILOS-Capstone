@@ -8,7 +8,7 @@ export const getPendingProjects = async () => {
     const { data, error } = await client.from("projects")
         .select("*")
         .neq("status", "Approved")
-        .eq("location_id", location)
+        .eq("location", location)
         .order("id", {ascending: false})
 
     if (error) {

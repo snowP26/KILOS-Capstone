@@ -120,7 +120,7 @@ export type homeFeedback = {
 
 export type project = {
     id: number,
-    location_id: number,
+    location: number,
     author: number,
     created_at: string,
     title: string,

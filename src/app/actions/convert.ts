@@ -17,10 +17,11 @@ export const locNameToID = async (loc: string) => {
   const { data, error } = await client
     .from("location")
     .select("id")
-    .eq("name", loc.trim());
+    .ilike("name", loc.trim());
 
   if (error || data == null) {
-    return console.log("Data not found: ", error);
+    console.log("Data not found: ", error);
+    return 0 
   }
 
   return data[0].id as number;

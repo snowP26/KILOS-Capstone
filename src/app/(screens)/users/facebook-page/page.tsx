@@ -116,7 +116,7 @@ export default function FacebookPage() {
       } else {
         Swal.fire({
           title: "Error!",
-          text: data.error?.message || "Failed to post.",
+          text: error || "Failed to post.",
           icon: "error",
           timer: 1500,
           showConfirmButton: true,
