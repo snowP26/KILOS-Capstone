@@ -31,7 +31,7 @@ import Swal from "sweetalert2";
 export default function FacebookPage() {
   const [body, setBody] = useState("");
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState<any>(null);
+  const [response, setResponse] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [posts, setPosts] = useState<fbPosts[]>([]);
 
