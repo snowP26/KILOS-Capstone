@@ -151,3 +151,9 @@ export type project_budget = {
     photoURL: string,
     comment: string | undefined
 }
+
+export type fbPosts = {
+    id: number,
+    message: string,
+    created_time: string,
+}
