@@ -380,7 +380,7 @@ export default function ViewProposedProj() {
                                             </TableBody>
                                         </Table>
                                         <div
-                                            className="flex items-center justify-center gap-2 h-10 w-full rounded-md border border-dashed border-gray-400 bg-blue-50 text-blue-500 font-medium cursor-pointer transition-colors hover:bg-blue-100 hover:border-blue-500"
+                                            className="flex items-center justify-center gap-2 h-10 w-full border-t border-b border-dashed border-gray-400 bg-blue-50 text-blue-500 font-medium cursor-pointer transition-colors hover:bg-blue-100 hover:border-blue-500"
                                             onClick={() => {
                                                 addProjectApproval(project?.id);
                                                 setRefresh((prev) => prev + 1);

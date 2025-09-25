@@ -30,6 +30,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
+
 } from "@/components/ui/table";
 import { project, project_budget } from "@/src/app/lib/definitions";
 import {
@@ -42,6 +43,7 @@ import {
 } from "@/src/app/actions/projects";
 import { useUserRole } from "@/src/app/actions/role";
 import { Skeleton } from "@/components/ui/skeleton";
+
 
 export default function ViewProjectBudget() {
     const router = useRouter();
@@ -120,7 +122,7 @@ export default function ViewProjectBudget() {
     return (
         <div className="bg-[#E6F1FF] min-h-screen max-h-full py-10">
             {/* Breadcrumb */}
-            <Breadcrumb className="ml-5 xl:ml-20">
+            <Breadcrumb className="ml-5 lg:ml-20">
                 <BreadcrumbList>
                     <Button
                         className="group gap-0 relative bg-[#E6F1FF] cursor-pointer"
@@ -128,11 +130,13 @@ export default function ViewProjectBudget() {
                         onClick={() => router.back()}
                     >
                         <ArrowLeft color="black" />
-                        <span className="ml-2 opacity-0 group-hover:opacity-100 transition">
+                        <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
                             Return
-                        </span>
+                        </div>
                     </Button>
-                    <Separator className="mx-3 bg-gray-500" orientation="vertical" />
+                    <div className="h-5 w-3">
+                        <Separator className="bg-gray-500" orientation="vertical" />
+                    </div>
                     <BreadcrumbItem>
                         <BreadcrumbLink href="/users/projects">
                             Current Projects
@@ -352,6 +356,7 @@ export default function ViewProjectBudget() {
                             {normalizedRole == 'treasurer' && (
                                 <TableRow>
                                     <TableCell colSpan={6} className="px-2 py-1">
+
                                         <Dialog>
                                             <DialogTrigger asChild>
                                                 <button
@@ -368,6 +373,7 @@ export default function ViewProjectBudget() {
                                                     <DialogDescription>
                                                         Fill in the details below to add a new item to the project budget.
                                                     </DialogDescription>
+
                                                 </DialogHeader>
 
                                                 {/* Form */}
@@ -458,8 +464,18 @@ export default function ViewProjectBudget() {
                             )}
                         </TableBody>
 
+
                     </Table>
+                    <div
+                        className="flex items-center justify-center gap-2 h-10 w-full border-t border-b border-dashed border-gray-400 bg-white text-blue-500 font-medium cursor-pointer transition-colors hover:bg-blue-100 hover:border-blue-500"
+
+                    >
+                        <CirclePlus size={16} />
+                        <span>Add Item</span>
+                    </div>
                 </div>
+
+
             </div>
         </div>
     );
