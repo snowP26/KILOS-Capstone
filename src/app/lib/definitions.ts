@@ -120,7 +120,7 @@ export type homeFeedback = {
 
 export type project = {
     id: number,
-    location_id: number,
+    location: number,
     author: number,
     created_at: string,
     title: string,
@@ -150,4 +150,10 @@ export type project_budget = {
     receiptURL: string,
     photoURL: string,
     comment: string | undefined
+}
+
+export type fbPosts = {
+    id: number,
+    message: string,
+    created_time: string,
 }

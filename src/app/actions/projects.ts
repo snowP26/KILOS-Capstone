@@ -8,7 +8,7 @@ export const getProjects = async () => {
     const { data, error } = await client
         .from("projects")
         .select("*")
-        .eq("location_id", loc as number).eq("status", "Approved");
+        .eq("location", loc as number).eq("status", "Approved");
 
 
     if (error) {
@@ -31,7 +31,7 @@ export const getProposedProjects = async () => {
     const { data, error } = await client
         .from("projects")
         .select("*")
-        .eq("location_id", loc as number)
+        .eq("location", loc as number)
         .neq("status", "Approved")
         .order("id", { ascending: false });
 
@@ -55,8 +55,8 @@ const uploadFile = async (file: File, title: string, projectID: number | null) =
         return
     }
 
-    const location_id = await getLocFromAuth()
-    const location = await locIDtoName(location_id)
+    const locationID = await getLocFromAuth()
+    const location = await locIDtoName(locationID)
     const filename = `${location}_${title}_${file.name}`
 
     const { error: bucketError } = await client.storage.from("projects").upload(`files/${location}/${filename}`, file, { upsert: true })
@@ -84,7 +84,7 @@ export const postProject = async (e: FormEvent<HTMLFormElement>) => {
     const form = e.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
     const userID = await getUserID();
-    const location_id = await getLocFromAuth()
+    const location = await getLocFromAuth()
 
     const title = formData.get("title") as string;
     const description = formData.get("details") as string;
@@ -94,7 +94,7 @@ export const postProject = async (e: FormEvent<HTMLFormElement>) => {
         title: title,
         description: description,
         status: "For Approval",
-        location_id: location_id,
+        location: location,
         author: userID
     }]).select("id")
 
@@ -104,7 +104,7 @@ export const postProject = async (e: FormEvent<HTMLFormElement>) => {
     }
     if (error) return console.log(error);
 
-    console.log(`${userID}, ${location_id}, ${title}, ${description}`)
+    console.log(`${userID}, ${location}, ${title}, ${description}`)
 }
 
 export const getProjectByID = async (id: number | undefined) => {

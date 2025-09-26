@@ -13,23 +13,21 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type Users = {
-    id: string
-    createdAt: string
-    firstName: string
-    lastName: string
-    position: string
-    role: string
+    youth_id: string
+    youth_created_at: string
+    firstname: string
+    lastname: string
+    position_name: string
+    position_role: string
     email: string
-    password: string
-    regisCode: string
+    registration_code: string
+
 }
 
 export const locColumns: ColumnDef<Users>[] = [
     {
-        accessorKey: "id",
+        accessorKey: "youth_id",
         header: ({ column }) => {
             return (
                 <Button
@@ -44,7 +42,7 @@ export const locColumns: ColumnDef<Users>[] = [
         },
     },
     {
-        accessorKey: "createdAt",
+        accessorKey: "youth_created_at",
         header: ({ column }) => {
             return (
                 <Button
@@ -59,19 +57,24 @@ export const locColumns: ColumnDef<Users>[] = [
         },
     },
     {
-        accessorKey: "firstName",
+        accessorKey: "firstname",
         header: () => <div className="text-center">First Name</div>
     },
+
     {
-        accessorKey: "lastName",
+        accessorKey: "lastname",
         header: () => <div className="text-center">Last Name</div>
     },
     {
-        accessorKey: "position",
+        accessorKey:"registration_code",
+        header: () => <div className="text-center">Registration Code</div>
+    },
+    {
+        accessorKey: "position_name",
         header: () => <div className="text-center">Position</div>
     },
     {
-        accessorKey: "role",
+        accessorKey: "position_role",
         header: () => <div className="text-center">Role</div>
     },
     {
@@ -80,7 +83,7 @@ export const locColumns: ColumnDef<Users>[] = [
             return (
                 <Button
                     variant="ghost"
-                    className="cursor-pointer"
+                    className="cursor-pointer justify-center w-full text-center"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
                     Email
@@ -88,14 +91,6 @@ export const locColumns: ColumnDef<Users>[] = [
                 </Button>
             )
         },
-    },
-    {
-        accessorKey: "password",
-        header: "Password",
-    },
-    {
-        accessorKey: "regisCode",
-        header: () => <div className="text-center">Registration Code</div>
     },
     {
         id: "actions",
@@ -113,7 +108,7 @@ export const locColumns: ColumnDef<Users>[] = [
                     <DropdownMenuContent align="end" className="bg-[#1D1A1A] text-white">
                         <DropdownMenuLabel className="text-xs">Actions</DropdownMenuLabel>
                         <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(payment.id)}
+                            onClick={() => navigator.clipboard.writeText(payment.youth_id)}
                         >
                             Copy payment ID
                         </DropdownMenuItem>

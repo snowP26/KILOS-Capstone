@@ -25,7 +25,7 @@ export const getCodeData = async (code: string) => {
 
   if (data) {
     console.log("Successfully fetched registration code data.");
-    return data.user_type;
+    return data.role;
   }
 }
 
@@ -87,9 +87,9 @@ export const registerUser = async (
       email: email,
       firstname: firstName,
       lastname: lastName,
-      position: posData[0].position_name,
-      role: posData[0].user_type,
-      location: posData[0].location_id,
+      position: posData[0].position,
+      role: posData[0].role,
+      location: posData[0].location,
     },
   ]);
 
@@ -104,9 +104,9 @@ export const registerUser = async (
       data: {
         first_name: firstName,
         last_name: lastName,
-        position: posData[0].position_name,
-        role: posData[0].user_type,
-        location: posData[0].location_id,
+        position: posData[0].position,
+        role: posData[0].role,
+        location: posData[0].location,
       },
       emailRedirectTo: "http://localhost:3000/login",
     },

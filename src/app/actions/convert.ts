@@ -17,10 +17,11 @@ export const locNameToID = async (loc: string) => {
   const { data, error } = await client
     .from("location")
     .select("id")
-    .eq("name", loc.trim());
+    .ilike("name", loc.trim());
 
   if (error || data == null) {
-    return console.log("Data not found: ", error);
+    console.log("Data not found: ", error);
+    return 0 
   }
 
   return data[0].id as number;
@@ -47,10 +48,11 @@ export const getLocFromAuth = async () => {
     .single();
 
   if (error) {
-    console.log("There seems to be an error with the youth official", error);
+    console.log("There seems to be an error with the youth official: ", error);
     return 0;
   }
 
+  console.log("Location ID found:", data?.location);
   return data.location as number;
 };
 

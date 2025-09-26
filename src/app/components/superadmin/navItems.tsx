@@ -60,12 +60,15 @@ export function NavItems({
                             <CollapsibleContent>
                                 <SidebarMenuSub>
 
-                                    {/* draft for sidebar active button highlight */}
                                     {item.items?.map((subItem) => {
-                                        // ✅ Compute values here, outside of JSX
                                         const normalizedPathname = pathname.replace(/\/$/, "")
-                                        const normalizedBaseUrl = subItem.url.replace(/\[id\]/, "").replace(/\/$/, "")
-                                        const isActive = normalizedPathname.startsWith(normalizedBaseUrl)
+                                        const normalizedBaseUrl = subItem.url.replace(/\/$/, "")
+
+                                        const isActive =
+                                            normalizedPathname === normalizedBaseUrl ||
+                                            normalizedPathname.startsWith(normalizedBaseUrl + "/")
+
+                                            console.log(isActive)
 
                                         return (
                                             <SidebarMenuSubItem key={subItem.title}>
@@ -77,7 +80,7 @@ export function NavItems({
                                                             router.push(subItem.url)
                                                         }}
                                                         data-active={isActive}
-                                                        className={`text-white ${isActive ? "bg-white" : ""
+                                                        className={`text-black ${isActive ? "bg-white" : "text-white"
                                                             }`}
                                                     >
                                                         <span>{subItem.title}</span>
