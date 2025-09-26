@@ -22,6 +22,7 @@ export type Users = {
     position_role: string
     email: string
     registration_code: string
+
 }
 
 export const locColumns: ColumnDef<Users>[] = [
