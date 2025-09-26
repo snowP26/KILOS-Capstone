@@ -11,51 +11,28 @@ import { NavItems } from "./navItems"
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
-    SidebarMenu,
-    SidebarMenuItem,
     SidebarRail,
 } from "@/components/ui/sidebar"
 
-// This is sample data.
+
 const data = {
     navItems: [
         {
-            title: "Positions",
+            title: "Locations",
             url: "#",
             icon: UserRound,
             items: [
                 {
                     title: "Bula",
-                    url: "../../../superadmin/positions/[id]/",
+                    url: "../../../superadmin/locations/bula/",
                 },
                 {
                     title: "Naga City",
-                    url: "../../../superadmin/positions/[id]/",
+                    url: "../../../superadmin/locations/naga-city/",
                 },
                 {
                     title: "Pili",
-                    url: "../../../superadmin/positions/[id]/",
-                },
-            ],
-        },
-        {
-            title: "Locations",
-            url: "#",
-            icon: MapPin,
-            items: [
-                {
-                    title: "Bula",
-                    url: "../../../superadmin/locations/[id]/",
-                },
-                {
-                    title: "Naga City",
-                    url: "../../../superadmin/locations/[id]/",
-                },
-                {
-                    title: "Pili",
-                    url: "../../../superadmin/locations/[id]/",
+                    url: "../../../superadmin/locations/pili/",
                 },
             ],
         },

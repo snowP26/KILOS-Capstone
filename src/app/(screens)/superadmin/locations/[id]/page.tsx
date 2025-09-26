@@ -5,7 +5,7 @@ import {
   Users,
 } from "../../(screens)/superadmin/../../loc-columns";
 import { DataTable } from "../../(screens)/superadmin/../../locData-table";
-
+import { Button } from "@/components/ui/button"
 import { SideBar } from "@/src/app/components/superadmin/sideBar";
 
 import {
@@ -29,30 +29,27 @@ import { locNameToID } from "@/src/app/actions/convert";
 
 export default function LocationsID() {
   const [data, setData] = useState<Users[]>([]);
+  const [locTitle, setLocTitle] = useState<string>("");
   const params = useParams();
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const location = Array.isArray(params.id)
-          ? params.id[0]
-          : params.id;
+        const location = Array.isArray(params.id) ? params.id[0] : params.id;
         if (!location) return;
-
-        const locID = await locNameToID(location);
-
+        const cleanLocation = location.replace(/-/g, " ")
+        setLocTitle(cleanLocation);
+        const locID = await locNameToID(cleanLocation);
         const youthOfficials = await getUsersByLoc(locID);
-        console.log(await getUsersByLoc(locID))
         setData(youthOfficials || []);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
 
-    console.log(params.id)
-
     fetchUsers();
   }, [params.id]);
+
   return (
     <SidebarProvider>
       <SideBar />
@@ -73,7 +70,7 @@ export default function LocationsID() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>ID</BreadcrumbPage>
+                  <BreadcrumbPage>{locTitle.toUpperCase() || "Loading..."}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -83,12 +80,15 @@ export default function LocationsID() {
         <hr className="border-t border-black w-full mx-auto my-3" />
 
         <div className="text-center mb-10 lg:text-start lg:mx-5 lg:mt-10">
-          <h1 className="text-black text-4xl font-bold underline">Bula</h1>
+          <h1 className="text-black text-4xl font-bold underline capitalize">
+            {locTitle}
+          </h1>
         </div>
 
         <div className="text-black container mx-auto pb-10">
-          <DataTable columns={locColumns} data={data} />
+          <DataTable columns={locColumns} data={data}/>
         </div>
+
       </SidebarInset>
     </SidebarProvider>
   );

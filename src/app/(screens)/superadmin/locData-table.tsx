@@ -32,6 +32,11 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { createNewCode } from "../../actions/super_admin"
+import { useParams, useRouter } from "next/navigation"
+import { locNameToID } from "../../actions/convert"
+import Swal from "sweetalert2"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -42,13 +47,14 @@ export function DataTable<TData, TValue>({
     columns,
     data,
 }: DataTableProps<TData, TValue>) {
+    const router = useRouter()
+    const [isDialogOpen, setIsDialogOpen] = React.useState(false)
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
     )
     const [columnVisibility, setColumnVisibility] =
         React.useState<VisibilityState>({})
-
     const table = useReactTable({
         data,
         columns,
@@ -65,6 +71,40 @@ export function DataTable<TData, TValue>({
             columnVisibility,
         },
     })
+    const params = useParams();
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        const form = e.currentTarget
+        const formData = new FormData(form)
+
+        const positionTitle = formData.get("positionTitle") as string
+        const positionRole = formData.get("positionRole") as string
+        const loc = (params?.id as string).replace(/-/g, " ")
+        const locID = await locNameToID(loc)
+
+        try {
+            await createNewCode(locID, positionTitle, positionRole)
+
+            Swal.fire({
+                icon: "success",
+                title: "Position Added",
+                text: `${positionTitle} (${positionRole}) has been successfully created. Please refresh the page.`,
+                timer: 1250
+            })
+                setIsDialogOpen(false)
+                form.reset()
+
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Something went wrong while creating the position.",
+                timer: 1250
+            })
+        }
+    }
+
 
     return (
         <div>
@@ -150,25 +190,83 @@ export function DataTable<TData, TValue>({
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-center lg:justify-end space-x-2 py-4">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className="bg-[#1D1A1A] text-white cursor-pointer"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Previous
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className="bg-[#1D1A1A] text-white cursor-pointer"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Next
-                </Button>
+            <div className="flex items-center justify-between py-4">
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                        <Button className="cursor-pointer">
+                            Add Position
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogTitle>
+                            Create Role
+                        </DialogTitle>
+                        <DialogDescription>
+                            Generate a registration code for the users.
+                        </DialogDescription>
+                        <form className="space-y-4 mt-4" onSubmit={handleSubmit}>
+                            {/* Position Title */}
+                            <div className="flex flex-col text-left">
+                                <label htmlFor="positionTitle" className="text-sm font-medium">
+                                    Position Title
+                                </label>
+                                <input
+                                    id="positionTitle"
+                                    name="positionTitle"
+                                    type="text"
+                                    placeholder="Enter position title"
+                                    className="border border-gray-300 rounded-md px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+
+                            {/* Position Role */}
+                            <div className="flex flex-col text-left">
+                                <label htmlFor="positionRole" className="text-sm font-medium">
+                                    Position Role
+                                </label>
+                                <select
+                                    id="positionRole"
+                                    name="positionRole"
+                                    className="border border-gray-300 rounded-md px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="Legislative">Legislative</option>
+                                    <option value="Executive">Executive</option>
+                                    <option value="Treasurer">Treasurer</option>
+                                    <option value="Admin">Admin</option>
+                                </select>
+                            </div>
+
+                            {/* Submit Button */}
+                            <div className="flex justify-end">
+                                <Button type="submit" className="cursor-pointer">
+                                    Save
+                                </Button>
+                            </div>
+                        </form>
+                    </DialogContent>
+                </Dialog>
+
+
+                <div className="flex items-center space-x-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="bg-[#1D1A1A] text-white cursor-pointer"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        Previous
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="bg-[#1D1A1A] text-white cursor-pointer"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Next
+                    </Button>
+                </div>
             </div>
         </div>
     )

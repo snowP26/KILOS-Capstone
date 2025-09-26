@@ -1,12 +1,11 @@
 import client from "@/src/api/client";
-import { getLocFromAuth } from "./convert"
-import { id } from "date-fns/locale";
+
 
 
 export const getUsersByLoc = async (locID: number) => {
 
     const { data: userData, error: userError } = await client
-        .from("youth_as_positions")
+        .from("youth_with_positions_v2")
         .select("*")
         .eq("location", locID);
     
@@ -27,4 +26,21 @@ export const getUsersByLoc = async (locID: number) => {
 
     console.log("Successfully retrieved youth official data")
     return userData
+}
+
+export const createNewCode = async (loc: number, position: string, role: string)=>{
+
+    
+    const { data, error } = await client.from("positions").insert([{
+        position: position,
+        role: role,
+        location: loc
+    }])
+
+    if(error){
+        console.log("error in inserting data: ", error)
+        return []
+    }
+
+    return data
 }
