@@ -126,7 +126,7 @@ export default function ViewUpcomingEvents() {
                         </h1>
                         <p className="text-gray-600 mt-3 mb-10 line-clamp-3">
                             Makiiba samuya sa paghabi kan sarong ciudad nin Naga na mas bukas sa pakikipag diyalogo, mas ligtas, asin mas inklusibong ciudad para sa satuyang mga tugang na miyembro kan komunidad kan LGBTQIA+.
-                            Mag-iribahan kita ngunyan na Sabado, Hunyo 21, 2025 sa Museo ni Jesse Robredo para sa "HIBLA: Weaving Safety, Dignity, and Dialogue" kun sain gaganapon an mga minasunod:
+                            Mag-iribahan kita ngunyan na Sabado, Hunyo 21, 2025 sa Museo ni Jesse Robredo para sa &quot;HIBLA: Weaving Safety, Dignity, and Dialogue&quot; kun sain gaganapon an mga minasunod:
                         </p>
 
                         <div className="flex flex-row gap-2">
@@ -157,7 +157,7 @@ export default function ViewUpcomingEvents() {
                         </h1>
                         <p className="text-gray-600 mt-3 mb-10 line-clamp-3">
                             Makiiba samuya sa paghabi kan sarong ciudad nin Naga na mas bukas sa pakikipag diyalogo, mas ligtas, asin mas inklusibong ciudad para sa satuyang mga tugang na miyembro kan komunidad kan LGBTQIA+.
-                            Mag-iribahan kita ngunyan na Sabado, Hunyo 21, 2025 sa Museo ni Jesse Robredo para sa "HIBLA: Weaving Safety, Dignity, and Dialogue" kun sain gaganapon an mga minasunod:
+                            Mag-iribahan kita ngunyan na Sabado, Hunyo 21, 2025 sa Museo ni Jesse Robredo para sa &quot;HIBLA: Weaving Safety, Dignity, and Dialogue&quot; kun sain gaganapon an mga minasunod:
                         </p>
 
                         <div className="flex flex-row gap-2">
