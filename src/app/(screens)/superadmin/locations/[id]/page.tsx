@@ -5,7 +5,6 @@ import {
   Users,
 } from "../../(screens)/superadmin/../../loc-columns";
 import { DataTable } from "../../(screens)/superadmin/../../locData-table";
-import { Button } from "@/components/ui/button"
 import { SideBar } from "@/src/app/components/superadmin/sideBar";
 
 import {
@@ -26,6 +25,9 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getUsersByLoc } from "@/src/app/actions/super_admin";
 import { locNameToID } from "@/src/app/actions/convert";
+import { useUserRole } from "@/src/app/actions/role";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function LocationsID() {
   const [data, setData] = useState<Users[]>([]);
@@ -37,7 +39,7 @@ export default function LocationsID() {
       try {
         const location = Array.isArray(params.id) ? params.id[0] : params.id;
         if (!location) return;
-        const cleanLocation = location.replace(/-/g, " ")
+        const cleanLocation = location.replace(/-/g, " ");
         setLocTitle(cleanLocation);
         const locID = await locNameToID(cleanLocation);
         const youthOfficials = await getUsersByLoc(locID);
@@ -49,6 +51,27 @@ export default function LocationsID() {
 
     fetchUsers();
   }, [params.id]);
+
+  const { role } = useUserRole();
+
+  if (role !== "superadmin") {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#1D1A1A] text-center px-6">
+        <h1 className="text-2xl font-semibold text-white mb-4">
+          Access Denied
+        </h1>
+        <p className="text-gray-400 mb-6">
+          You don’t have permission to view this page.
+        </p>
+        <Link href="/">
+          <Button className="bg-[#1D1A1A] text-[#C1E8FF] border border-[#2A2727] rounded-xl shadow-sm hover:bg-[#2A2727] hover:text-white transition-all">
+            Return Home
+          </Button>
+        </Link>
+      </div>
+    );
+  }
+
 
   return (
     <SidebarProvider>
@@ -70,7 +93,9 @@ export default function LocationsID() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>{locTitle.toUpperCase() || "Loading..."}</BreadcrumbPage>
+                  <BreadcrumbPage>
+                    {locTitle.toUpperCase() || "Loading..."}
+                  </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -86,9 +111,8 @@ export default function LocationsID() {
         </div>
 
         <div className="text-black container mx-auto pb-10">
-          <DataTable columns={locColumns} data={data}/>
+          <DataTable columns={locColumns} data={data} />
         </div>
-
       </SidebarInset>
     </SidebarProvider>
   );
