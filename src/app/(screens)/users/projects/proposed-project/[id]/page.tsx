@@ -75,7 +75,7 @@ export default function ViewProposedProject() {
 
     return (
         <div className="bg-[#E6F1FF] h-fit xl:h-screen mt-10 pb-10">
-            <Breadcrumb className="xl:ml-20">
+            <Breadcrumb className="ml-5 xl:ml-20">
                 <BreadcrumbList>
                     <Button
                         className="group gap-0 relative bg-[#E6F1FF] cursor-pointer"
@@ -306,9 +306,8 @@ export default function ViewProposedProject() {
 
                             <hr className="border-t mt-3 border-gray-200 w-full" />
 
-                            <div className="min-h-fit max-h-105 xl:mb-0 overflow-y-scroll w-full">
+                            <div className="min-h-fit max-h-105 xl:mb-0 w-full">
                                 {showDetails ? <ProjectDetails /> : <ProjectTable id={project?.id} />}
-
                             </div>
                         </div>
 

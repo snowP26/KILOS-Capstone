@@ -35,7 +35,7 @@ export const ProjectTable = ({ id }: ProjectTableProps) => {
     }, [id])
 
     return (
-        <Table>
+        <Table className="mb-10">
             <TableHeader>
                 <TableRow>
                     <TableHead className="text-center">#</TableHead>

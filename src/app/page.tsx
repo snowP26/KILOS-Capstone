@@ -108,11 +108,11 @@ export default function Home() {
           >
             <CarouselContent className="-ml-4">
               {projects.map((data) => (
-                <CarouselItem 
+                <CarouselItem
                   className="basis-1/1 md:basis-2/3 lg:basis-2/4 xl:basis-1/3 2xl:basis-3/13"
                   key={data.id}
                 >
-                  <div className="cursor-pointer">
+                  <div className="cursor-pointer transition-all duration-200 hover:bg-white hover:shadow-lg hover:scale-[1.02]" onClick={() => router.push("/view-project/[id]/")}>
                     <UpcomingEventCard
                       title={data.title}
                       imgURL={data.imageURL}
@@ -128,7 +128,11 @@ export default function Home() {
             <CarouselNext className="cursor-pointer" />
           </Carousel>
         </div>
-        <p className="underline text-xl mr-15 sm:mx-40 mb-25 my-5 text-end">See All</p>
+
+        <Button onClick={() => router.push("/upcoming-events/")}
+            className="bg-white text-black hover:bg-[#052659] hover:text-white cursor-pointer underline text-xl lg:mr-15 sm:mx-40 mb-25 my-5 flex justify-self-center lg:justify-self-end">
+            See All
+        </Button>
 
         <div className="flex flex-col items-center mx-25 relative z-10 sm:flex-row sm:justify-between sm:items-end">
           <p className="text-2xl font-bold text-center mb-3 sm:mb-0 sm:text-start">Ordinances</p>
@@ -159,7 +163,10 @@ export default function Home() {
 
           </div>
         </div>
-        <p className="underline text-xl mr-15 sm:mx-40 my-5 text-end">See All</p>
+        <Button onClick={() => router.push("/published-ordinances/")}
+            className="bg-white text-black hover:bg-[#052659] hover:text-white cursor-pointer underline text-xl lg:mr-15 sm:mx-40 mb-25 my-5 flex justify-self-center lg:justify-self-end">
+            See All
+        </Button>
       </div>
     </div>
   );

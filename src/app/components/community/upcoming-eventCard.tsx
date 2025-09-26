@@ -15,19 +15,25 @@ export const UpcomingEventCard = ({ title, imgURL, loc, date }: cardParams) => {
     })
 
     return (
-        <div className="relative p-5 w-70 h-100 sm:h-140 sm:w-90 bg-blue-100 rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
-            <div className="flex justify-center">
+        <div className="relative w-70 h-100 sm:h-140 sm:w-90 bg-blue-100 rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
+            <div className="flex justify-center rounded-t-md">
                 <img
-                    className="h-70 sm:h-100 object-fill"
+                    className="h-75 sm:h-110 object-cover rounded-t-md"
                     src={imgURL}
                     alt={title}
                 />
+                <div className="bg-blue-100 absolute top-10 right-0 px-5 py-1 rounded-l-md border-y border-l border-b-blue-200">
+                    <p className="text-md text-center text-black italic">
+                        {formattedDate}
+                    </p>
+                </div>
+
             </div>
 
             <div>
-                <p className="mt-2 text-md font-semibold text-center">{title}</p>
-
-                <p className="mt-1 text-sm text-center text-gray-600">{formattedDate}</p>
+                <p className="mt-2 px-5 text-md font-semibold line-clamp-2 text-center">
+                    {title}
+                </p>
 
                 <div className="absolute bottom-2 left-3">
                     <div className="flex flex-row text-sm">
