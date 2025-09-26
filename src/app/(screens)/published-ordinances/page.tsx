@@ -128,7 +128,7 @@ export default function ViewPublishedOrdinances() {
                         </h1>
                         <p className="text-black font-semibold mt-3 mb-10 line-clamp-3">
                             An Ordinance Makiiba samuya sa paghabi kan sarong ciudad nin Naga na mas bukas sa pakikipag diyalogo, mas ligtas, asin mas inklusibong ciudad para sa satuyang mga tugang na miyembro kan komunidad kan LGBTQIA+.
-                            Mag-iribahan kita ngunyan na Sabado, Hunyo 21, 2025 sa Museo ni Jesse Robredo para sa "HIBLA: Weaving Safety, Dignity, and Dialogue" kun sain gaganapon an mga minasunod:
+                            Mag-iribahan kita ngunyan na Sabado, Hunyo 21, 2025 sa Museo ni Jesse Robredo para sa &quot;HIBLA: Weaving Safety, Dignity, and Dialogue&quot; kun sain gaganapon an mga minasunod:
                         </p>
                         <p className="text-xl font-thin">
                             Juan Dela Cruz
@@ -158,7 +158,7 @@ export default function ViewPublishedOrdinances() {
                         </h1>
                         <p className="text-black font-semibold mt-3 mb-10 line-clamp-3">
                             An Ordinance Makiiba samuya sa paghabi kan sarong ciudad nin Naga na mas bukas sa pakikipag diyalogo, mas ligtas, asin mas inklusibong ciudad para sa satuyang mga tugang na miyembro kan komunidad kan LGBTQIA+.
-                            Mag-iribahan kita ngunyan na Sabado, Hunyo 21, 2025 sa Museo ni Jesse Robredo para sa "HIBLA: Weaving Safety, Dignity, and Dialogue" kun sain gaganapon an mga minasunod:
+                            Mag-iribahan kita ngunyan na Sabado, Hunyo 21, 2025 sa Museo ni Jesse Robredo para sa &quot;HIBLA: Weaving Safety, Dignity, and Dialogue&quot; kun sain gaganapon an mga minasunod:
                         </p>
                         <p className="text-xl font-thin">
                             Juan Dela Cruz
