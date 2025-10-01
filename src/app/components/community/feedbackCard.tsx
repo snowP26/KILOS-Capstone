@@ -73,7 +73,7 @@ export const FeedbackCard = ({
 
           <p className="m-5 text-gray-500 text-sm">{body}</p>
 
-          <div className="flex flex-row justify-end">
+          <div className="flex flex-row justify-end relative bottom-2 right-2">
             <p className="font-thin text-xs mr-5 content-center">{date}</p>
             <Quote fill="black" />
           </div>
@@ -91,7 +91,7 @@ export const FeedbackCard = ({
           <hr className="border-t border-black w-[100%] mx-auto my-3" />
 
           {comments.length === 0 ? (
-            <div className="w-full py-10 flex items-center justify-center bg-gray-100 rounded-lg">
+            <div className="w-full py-10 flex items-center justify-center rounded-lg">
               <p className="text-gray-500 italic">No comments yet.</p>
             </div>
           ) : (

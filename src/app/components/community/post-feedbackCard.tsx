@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { useRef, useState } from "react";
 import { postFeedback } from "@/src/app/actions/feedback";
+import Swal from "sweetalert2";
 
 export const PostFeedbackCard = ({
   loc_name,
@@ -21,10 +22,10 @@ export const PostFeedbackCard = ({
   setRefresh: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const formRef = useRef<HTMLFormElement>(null);
-  const [open, setOpen] = useState(false); 
+  const [open, setOpen] = useState(false);
 
   return (
-    <div className="bg-[#052659] cursor-pointer text-white py-2 px-4 rounded-2xl hover:bg-white hover:text-[#052659] hover:border-black hover:border">
+    <div className="bg-[#052659] cursor-pointer text-white py-2 px-4 rounded-2xl hover:bg-white hover:text-[#052659] hover:border-black hover:border border">
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger className="cursor-pointer">Post a Feedback</DialogTrigger>
         <DialogContent>
@@ -35,9 +36,29 @@ export const PostFeedbackCard = ({
             <form
               ref={formRef}
               onSubmit={async (e) => {
-                await postFeedback(e, formRef, loc_name);
-                setRefresh((prev) => prev + 1); 
-                setOpen(false); 
+                try {
+                  await postFeedback(e, formRef, loc_name);
+                  setRefresh((prev) => prev + 1);
+                  setOpen(false);
+
+                  Swal.fire({
+                    icon: "success",
+                    title: "Feedback Submitted!",
+                    text: "Your feedback has been posted successfully.",
+                    timer: 1150
+                  });
+
+                  if (formRef.current) {
+                    formRef.current.reset();
+                  }
+                } catch (err) {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Submission Failed",
+                    text: "Something went wrong while posting your feedback. Please try again.",
+                    confirmButtonColor: "#AD0F0F",
+                  });
+                }
               }}
             >
               <Input
@@ -54,14 +75,14 @@ export const PostFeedbackCard = ({
                 <Button
                   type="button"
                   className="bg-[#AD0F0F] cursor-pointer hover:bg-white hover:text-[#AD0F0F] hover:border-black hover:border"
-                  onClick={() => setOpen(false)} 
+                  onClick={() => setOpen(false)}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   className="bg-[#052659] cursor-pointer hover:bg-white hover:text-[#052659] hover:border-black hover:border"
-                  onClick={() => setOpen(false)} 
+                  onClick={() => setOpen(false)}
                 >
                   Submit
                 </Button>
@@ -70,6 +91,6 @@ export const PostFeedbackCard = ({
           </DialogHeader>
         </DialogContent>
       </Dialog>
-    </div>
+    </div >
   );
 };
