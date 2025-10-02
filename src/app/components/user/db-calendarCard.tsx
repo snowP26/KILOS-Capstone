@@ -138,7 +138,7 @@ export const DbCalendarCard = () => {
                         />
                     </div>
                     <div className="w-full lg:w-[30%] xl:w-[20%]">
-                        <div className="mt-5">
+                        <div className="mt-5 bg-white">
                             <DateTodayCard />
                         </div>
 
@@ -238,7 +238,7 @@ export const DbCalendarCard = () => {
                 </div>
             </div>
 
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} >
                 <DialogContent className="bg-[#E6F1FF]">
                     <DialogHeader>
                         <DialogTitle className="mx-5">
