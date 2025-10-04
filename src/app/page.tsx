@@ -102,37 +102,43 @@ export default function Home() {
         </div>
 
         <hr className="border-t border-black w-[90%] mx-auto my-3" />
-        <div className="w-full mt-10 flex flex-wrap justify-center">
-          <Carousel opts={{ align: "start", }}
-            className="w-full min-w-auto sm:min-w-[70%] md:min-w-[80%] xl:min-w-[90%] max-w-sm"
-          >
-            <CarouselContent className="-ml-4">
-              {projects.map((data) => (
-                <CarouselItem
-                  className="basis-1/1 md:basis-2/3 lg:basis-2/4 xl:basis-1/3 2xl:basis-3/13"
-                  key={data.id}
-                >
-                  <div className="cursor-pointer transition-all duration-200 hover:bg-white hover:shadow-lg hover:scale-[1.02]" onClick={() => router.push("/view-project/[id]/")}>
-                    <UpcomingEventCard
-                      title={data.title}
-                      imgURL={data.imageURL}
-                      loc={data.location}
-                      date={data.target_date}
-                    />
-                  </div>
-                </CarouselItem>
-              ))
-              }
-            </CarouselContent>
-            <CarouselPrevious className="cursor-pointer" />
-            <CarouselNext className="cursor-pointer" />
-          </Carousel>
-        </div>
+        {projects && projects.length > 0 ? (
 
-        <Button onClick={() => router.push("/upcoming-events/")}
-            className="bg-white text-black hover:bg-[#052659] hover:text-white cursor-pointer underline text-xl lg:mr-15 sm:mx-40 mb-25 my-5 flex justify-self-center lg:justify-self-end">
-            See All
-        </Button>
+          <div className="w-full mt-10 flex flex-wrap justify-center">
+            <Carousel opts={{ align: "start", }}
+              className="w-full min-w-auto sm:min-w-[70%] md:min-w-[80%] xl:min-w-[90%] max-w-sm"
+            >
+              <CarouselContent className="-ml-4">
+                {projects.map((data) => (
+                  <CarouselItem
+                    className="basis-1/1 md:basis-2/3 lg:basis-2/4 xl:basis-1/3 2xl:basis-3/13"
+                    key={data.id}
+                  >
+                    <div className="cursor-pointer">
+                      <UpcomingEventCard
+                        title={data.title}
+                        imgURL={data.imageURL}
+                        loc={data.location}
+                        date={data.target_date}
+                      />
+                    </div>
+                  </CarouselItem>
+                ))
+                }
+              </CarouselContent>
+              <CarouselPrevious className="cursor-pointer" />
+              <CarouselNext className="cursor-pointer" />
+            </Carousel>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+            <p className="text-lg font-medium">No Projects available</p>
+            <p className="text-sm text-gray-400">Please check back later.</p>
+          </div>
+        )
+
+        }
+        <p className="underline text-xl mr-15 sm:mx-40 mb-25 my-5 text-end">See All</p>
 
         <div className="flex flex-col items-center mx-25 relative z-10 sm:flex-row sm:justify-between sm:items-end">
           <p className="text-2xl font-bold text-center mb-3 sm:mb-0 sm:text-start">Ordinances</p>
@@ -143,30 +149,40 @@ export default function Home() {
 
         <hr className="border-t border-black w-[90%] mx-auto my-3" />
 
+        {ordinances && ordinances.length > 0 ? (
+          <div>
 
-        <div className="flex flex-row justify-center gap-10">
-          <div className="mt-10 mx-10 grid grid-col-1 md:mx-20 md:grid-cols-2 md:grid-rows-2 gap-5 w-[100%]">
-            {ordinances.map((data) => (
-              <div
-                key={data.id}
-                onClick={async () => await openOrdinancePDF(data.id)}
-                className="cursor-pointer rounded-xl transition-all duration-200 hover:bg-white hover:shadow-lg hover:scale-[1.02]"
-              >
-                <OrdinancesLandingCard
-                  id={data.id}
-                  title={data.title}
-                  description={data.description}
-                  author={data.author}
-                />
-              </div>
-            ))}
+            <Carousel opts={{ align: "start", }} className="flex flex-row justify-center gap-10">
+              <CarouselContent className="mt-10 mx-10 grid grid-col-1 md:mx-20 md:grid-cols-2 md:grid-rows-2 gap-5 w-[100%]">
+                {ordinances.map((data) => (
+                  <div
+                    key={data.id}
+                    onClick={async () => await openOrdinancePDF(data.id)}
+                    className="cursor-pointer rounded-xl transition-all duration-200 hover:bg-white hover:shadow-lg hover:scale-[1.02]"
+                  >
+                    <OrdinancesLandingCard
+                      id={data.id}
+                      title={data.title}
+                      description={data.description}
+                      author={data.author}
+                    />
+                  </div>
+                ))}
+                <CarouselPrevious className="cursor-pointer" />
+                <CarouselNext className="cursor-pointer" />
+              </CarouselContent>
+            </Carousel>
 
+            <p className="underline text-xl mr-15 sm:mx-40 my-5 text-end">See All</p>
           </div>
-        </div>
-        <Button onClick={() => router.push("/published-ordinances/")}
-            className="bg-white text-black hover:bg-[#052659] hover:text-white cursor-pointer underline text-xl lg:mr-15 sm:mx-40 mb-25 my-5 flex justify-self-center lg:justify-self-end">
-            See All
-        </Button>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+            <p className="text-lg font-medium">No ordinances available</p>
+            <p className="text-sm text-gray-400">Please check back later.</p>
+          </div>
+        )
+        }
+
       </div>
     </div>
   );

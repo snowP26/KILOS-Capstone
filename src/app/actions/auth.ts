@@ -182,11 +182,15 @@ export const handleLogin = async (e: FormEvent<HTMLFormElement>, router: AppRout
     password: form.password
   })
 
-  if (error) {
-    console.log("Error with login: ", error);
-    console.log(form.email, form.password)
-    return
-  }
+if (error) {
+  Swal.fire({
+    icon: "error",
+    title: "Login Failed",
+    text: error.message, 
+    confirmButtonColor: "#052659", // optional styling
+  });
+  return;
+}
 
 
   const user = data.user
