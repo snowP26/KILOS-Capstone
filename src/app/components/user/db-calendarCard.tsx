@@ -147,7 +147,6 @@ export const DbCalendarCard = () => {
           <div className="w-full rounded-2xl lg:w-[70%] lg:mt-10 lg:mx-5 lg:max-h-180 xl:w-[80%]">
             <ContinuousCalendar
               onClick={handleDayClick}
-              events={currentEvents}
             />
           </div>
           <div className="w-full lg:w-[30%] xl:w-[20%]">
