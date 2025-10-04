@@ -30,7 +30,6 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-
 } from "@/components/ui/table";
 import { project, project_budget } from "@/src/app/lib/definitions";
 import {
