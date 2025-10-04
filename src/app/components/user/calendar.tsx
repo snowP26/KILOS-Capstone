@@ -70,6 +70,8 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick,
   const handleTodayClick = () => {
     setYear(today.getFullYear());
     scrollToDay(today.getMonth(), today.getDate());
+
+    console.log(`year: ${year} \n tdy: ${today.getMonth()}`)
   };
 
   const handleDayClick = (day: number, month: number, year: number) => {
@@ -98,6 +100,10 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick,
   //   setDate(undefined);
   //   setIsDialogOpen(false);
   // };
+
+  useEffect(() => {
+    handleTodayClick();
+  }, []);
 
   const generateCalendar = useMemo(() => {
     const today = new Date();
