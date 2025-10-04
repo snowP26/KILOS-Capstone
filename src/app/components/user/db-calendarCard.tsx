@@ -107,16 +107,6 @@ export const DbCalendarCard = () => {
         setNewEventTitle("");
     };
 
-    const handleEventClick = (selected: EventClickArg) => {
-        if (
-            window.confirm(
-                `Are you sure you want to delete the event "${selected.event.title}"?`
-            )
-        ) {
-            selected.event.remove();
-        }
-    };
-
     const handleDayClick = (day: number, month: number, year: number) => {
         setSelectedDate({ day, month, year });
         setDate(new Date(year, month, day));

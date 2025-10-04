@@ -1,13 +1,28 @@
-'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { CirclePlus, ChevronLeft, ChevronRight, CircleQuestionMark } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
+"use client";
 
-const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-interface CalendarEvent {
+const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+
+interface CustomEvent {
   id: string;
   title: string;
   start: Date;
@@ -15,44 +30,60 @@ interface CalendarEvent {
 
 interface ContinuousCalendarProps {
   onClick?: (_day: number, _month: number, _year: number) => void;
-  events?: CalendarEvent[];
+  events?: CustomEvent[];
 }
 
-export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick, events = [] }) => {
+export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
+  onClick,
+  events = [],
+}) => {
   const today = new Date();
   const dayRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [year, setYear] = useState<number>(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number>(0);
-
-  const monthOptions = monthNames.map((month, index) => ({ name: month, value: `${index}` }));
+  const monthOptions = monthNames.map((month, index) => ({
+    name: month,
+    value: `${index}`,
+  }));
 
   const scrollToDay = (monthIndex: number, dayIndex: number) => {
     const targetDayIndex = dayRefs.current.findIndex(
-      (ref) => ref && ref.getAttribute('data-month') === `${monthIndex}` && ref.getAttribute('data-day') === `${dayIndex}`,
+      (ref) =>
+        ref &&
+        ref.getAttribute("data-month") === `${monthIndex}` &&
+        ref.getAttribute("data-day") === `${dayIndex}`
     );
 
     const targetElement = dayRefs.current[targetDayIndex];
 
     if (targetDayIndex !== -1 && targetElement) {
-      const container = document.querySelector('.calendar-container');
+      const container = document.querySelector(".calendar-container");
       const elementRect = targetElement.getBoundingClientRect();
-      const is2xl = window.matchMedia('(min-width: 1536px)').matches;
+      const is2xl = window.matchMedia("(min-width: 1536px)").matches;
       const offsetFactor = is2xl ? 3 : 2.5;
 
       if (container) {
         const containerRect = container.getBoundingClientRect();
-        const offset = elementRect.top - containerRect.top - (containerRect.height / offsetFactor) + (elementRect.height / 2);
+        const offset =
+          elementRect.top -
+          containerRect.top -
+          containerRect.height / offsetFactor +
+          elementRect.height / 2;
 
         container.scrollTo({
           top: container.scrollTop + offset,
-          behavior: 'smooth',
+          behavior: "smooth",
         });
       } else {
-        const offset = window.scrollY + elementRect.top - (window.innerHeight / offsetFactor) + (elementRect.height / 2);
+        const offset =
+          window.scrollY +
+          elementRect.top -
+          window.innerHeight / offsetFactor +
+          elementRect.height / 2;
 
         window.scrollTo({
           top: offset,
-          behavior: 'smooth',
+          behavior: "smooth",
         });
       }
     }
@@ -70,40 +101,19 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick,
   const handleTodayClick = () => {
     setYear(today.getFullYear());
     scrollToDay(today.getMonth(), today.getDate());
-
-    console.log(`year: ${year} \n tdy: ${today.getMonth()}`)
   };
 
   const handleDayClick = (day: number, month: number, year: number) => {
-
-    if (onClick) {
-      if (month < 0) {
-        onClick(day, 11, year - 1);
-      } else {
-        onClick(day, month, year);
-      }
+    if (!onClick) {
+      return;
     }
-  }
+    if (month < 0) {
+      onClick(day, 11, year - 1);
+    } else {
+      onClick(day, month, year);
+    }
+  };
 
-  // const handleAddEvent = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (!newEventTitle || !date) return;
-
-  //   const newEvent: CustomEvent = {
-  //     id: String(Date.now()),
-  //     title: newEventTitle,
-  //     start: date,
-  //   };
-
-  //   setCurrentEvents((prev) => [...prev, newEvent]);
-  //   setNewEventTitle("");
-  //   setDate(undefined);
-  //   setIsDialogOpen(false);
-  // };
-
-  useEffect(() => {
-    handleTodayClick();
-  }, []);
 
   const generateCalendar = useMemo(() => {
     const today = new Date();
@@ -120,7 +130,6 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick,
 
       for (let month = 0; month < 12; month++) {
         const daysInMonth = new Date(year, month + 1, 0).getDate();
-
         for (let day = 1; day <= daysInMonth; day++) {
           daysInYear.push({ month, day });
         }
@@ -138,35 +147,40 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick,
     };
 
     const calendarDays = daysInYear();
-
     const calendarWeeks = [];
     for (let i = 0; i < calendarDays.length; i += 7) {
       calendarWeeks.push(calendarDays.slice(i, i + 7));
     }
 
     const calendar = calendarWeeks.map((week, weekIndex) => (
-      <div className="flex w-full" key={`week-${weekIndex}`}>
+      <div className="flex w-full" key={`week-${weekIndex}`}> 
         {week.map(({ month, day }, dayIndex) => {
           const index = weekIndex * 7 + dayIndex;
-          const isNewMonth = index === 0 || calendarDays[index - 1].month !== month;
-          const isToday = today.getMonth() === month && today.getDate() === day && today.getFullYear() === year;
-          const dayEvents = month >= 0
-            ? events.filter(
-              (ev) =>
-                ev.start.getDate() === day &&
-                ev.start.getMonth() === month &&
-                ev.start.getFullYear() === year
-            )
-            : [];
+          const isNewMonth =
+            index === 0 || calendarDays[index - 1].month !== month;
+          const isToday =
+            today.getMonth() === month &&
+            today.getDate() === day &&
+            today.getFullYear() === year;
+
+          // Filter events for this day
+          const dayEvents = events.filter(
+            (ev) =>
+              ev.start.getDate() === day &&
+              ev.start.getMonth() === month &&
+              ev.start.getFullYear() === year
+          );
 
           return (
             <div
               key={`${month}-${day}`}
-              ref={(el) => { dayRefs.current[index] = el; }}
+              ref={(el) => {
+                dayRefs.current[index] = el;
+              }}
               data-month={month}
               data-day={day}
               onClick={() => handleDayClick(day, month, year)}
-              className={`relative z-10 m-[-0.5px] group aspect-square w-full grow cursor-pointer rounded-xl border font-medium transition-all hover:z-20 hover:border-cyan-400 sm:-m-px size-auto sm:rounded-2xl sm:border-2 lg:rounded-3xl`}
+              className={`relative z-10 m-[-0.5px] group aspect-square w-full grow cursor-pointer rounded-xl border font-medium transition-all hover:z-20 hover:border-cyan-400 sm:-m-px sm:size-20 sm:rounded-2xl sm:border-2 lg:size-36 lg:rounded-3xl 2xl:size-40`}
             >
               <div className="flex flex-row items-center absolute left-1 top-1">
                 {/* Day number */}
@@ -184,12 +198,12 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick,
 
                 {/* Show question mark only if there are events */}
                 {dayEvents.length > 0 && (
-                  <CircleQuestionMark className="hidden sm:block w-4 h-4 text-red-500" />
+                  <span className="hidden sm:block w-4 h-4 text-red-500" title="Events present">?</span>
                 )}
               </div>
 
               {isNewMonth && (
-                <span className="absolute bottom-0.5 left-0 w-full truncate px-1.5 text-sm font-semibold text-gray-300 sm:bottom-0 sm:text-lg lg:bottom-2.5 lg:left-0 lg:-mb-1 lg:w-full lg:px-0 lg:text-xl xl:left-3.5  2xl:mb-[-4px] 2xl:text-2xl">
+                <span className="absolute bottom-0.5 left-0 w-full truncate px-1.5 text-sm font-semibold text-slate-300 sm:bottom-0 sm:text-lg lg:bottom-2.5 lg:left-3.5 lg:-mb-1 lg:w-fit lg:px-0 lg:text-xl 2xl:mb-[-4px] 2xl:text-2xl">
                   {monthNames[month]}
                 </span>
               )}
@@ -208,14 +222,9 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick,
               )}
 
               <button type="button" className="absolute right-2 top-2 rounded-full opacity-0 transition-all focus:opacity-100 group-hover:opacity-100">
-                <CirclePlus
-                  className="size-8 scale-90 text-white transition-all hover:scale-100 group-focus:scale-100"
-                  aria-hidden="true"
-                  width="24" height="24"
-                  fill="orange"
-                />
+                {/* Placeholder for CirclePlus icon */}
+                <span className="size-8 scale-90 text-white transition-all hover:scale-100 group-focus:scale-100" aria-hidden="true">+</span>
               </button>
-
             </div>
           );
         })}
@@ -223,29 +232,32 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick,
     ));
 
     return calendar;
-  }, [year]);
+  }, [year, events]);
 
   useEffect(() => {
-    const calendarContainer = document.querySelector('.calendar-container');
+    const calendarContainer = document.querySelector(".calendar-container");
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const month = parseInt(entry.target.getAttribute('data-month')!, 10);
+            const month = parseInt(
+              entry.target.getAttribute("data-month")!,
+              10
+            );
             setSelectedMonth(month);
           }
         });
       },
       {
         root: calendarContainer,
-        rootMargin: '-75% 0px -25% 0px',
+        rootMargin: "-75% 0px -25% 0px",
         threshold: 0,
-      },
+      }
     );
 
     dayRefs.current.forEach((ref) => {
-      if (ref && ref.getAttribute('data-day') === '15') {
+      if (ref && ref.getAttribute("data-day") === "15") {
         observer.observe(ref);
       }
     });
@@ -320,15 +332,22 @@ export interface SelectProps {
   name: string;
   value: string;
   label?: string;
-  options: { 'name': string, 'value': string }[];
+  options: { name: string; value: string }[];
   onChange: (_event: React.ChangeEvent<HTMLSelectElement>) => void;
   className?: string;
 }
 
-export const Select = ({ name, value, label, options = [], onChange, className }: SelectProps) => (
+export const Select = ({
+  name,
+  value,
+  label,
+  options = [],
+  onChange,
+  className,
+}: SelectProps) => (
   <div className={`relative ${className}`}>
     {label && (
-      <label htmlFor={name} className="mb-2 block font-medium text-gray-800">
+      <label htmlFor={name} className="mb-2 block font-medium text-slate-800">
         {label}
       </label>
     )}
@@ -337,7 +356,7 @@ export const Select = ({ name, value, label, options = [], onChange, className }
       name={name}
       value={value}
       onChange={onChange}
-      className="cursor-pointer rounded-lg border border-gray-300 bg-white py-1.5 pl-2 pr-6 text-sm font-medium text-gray-900 hover:bg-gray-100 sm:rounded-xl sm:py-2.5 sm:pl-3 sm:pr-8 focus:rounded-b-none"
+      className="cursor-pointer rounded-lg border border-gray-300 bg-white py-1.5 pl-2 pr-6 text-sm font-medium text-gray-900 hover:bg-gray-100 sm:rounded-xl sm:py-2.5 sm:pl-3 sm:pr-8"
       required
     >
       {options.map((option) => (
@@ -346,5 +365,7 @@ export const Select = ({ name, value, label, options = [], onChange, className }
         </option>
       ))}
     </select>
+    <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-1 sm:pr-2">
+    </span>
   </div>
 );
