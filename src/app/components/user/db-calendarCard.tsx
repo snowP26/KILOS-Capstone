@@ -77,10 +77,10 @@ export const DbCalendarCard = () => {
         }
     }, []);
 
-    useEffect(() => { 
-        if (typeof window !== "undefined") { 
-            localStorage.setItem("events", JSON.stringify(currentEvents)); 
-        } 
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            localStorage.setItem("events", JSON.stringify(currentEvents));
+        }
     }, [currentEvents]);
 
     const handleDateClick = (day: number, month: number, year: number) => {
@@ -131,12 +131,25 @@ export const DbCalendarCard = () => {
         <>
             <div>
                 <div className="flex flex-col mb-10 lg:flex-row">
-                    <div className="w-full rounded-2xl lg:w-[70%] lg:mt-10 lg:mx-5 lg:max-h-180 xl:w-[80%]">
+                    {/* <div className="w-full rounded-2xl lg:w-[70%] lg:mt-10 lg:mx-5 lg:max-h-180 xl:w-[80%]">
                         <ContinuousCalendar
                             onClick={handleDayClick}
                             events={currentEvents}
                         />
+                    </div> */}
+                    <div className="bg-white flex h-screen max-h-150 w-full rounded-2xl lg:w-[70%] lg:mt-10 lg:mx-5 lg:max-h-180 xl:w-[80%]">
+                        <div className="h-full w-full">
+                            <ContinuousCalendar onClick={handleDayClick} events={currentEvents} />
+                        </div>
                     </div>
+                    {/* <ScrollArea className="lg:w-[70%] lg:mt-10 lg:mx-5 lg:max-h-180 xl:w-[80%]">
+                        <div className="flex h-screen max-h-screen w-full rounded-2xl ">
+                            <div className="h-full w-full">
+                                <ContinuousCalendar onClick={handleDayClick} />
+                            </div>
+                        </div>
+                    </ScrollArea> */}
+
                     <div className="w-full lg:w-[30%] xl:w-[20%]">
                         <div className="mt-5">
                             <DateTodayCard />
