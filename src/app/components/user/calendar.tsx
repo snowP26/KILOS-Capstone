@@ -163,7 +163,6 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
             today.getDate() === day &&
             today.getFullYear() === year;
 
-          // Filter events for this day
           const dayEvents = events.filter(
             (ev) =>
               ev.start.getDate() === day &&
@@ -236,6 +235,8 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
 
   useEffect(() => {
     const calendarContainer = document.querySelector(".calendar-container");
+
+    handleTodayClick();
 
     const observer = new IntersectionObserver(
       (entries) => {
