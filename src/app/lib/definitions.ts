@@ -157,3 +157,13 @@ export type fbPosts = {
     message: string,
     created_time: string,
 }
+
+export type Meetings = {
+    id: number;
+    created_at: string;
+    date: string;
+    host: string;
+    header: string;
+    details: string;
+    modality: "Online" | "Onsite" | "Hybrid";
+}
