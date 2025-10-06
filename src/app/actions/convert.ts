@@ -77,7 +77,7 @@ export const authorIDtoName = async (id: number) => {
 
 export const authorEmailToInfo = async (email: string) => {
   const { data, error } = await client
-    .from("youth_official") // adjust table name if different
+    .from("youth_official")
     .select("firstname, lastname, position, role")
     .eq("email", email.trim())
     .maybeSingle()
