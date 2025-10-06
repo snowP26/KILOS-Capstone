@@ -21,7 +21,7 @@ export const locNameToID = async (loc: string) => {
 
   if (error || data == null) {
     console.log("Data not found: ", error);
-    return 0 
+    return 0
   }
 
   return data[0].id as number;
@@ -124,6 +124,18 @@ export const getUserID = async (): Promise<string> => {
 };
 
 export const getDisplayName = (fileName: string) => {
-    const parts = fileName.split("_");
-    return parts.length > 2 ? parts.slice(2).join("_") : fileName;
-  };
+  const parts = fileName.split("_");
+  return parts.length > 2 ? parts.slice(2).join("_") : fileName;
+};
+
+
+export const yoEmailtoID = async (email: string) => {
+  const { data, error } = await client.from("youth_official").select("id").eq("email", email).single();
+
+  if (error) {
+    console.error("Error fetching youth official ID:", error);
+    return null;
+  }
+
+  return data ? data.id : null;
+}
