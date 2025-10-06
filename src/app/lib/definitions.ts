@@ -162,7 +162,7 @@ export type Meetings = {
     id: number;
     created_at: string;
     date: string;
-    host: string;
+    host_id: string;
     header: string;
     details: string;
     modality: "Online" | "Onsite" | "Hybrid";
