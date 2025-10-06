@@ -23,7 +23,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface CustomEvent {
   id: string;
@@ -39,8 +39,8 @@ interface EventClickArg {
 }
 
 export const DbCalendarCard = () => {
-  const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState<Date | undefined>(undefined);
+  const [open, setOpen] = useState(false);
+  const [date, setDate] = useState<Date | undefined>(undefined);
 
   const [currentEvents, setCurrentEvents] = useState<CustomEvent[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -133,6 +133,22 @@ export const DbCalendarCard = () => {
     setIsDialogOpen(false);
     setIsMeetingDialogOpen(false);
   };
+
+  const cleanEmails = (emails: string) => {
+    if(!emails) return [];
+
+    const emailArray = emails.split(",").map((email) => email.trim()).filter((email) => email.length > 0)
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    return emailArray.filter((email) => emailRegex.test(email))
+  }
+
+  const handleCreateMeeting = (e: HTMLFormElement) => {
+    // get the form data
+    // pass the form data to the backend function
+    // 
+  }
 
   return (
     <>
