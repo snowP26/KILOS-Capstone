@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FormEvent } from "react";
 import { ContinuousCalendar } from "./calendar";
 import { Input } from "@/components/ui/input";
 import {
@@ -24,6 +24,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import client from "@/src/api/client";
+import { getUserID } from "../../actions/convert";
+import Swal from "sweetalert2";
+import { updateAttendees } from "../../actions/meeting";
 
 interface CustomEvent {
   id: string;
@@ -31,59 +35,38 @@ interface CustomEvent {
   start: Date;
 }
 
-interface EventClickArg {
-  event: {
-    title: string;
-    remove: () => void;
-  };
-}
-
 export const DbCalendarCard = () => {
-  const [open, setOpen] = useState(false);
+  // --- States ---
   const [date, setDate] = useState<Date | undefined>(undefined);
-
   const [currentEvents, setCurrentEvents] = useState<CustomEvent[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isMeetingDialogOpen, setIsMeetingDialogOpen] = useState(false);
-  const [isDatePopoverOpen, setIsDatePopoverOpen] = useState(false);
-  const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
-  const [emails, setEmails] = useState("");
-
-  const [newEventTitle, setNewEventTitle] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<{
     day: number;
     month: number;
     year: number;
   } | null>(null);
 
-  const eventsForSelectedDay = currentEvents.filter(
-    (event) =>
-      event.start.getDate() === selectedDate?.day &&
-      event.start.getMonth() === selectedDate?.month &&
-      event.start.getFullYear() === selectedDate?.year
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isMeetingDialogOpen, setIsMeetingDialogOpen] = useState(false);
+  const [isDatePopoverOpen, setIsDatePopoverOpen] = useState(false);
+  const [newEventTitle, setNewEventTitle] = useState<string>("");
+  const [emails, setEmails] = useState("");
+  const [selectedModality, setSelectedModality] = useState<"Online" | "Onsite">(
+    "Online"
   );
 
+  // --- Retrieve saved events ---
   useEffect(() => {
     if (typeof window !== "undefined") {
       const savedEvents = localStorage.getItem("events");
       if (savedEvents) {
         try {
-          const parsed: unknown = JSON.parse(savedEvents);
-
+          const parsed = JSON.parse(savedEvents);
           if (Array.isArray(parsed)) {
-            const typedEvents: CustomEvent[] = parsed
-              .filter(
-                (e): e is { id: string; title: string; start: string } =>
-                  typeof e.id === "string" &&
-                  typeof e.title === "string" &&
-                  typeof e.start === "string"
-              )
-              .map((e) => ({
-                id: e.id,
-                title: e.title,
-                start: new Date(e.start),
-              }));
-
+            const typedEvents: CustomEvent[] = parsed.map((e) => ({
+              id: e.id,
+              title: e.title,
+              start: new Date(e.start),
+            }));
             setCurrentEvents(typedEvents);
           }
         } catch (error) {
@@ -93,30 +76,22 @@ export const DbCalendarCard = () => {
     }
   }, []);
 
+  // --- Persist events ---
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("events", JSON.stringify(currentEvents));
     }
   }, [currentEvents]);
 
-  const handleDateClick = (day: number, month: number, year: number) => {
-    setSelectedDate({ day, month, year });
-    setIsDialogOpen(true);
-  };
-
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
-    setNewEventTitle("");
-  };
-
+  // --- Handle selecting a day ---
   const handleDayClick = (day: number, month: number, year: number) => {
+    const newDate = new Date(year, month, day);
+    setDate(newDate);
     setSelectedDate({ day, month, year });
-    setDate(new Date(year, month, day));
-
-    console.log(`${date}`);
     setIsDialogOpen(true);
   };
 
+  // --- Add an event (local example) ---
   const handleAddEvent = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newEventTitle || !date) return;
@@ -134,22 +109,81 @@ export const DbCalendarCard = () => {
     setIsMeetingDialogOpen(false);
   };
 
+  // --- Helper to clean and validate emails ---
   const cleanEmails = (emails: string) => {
-    if(!emails) return [];
-
-    const emailArray = emails.split(",").map((email) => email.trim()).filter((email) => email.length > 0)
-
+    if (!emails) return [];
+    const emailArray = emails
+      .split(",")
+      .map((email) => email.trim())
+      .filter((email) => email.length > 0);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailArray.filter((email) => emailRegex.test(email));
+  };
 
-    return emailArray.filter((email) => emailRegex.test(email))
-  }
+  // --- Create meeting handler ---
+  const handleCreateMeeting = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-  const handleCreateMeeting = (e: HTMLFormElement) => {
-    // get the form data
-    // pass the form data to the backend function
-    // 
-  }
+    if (!date) {
+      console.error("No date selected.");
+      return;
+    }
 
+    const formData = new FormData(e.currentTarget);
+    const header = formData.get("header") as string;
+    const details = formData.get("details") as string;
+    const time = formData.get("time") as string;
+    const rawEmails = formData.get("emails") as string;
+
+    const validEmails = cleanEmails(rawEmails);
+
+    if (!date) {
+      Swal.fire({
+        icon: "warning",
+        title: "No date selected",
+        text: "Please pick a date before creating a meeting.",
+      });
+      return;
+    }
+
+    // Combine date + time into one timestamp
+    const [hours, minutes, seconds] = time.split(":").map(Number);
+    const combinedDate = new Date(date);
+    combinedDate.setHours(hours, minutes, seconds || 0, 0);
+    const timestampz = combinedDate.toISOString();
+
+    const { data, error } = await client.from("meetings").insert([
+      {
+        header: header,
+        details: details,
+        modality: selectedModality,
+        date: timestampz,
+        host_id: await getUserID(),
+      },
+    ])
+      .select()
+      .single();
+
+    if (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Failed to create meeting",
+        text: error.message || "Please try again later.",
+      });
+      return;
+    }
+
+    await updateAttendees(validEmails, data.id);
+  };
+
+  const eventsForSelectedDay = currentEvents.filter(
+    (event) =>
+      event.start.getDate() === selectedDate?.day &&
+      event.start.getMonth() === selectedDate?.month &&
+      event.start.getFullYear() === selectedDate?.year
+  );
+
+  // --- JSX return ---
   return (
     <>
       <div>
@@ -160,6 +194,7 @@ export const DbCalendarCard = () => {
               events={currentEvents}
             />
           </div>
+
           <div className="w-full lg:w-[30%] xl:w-[20%]">
             <div className="mt-5 bg-white">
               <DateTodayCard />
@@ -174,133 +209,29 @@ export const DbCalendarCard = () => {
                   {eventsForSelectedDay.length <= 0 && (
                     <div className="text-center">No Events Present</div>
                   )}
-
-                  {eventsForSelectedDay.length > 0 &&
-                    eventsForSelectedDay.map((event: CustomEvent) => (
-                      <li key={event.id} className="flex justify-center">
-                        <Dialog>
-                          <DialogTrigger>
-                            <div className="bg-purple-400 w-55 lg:w-45 p-5 mt-2 rounded-2xl cursor-pointer">
-                              <div className="font-bold text-xl text-center w-full truncate">
-                                {event.title}
-                              </div>
-                              <div className="flex flex-row">
-                                <p className="pr-1">Host:</p>
-                                <p>Mayor Kurt Sereno</p>
-                              </div>
-                              <div className="flex flex-row">
-                                <p className="pr-1">Date:</p>
-                                <div>
-                                  {event.start.toLocaleDateString("en-US", {
-                                    year: "numeric",
-                                    month: "short",
-                                    day: "numeric",
-                                  })}
-                                </div>
-                              </div>
-                            </div>
-                          </DialogTrigger>
-                          <DialogContent className="bg-[#E6F1FF] w-full">
-                            <DialogHeader>
-                              <DialogTitle className="text-start text-xl lg:text-3xl lg:text-center">
-                                Meeting Title
-                              </DialogTitle>
-                              <hr className="border-t border-black w-full lg:w-full" />
-                              <div className="flex flex-wrap gap-2 justify-center text-center">
-                                <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
-                                  <p className="text-sm">Mayor Kurt Sereno</p>
-                                </div>
-                                <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
-                                  <p className="text-sm">Meeting Modality</p>
-                                </div>
-                                <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
-                                  <p className="text-sm">Meeting Date</p>
-                                </div>
-                                <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
-                                  <p className="text-sm">Meeting Time</p>
-                                </div>
-                              </div>
-
-                              <div className="bg-white text-balance h-100 mt-2 rounded-[20px]">
-                                <ScrollArea className="h-[90%] m-3 ">
-                                  <p className="p-5">
-                                    Lorem ipsum dolor sit amet, consectetur
-                                    adipiscing elit. Sed euismod, nunc at
-                                    gravida fermentum, erat turpis malesuada
-                                    leo, vel commodo sapien turpis nec lorem.
-                                    Integer sit amet est nec purus tincidunt
-                                    aliquet. Aenean porta vehicula neque, in
-                                    tempor ex tincidunt at. Suspendisse potenti.
-                                    Proin quis lorem vehicula, tincidunt neque
-                                    sed, fermentum elit. Ut dapibus eros eget
-                                    mauris volutpat, nec tempus justo tempor.
-                                    Vestibulum ante ipsum primis in faucibus
-                                    orci luctus et ultrices posuere cubilia
-                                    curae; Sed congue magna sed metus pulvinar,
-                                    quis cursus nulla lacinia. Aliquam erat
-                                    volutpat. Donec non lacus at arcu fermentum
-                                    venenatis. Quisque vitae hendrerit purus.
-                                    Nulla convallis lorem a justo dapibus, nec
-                                    dignissim sapien accumsan. Mauris porttitor,
-                                    augue id tincidunt dignissim, justo augue
-                                    sagittis leo, a tincidunt arcu metus ac
-                                    lorem. Curabitur rhoncus lorem a lacus
-                                    blandit, sit amet gravida ligula laoreet.
-                                    Suspendisse imperdiet lacus ut blandit
-                                    dignissim. Sed iaculis libero ut enim
-                                    congue, nec tincidunt metus bibendum. Morbi
-                                    pulvinar tellus vel turpis rhoncus
-                                    imperdiet. Nulla facilisi. Vestibulum
-                                    iaculis fringilla felis, ac varius elit
-                                    fringilla nec. Nam sodales lectus eros, at
-                                    iaculis diam malesuada non. Integer ornare
-                                    justo libero, at tincidunt nisl dapibus ut.
-                                    Curabitur rutrum, magna sed varius
-                                    convallis, enim est efficitur eros, nec
-                                    sollicitudin nisi sapien non metus. Etiam
-                                    volutpat, lacus sed bibendum tempor, magna
-                                    magna malesuada augue, vel dapibus metus
-                                    neque a nisl. Duis eget tempor eros. Etiam
-                                    vel eros in elit tristique sagittis ac nec
-                                    urna. Nullam in sem quis magna cursus
-                                    vehicula. Nam a orci sapien. Sed fermentum
-                                    imperdiet pulvinar. Nam sodales nisi et
-                                    mauris bibendum, et volutpat dolor
-                                    tristique. Cras vulputate nunc in nulla
-                                    tincidunt, at pulvinar velit porttitor.
-                                    Vivamus mattis posuere diam a scelerisque.
-                                    Nulla ornare nisl eu urna gravida accumsan.
-                                    Sed sodales magna in turpis finibus
-                                    facilisis. Duis et purus ut velit pharetra
-                                    dapibus. Quisque pretium laoreet justo nec
-                                    vehicula. Morbi ultrices nulla eget sagittis
-                                    viverra. Aliquam efficitur justo in libero
-                                    fermentum rutrum. Cras at porttitor sapien.
-                                    Vestibulum volutpat, risus in commodo
-                                    vulputate, mi risus hendrerit purus, a
-                                    bibendum diam mi vel risus. Sed luctus diam
-                                    sed magna porta, nec pulvinar metus
-                                    tincidunt. Vivamus mattis posuere diam a
-                                    scelerisque. Nulla ornare nisl eu urna
-                                    gravida accumsan. Sed sodales magna in
-                                    turpis finibus facilisis. Duis et purus ut
-                                    velit pharetra dapibus. Quisque pretium
-                                    laoreet justo nec vehicula. Morbi ultrices
-                                    nulla eget sagittis viverra. Aliquam
-                                    efficitur justo in libero fermentum rutrum.
-                                    Cras at porttitor sapien. Vestibulum
-                                    volutpat, risus in commodo vulputate, mi
-                                    risus hendrerit purus, a bibendum diam mi
-                                    vel risus. Sed luctus diam sed magna porta,
-                                    nec pulvinar metus tincidunt.
-                                  </p>
-                                </ScrollArea>
-                              </div>
-                            </DialogHeader>
-                          </DialogContent>
-                        </Dialog>
-                      </li>
-                    ))}
+                  {eventsForSelectedDay.map((event) => (
+                    <li key={event.id} className="flex justify-center">
+                      <div className="bg-purple-400 w-55 lg:w-45 p-5 mt-2 rounded-2xl cursor-pointer">
+                        <div className="font-bold text-xl text-center w-full truncate">
+                          {event.title}
+                        </div>
+                        <div className="flex flex-row">
+                          <p className="pr-1">Host:</p>
+                          <p>Mayor Kurt Sereno</p>
+                        </div>
+                        <div className="flex flex-row">
+                          <p className="pr-1">Date:</p>
+                          <div>
+                            {event.start.toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
                 </ul>
               </ScrollArea>
             </div>
@@ -308,6 +239,7 @@ export const DbCalendarCard = () => {
         </div>
       </div>
 
+      {/* --- Dialog for selected date --- */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="bg-[#E6F1FF]">
           <DialogHeader>
@@ -327,173 +259,36 @@ export const DbCalendarCard = () => {
               )}
             </DialogTitle>
           </DialogHeader>
-          <hr className="border-t border-black w-full" />
 
-          <ul className="max-h-[500px]">
-            {eventsForSelectedDay.length <= 0 && (
-              <h1 className="text-3xl py-10 text-gray-400 text-center font-medium">
-                No events for today!
-              </h1>
-            )}
-            <ScrollArea className="h-full px-3">
-              <div className="w-full flex flex-wrap justify-center gap-2 mb-5">
-                {eventsForSelectedDay.length > 0 &&
-                  eventsForSelectedDay.map((event: CustomEvent) => (
-                    <li key={event.id}>
-                      <Dialog>
-                        <DialogTrigger>
-                          <div className="bg-purple-400 w-full p-5 mt-2 rounded-2xl cursor-pointer">
-                            <div className="font-bold text-xl text-center w-full truncate">
-                              {event.title}
-                            </div>
-                            <div className="flex flex-row">
-                              <p className="pr-1">Host:</p>
-                              <p>Mayor Kurt Sereno</p>
-                            </div>
-                            <div className="flex flex-row">
-                              <p className="pr-1">Date:</p>
-                              <div>
-                                {event.start.toLocaleDateString("en-US", {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                })}
-                              </div>
-                            </div>
-                          </div>
-                        </DialogTrigger>
-                        <DialogContent className="bg-[#E6F1FF] w-full">
-                          <DialogHeader>
-                            <DialogTitle className="text-start text-xl lg:text-3xl lg:text-center">
-                              Meeting Title
-                            </DialogTitle>
-                            <hr className="border-t border-black w-full lg:w-full" />
-                            <div className="flex flex-wrap gap-2 justify-center text-center">
-                              <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
-                                <p className="text-sm">Mayor Kurt Sereno</p>
-                              </div>
-                              <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
-                                <p className="text-sm">Meeting Modality</p>
-                              </div>
-                              <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
-                                <p className="text-sm">Meeting Date</p>
-                              </div>
-                              <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
-                                <p className="text-sm">Meeting Time</p>
-                              </div>
-                            </div>
-
-                            <div className="bg-white text-balance h-100 mt-2 rounded-[20px]">
-                              <ScrollArea className="h-[90%] m-3 ">
-                                <p className="p-5">
-                                  Lorem ipsum dolor sit amet, consectetur
-                                  adipiscing elit. Sed euismod, nunc at gravida
-                                  fermentum, erat turpis malesuada leo, vel
-                                  commodo sapien turpis nec lorem. Integer sit
-                                  amet est nec purus tincidunt aliquet. Aenean
-                                  porta vehicula neque, in tempor ex tincidunt
-                                  at. Suspendisse potenti. Proin quis lorem
-                                  vehicula, tincidunt neque sed, fermentum elit.
-                                  Ut dapibus eros eget mauris volutpat, nec
-                                  tempus justo tempor. Vestibulum ante ipsum
-                                  primis in faucibus orci luctus et ultrices
-                                  posuere cubilia curae; Sed congue magna sed
-                                  metus pulvinar, quis cursus nulla lacinia.
-                                  Aliquam erat volutpat. Donec non lacus at arcu
-                                  fermentum venenatis. Quisque vitae hendrerit
-                                  purus. Nulla convallis lorem a justo dapibus,
-                                  nec dignissim sapien accumsan. Mauris
-                                  porttitor, augue id tincidunt dignissim, justo
-                                  augue sagittis leo, a tincidunt arcu metus ac
-                                  lorem. Curabitur rhoncus lorem a lacus
-                                  blandit, sit amet gravida ligula laoreet.
-                                  Suspendisse imperdiet lacus ut blandit
-                                  dignissim. Sed iaculis libero ut enim congue,
-                                  nec tincidunt metus bibendum. Morbi pulvinar
-                                  tellus vel turpis rhoncus imperdiet. Nulla
-                                  facilisi. Vestibulum iaculis fringilla felis,
-                                  ac varius elit fringilla nec. Nam sodales
-                                  lectus eros, at iaculis diam malesuada non.
-                                  Integer ornare justo libero, at tincidunt nisl
-                                  dapibus ut. Curabitur rutrum, magna sed varius
-                                  convallis, enim est efficitur eros, nec
-                                  sollicitudin nisi sapien non metus. Etiam
-                                  volutpat, lacus sed bibendum tempor, magna
-                                  magna malesuada augue, vel dapibus metus neque
-                                  a nisl. Duis eget tempor eros. Etiam vel eros
-                                  in elit tristique sagittis ac nec urna. Nullam
-                                  in sem quis magna cursus vehicula. Nam a orci
-                                  sapien. Sed fermentum imperdiet pulvinar. Nam
-                                  sodales nisi et mauris bibendum, et volutpat
-                                  dolor tristique. Cras vulputate nunc in nulla
-                                  tincidunt, at pulvinar velit porttitor.
-                                  Vivamus mattis posuere diam a scelerisque.
-                                  Nulla ornare nisl eu urna gravida accumsan.
-                                  Sed sodales magna in turpis finibus facilisis.
-                                  Duis et purus ut velit pharetra dapibus.
-                                  Quisque pretium laoreet justo nec vehicula.
-                                  Morbi ultrices nulla eget sagittis viverra.
-                                  Aliquam efficitur justo in libero fermentum
-                                  rutrum. Cras at porttitor sapien. Vestibulum
-                                  volutpat, risus in commodo vulputate, mi risus
-                                  hendrerit purus, a bibendum diam mi vel risus.
-                                  Sed luctus diam sed magna porta, nec pulvinar
-                                  metus tincidunt. Vivamus mattis posuere diam a
-                                  scelerisque. Nulla ornare nisl eu urna gravida
-                                  accumsan. Sed sodales magna in turpis finibus
-                                  facilisis. Duis et purus ut velit pharetra
-                                  dapibus. Quisque pretium laoreet justo nec
-                                  vehicula. Morbi ultrices nulla eget sagittis
-                                  viverra. Aliquam efficitur justo in libero
-                                  fermentum rutrum. Cras at porttitor sapien.
-                                  Vestibulum volutpat, risus in commodo
-                                  vulputate, mi risus hendrerit purus, a
-                                  bibendum diam mi vel risus. Sed luctus diam
-                                  sed magna porta, nec pulvinar metus tincidunt.
-                                </p>
-                              </ScrollArea>
-                            </div>
-                          </DialogHeader>
-                        </DialogContent>
-                      </Dialog>
-                    </li>
-                  ))}
-              </div>
-            </ScrollArea>
-          </ul>
           <Button
             onClick={() => setIsMeetingDialogOpen(true)}
-            className="relative z-50 bg-[#E6F1FF] place-self-end w-fit text-black cursor-pointer border-1 border-black border-dashed hover:text-white"
+            className="bg-[#E6F1FF] text-black border border-dashed border-black hover:text-white mt-4"
           >
             Set Up a Meeting
           </Button>
         </DialogContent>
       </Dialog>
 
+      {/* --- Meeting Creation Dialog --- */}
       <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
-        <DialogContent className="bg-[#E6F1FF] w-full max-w-lg rounded-2xl">
+        <DialogContent className="bg-[#E6F1FF] w-full max-w-2xl rounded-2xl p-6 md:p-8 shadow-lg">
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl lg:text-3xl font-semibold text-[#052659]">
+            <DialogTitle className="text-center text-2xl md:text-3xl font-semibold text-[#052659]">
               Set Up a Meeting
             </DialogTitle>
-            <hr className="border-t border-black/40 w-[90%] mx-auto mt-2" />
+            <hr className="border-t border-black/30 w-[90%] mx-auto mt-3" />
           </DialogHeader>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setIsMeetingDialogOpen(false);
-              setIsEmailDialogOpen(true); // open next dialog
-            }}
-            className="mt-4 space-y-5"
-          >
-            <div className="flex flex-col gap-3">
+          <form onSubmit={handleCreateMeeting} className="mt-6 space-y-6">
+            {/* Header */}
+            <div className="flex flex-col gap-2">
               <Label className="text-sm font-medium text-gray-700">
                 Meeting Header
               </Label>
               <Input
                 type="text"
                 placeholder="Enter meeting title"
+                name="header"
                 value={newEventTitle}
                 onChange={(e) => setNewEventTitle(e.target.value)}
                 required
@@ -501,24 +296,23 @@ export const DbCalendarCard = () => {
               />
             </div>
 
-            <div className="flex flex-col gap-3">
+            {/* Details */}
+            <div className="flex flex-col gap-2">
               <Label className="text-sm font-medium text-gray-700">
                 Meeting Details
               </Label>
               <Textarea
                 placeholder="Describe the agenda or discussion points..."
-                className="border border-black rounded-xl h-32 bg-white placeholder:italic focus:ring-2 focus:ring-[#052659]"
+                className="border border-black rounded-xl h-28 bg-white placeholder:italic focus:ring-2 focus:ring-[#052659]"
                 name="details"
                 required
               />
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-5">
-              <div className="flex flex-col gap-1 w-full">
-                <Label
-                  htmlFor="date-picker"
-                  className="text-sm font-medium text-gray-700"
-                >
+            {/* Date & Time */}
+            <div className="flex flex-col md:flex-row gap-5">
+              <div className="flex flex-col gap-2 w-full">
+                <Label htmlFor="date-picker" className="text-sm font-medium">
                   Meeting Date
                 </Label>
                 <Popover
@@ -529,18 +323,21 @@ export const DbCalendarCard = () => {
                     <Button
                       variant="outline"
                       id="date-picker"
-                      className="w-full bg-white justify-between border border-black rounded-xl"
+                      className="w-full bg-white justify-between border border-black rounded-xl text-left"
                     >
                       {date ? date.toLocaleDateString() : "Select date"}
-                      <ChevronDownIcon />
+                      <ChevronDownIcon className="ml-2 h-4 w-4 opacity-70" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent
+                    className="w-auto p-2 bg-white border border-gray-300 rounded-xl shadow-md"
+                    align="start"
+                  >
                     <Calendar
                       mode="single"
                       selected={date}
                       onSelect={(d) => {
-                        setDate(d);
+                        if (d) setDate(d);
                         setIsDatePopoverOpen(false);
                       }}
                     />
@@ -548,44 +345,75 @@ export const DbCalendarCard = () => {
                 </Popover>
               </div>
 
-              <div className="flex flex-col gap-1 w-full">
-                <Label
-                  htmlFor="time-picker"
-                  className="text-sm font-medium text-gray-700"
-                >
+              <div className="flex flex-col gap-2 w-full">
+                <Label htmlFor="time-picker" className="text-sm font-medium">
                   Meeting Time
                 </Label>
                 <Input
                   type="time"
+                  name="time"
                   id="time-picker"
-                  step="1"
-                  defaultValue="10:30:00"
+                  step="60"
+                  defaultValue="10:30"
                   className="border border-black rounded-xl bg-white cursor-pointer"
                 />
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
+            {/* Modality */}
+            <div className="flex flex-col gap-3">
               <Label className="text-sm font-medium text-gray-700">
                 Meeting Modality
               </Label>
-              <Tabs defaultValue="online" className="w-fit self-center">
-                <TabsList className="border border-black rounded-xl overflow-hidden">
-                  <TabsTrigger value="online">Online</TabsTrigger>
-                  <TabsTrigger value="onsite">Onsite</TabsTrigger>
+              <Tabs
+                value={selectedModality.toLowerCase()}
+                onValueChange={(val) =>
+                  setSelectedModality(val === "online" ? "Online" : "Onsite")
+                }
+                className="w-fit self-center"
+              >
+                <TabsList className="border border-black rounded-xl overflow-hidden bg-white">
+                  <TabsTrigger
+                    value="online"
+                    className="data-[state=active]:bg-[#052659] data-[state=active]:text-white"
+                  >
+                    Online
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="onsite"
+                    className="data-[state=active]:bg-[#052659] data-[state=active]:text-white"
+                  >
+                    Onsite
+                  </TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
 
+            {/* Participants */}
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm font-medium text-gray-700">
+                Participants (comma-separated emails)
+              </Label>
+              <Textarea
+                name="emails"
+                value={emails}
+                onChange={(e) => setEmails(e.target.value)}
+                placeholder="example@email.com, another@email.com"
+                className="border border-black rounded-xl h-20 bg-white placeholder:italic focus:ring-2 focus:ring-[#052659]"
+              />
+            </div>
+
+            {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-[#052659] text-white rounded-xl py-2 mt-4 hover:bg-[#0A4A9C] transition"
+              className="w-full bg-[#052659] text-white rounded-xl py-2 mt-2 hover:bg-[#0A4A9C] transition"
             >
               Send to Participants
             </Button>
           </form>
         </DialogContent>
       </Dialog>
+
     </>
   );
 };
