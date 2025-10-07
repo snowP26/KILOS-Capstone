@@ -184,7 +184,7 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
               onClick={() => {
                 if (!isPast && month >= 0) handleDayClick(day, month, year);
               }}
-              className={`relative z-10 m-[-0.5px] group aspect-square w-full grow rounded-xl border font-medium transition-all sm:-m-px sm:size-20 sm:rounded-2xl sm:border-2 lg:size-36 lg:rounded-3xl 2xl:size-40
+              className={`relative z-10 m-[-0.5px] group aspect-square w-full grow rounded-xl border font-medium transition-all sm:-m-px sm:size-20 sm:rounded-2xl sm:border-2 lg:size-15 lg:rounded-3xl xl:size-26 2xl:size-30
           ${isPast
                   ? "cursor-not-allowed bg-gray-100 text-gray-400 opacity-60"
                   : "cursor-pointer hover:z-20 hover:border-cyan-400"
@@ -211,7 +211,7 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
               </div>
 
               {isNewMonth && (
-                <span className="absolute bottom-0.5 left-0 w-full truncate px-1.5 text-sm font-semibold text-slate-300 sm:bottom-0 sm:text-lg lg:bottom-2.5 lg:left-3.5 lg:-mb-1 lg:w-fit lg:px-0 lg:text-xl 2xl:mb-[-4px] 2xl:text-2xl ">
+                <span className="absolute bottom-0.5 left-0 w-full truncate px-1.5 text-sm font-semibold text-slate-300 sm:bottom-0 sm:text-lg lg:bottom-2.5 lg:left-3.5 lg:-mb-1 lg:w-fit lg:px-0 lg:text-base 2xl:mb-[-4px] 2xl:text-2xl ">
                   {monthNames[month]}
                 </span>
               )}
@@ -278,7 +278,7 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
 
   return (
     <ScrollArea>
-      <div className="calendar-container max-h-150 lg:max-h-180 overflow-auto mr-3 rounded-2xl bg-white pb-10 text-gray-800 shadow-xl">
+      <div className="calendar-container w-full lg:min-w-full lg:max-w-130 xl:w-full 2xl:w-full max-h-150 lg:max-h-180 overflow-auto mr-3 rounded-2xl bg-white pb-10 text-gray-800 shadow-xl">
         <div className="sticky z-30 -top-px w-full rounded-t-2xl bg-white px-5 pt-7 sm:px-8 sm:pt-8">
           <div className="mb-4 flex w-full flex-wrap items-center justify-between gap-6">
             <div className="flex flex-wrap gap-2 sm:gap-3">
@@ -326,9 +326,8 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
           {generateCalendar}
         </div>
       </ScrollArea> */}
-        <div className="">
-          <div className="w-full h-full px-5 pt-4 sm:px-8 sm:pt-6">{generateCalendar}</div>
-        </div>
+        
+          <div className="w-full min-w-50 h-full pt-4 sm:px-8 sm:pt-6">{generateCalendar}</div>
       </div>
 
 

@@ -148,7 +148,7 @@ export default function Home() {
 
       </div>
 
-      <div className="mt-10 w-[90%] self-center lg:w-[90%] lg:mt-0 lg:self-start">
+      <div className="mt-10 w-[90%] self-center lg:w-[80%] lg:mt-0 lg:self-start">
         <DbCalendarCard />
       </div>
     </div>

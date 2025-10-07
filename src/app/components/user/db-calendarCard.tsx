@@ -177,7 +177,7 @@ export const DbCalendarCard = () => {
     <>
       <div>
         <div className="flex flex-col mb-10 lg:flex-row">
-          <div className="w-full rounded-2xl lg:w-[70%] lg:mt-10 lg:mx-5 lg:max-h-180 xl:w-[80%]">
+          <div className="w-full rounded-2xl lg:w-[70%] lg:mt-10 lg:mx-3 lg:max-h-180 xl:w-[80%]">
             <ContinuousCalendar
               onClick={handleDayClick}
               events={currentEvents}
@@ -434,7 +434,7 @@ export const DbCalendarCard = () => {
               </Label>
               <Textarea
                 placeholder="Describe the agenda or discussion points..."
-                className="border border-black rounded-xl h-28 bg-white placeholder:italic focus:ring-2 focus:ring-[#052659]"
+                className="border w-full max-w-112 border-black rounded-xl h-28 bg-white placeholder:italic focus:ring-2 focus:ring-[#052659]"
                 name="details"
                 required
               />
@@ -454,6 +454,7 @@ export const DbCalendarCard = () => {
                     <Button
                       variant="outline"
                       id="date-picker"
+                      disabled
                       className="w-full bg-white justify-between border border-black rounded-xl text-left"
                     >
                       {date ? date.toLocaleDateString() : "Select date"}
@@ -506,13 +507,13 @@ export const DbCalendarCard = () => {
                 <TabsList className="border border-black rounded-xl overflow-hidden bg-white">
                   <TabsTrigger
                     value="online"
-                    className="data-[state=active]:bg-[#052659] data-[state=active]:text-white"
+                    className="data-[state=active]:bg-[#052659] cursor-pointer data-[state=active]:text-white"
                   >
                     Online
                   </TabsTrigger>
                   <TabsTrigger
                     value="onsite"
-                    className="data-[state=active]:bg-[#052659] data-[state=active]:text-white"
+                    className="data-[state=active]:bg-[#052659] cursor-pointer data-[state=active]:text-white"
                   >
                     Onsite
                   </TabsTrigger>
@@ -530,7 +531,7 @@ export const DbCalendarCard = () => {
                 value={emails}
                 onChange={(e) => setEmails(e.target.value)}
                 placeholder="example@email.com, another@email.com"
-                className="border border-black rounded-xl h-20 bg-white placeholder:italic focus:ring-2 focus:ring-[#052659]"
+                className="border w-full max-w-112 border-black rounded-xl h-20 bg-white placeholder:italic focus:ring-2 focus:ring-[#052659]"
               />
             </div>
 
