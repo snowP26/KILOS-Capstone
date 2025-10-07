@@ -131,7 +131,7 @@ export type project = {
     budget: number,
 }
 
-export type project_approvals = { 
+export type project_approvals = {
     id: number,
     project_id: number,
     recipient: string,
@@ -166,4 +166,8 @@ export type Meetings = {
     header: string;
     details: string;
     modality: "Online" | "Onsite" | "Hybrid";
+    users?: {
+        firstname: string;
+        lastname: string;
+    };
 }

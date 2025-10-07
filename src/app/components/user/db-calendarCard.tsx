@@ -27,7 +27,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import client from "@/src/api/client";
 import { getUserID } from "../../actions/convert";
 import Swal from "sweetalert2";
-import { updateAttendees } from "../../actions/meeting";
+import { getMeeting, updateAttendees } from "../../actions/meeting";
+import { Meetings } from "../../lib/definitions";
 
 interface CustomEvent {
   id: string;
@@ -38,7 +39,7 @@ interface CustomEvent {
 export const DbCalendarCard = () => {
   // --- States ---
   const [date, setDate] = useState<Date | undefined>(undefined);
-  const [currentEvents, setCurrentEvents] = useState<CustomEvent[]>([]);
+  const [currentEvents, setCurrentEvents] = useState<Meetings[]>([]);
   const [selectedDate, setSelectedDate] = useState<{
     day: number;
     month: number;
@@ -46,6 +47,7 @@ export const DbCalendarCard = () => {
   } | null>(null);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [refresh, setRefresh] = useState(0)
   const [isMeetingDialogOpen, setIsMeetingDialogOpen] = useState(false);
   const [isDatePopoverOpen, setIsDatePopoverOpen] = useState(false);
   const [newEventTitle, setNewEventTitle] = useState<string>("");
@@ -55,25 +57,13 @@ export const DbCalendarCard = () => {
   );
 
   // --- Retrieve saved events ---
+  const fetchMeetingData = async () => {
+    const data = await getMeeting();
+    if (data) setCurrentEvents(data);
+  };
+
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedEvents = localStorage.getItem("events");
-      if (savedEvents) {
-        try {
-          const parsed = JSON.parse(savedEvents);
-          if (Array.isArray(parsed)) {
-            const typedEvents: CustomEvent[] = parsed.map((e) => ({
-              id: e.id,
-              title: e.title,
-              start: new Date(e.start),
-            }));
-            setCurrentEvents(typedEvents);
-          }
-        } catch (error) {
-          console.error("Error parsing saved events:", error);
-        }
-      }
-    }
+    fetchMeetingData();
   }, []);
 
   // --- Persist events ---
@@ -81,33 +71,20 @@ export const DbCalendarCard = () => {
     if (typeof window !== "undefined") {
       localStorage.setItem("events", JSON.stringify(currentEvents));
     }
+
+    console.log("events updated:", currentEvents);
+
   }, [currentEvents]);
 
   // --- Handle selecting a day ---
   const handleDayClick = (day: number, month: number, year: number) => {
     const newDate = new Date(year, month, day);
     setDate(newDate);
+    console.log({ day, month, year })
     setSelectedDate({ day, month, year });
     setIsDialogOpen(true);
   };
 
-  // --- Add an event (local example) ---
-  const handleAddEvent = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newEventTitle || !date) return;
-
-    const newEvent: CustomEvent = {
-      id: String(Date.now()),
-      title: newEventTitle,
-      start: date,
-    };
-
-    setCurrentEvents((prev) => [...prev, newEvent]);
-    setNewEventTitle("");
-    setDate(undefined);
-    setIsDialogOpen(false);
-    setIsMeetingDialogOpen(false);
-  };
 
   // --- Helper to clean and validate emails ---
   const cleanEmails = (emails: string) => {
@@ -146,7 +123,6 @@ export const DbCalendarCard = () => {
       return;
     }
 
-    // Combine date + time into one timestamp
     const [hours, minutes, seconds] = time.split(":").map(Number);
     const combinedDate = new Date(date);
     combinedDate.setHours(hours, minutes, seconds || 0, 0);
@@ -174,15 +150,28 @@ export const DbCalendarCard = () => {
     }
 
     await updateAttendees(validEmails, data.id);
+    await fetchMeetingData();
+    setDate(undefined);
+    setSelectedModality("Online");
+    setIsMeetingDialogOpen(false);
+    setNewEventTitle("");
+    setEmails("")
+
+    setIsMeetingDialogOpen(false)
   };
 
-  const eventsForSelectedDay = currentEvents.filter(
-    (event) =>
-      event.start.getDate() === selectedDate?.day &&
-      event.start.getMonth() === selectedDate?.month &&
-      event.start.getFullYear() === selectedDate?.year
-  );
+  const eventsForSelectedDay = currentEvents.filter((event) => {
+    const d = new Date(event.date);
+    return (
+      d.getDate() === selectedDate?.day &&
+      d.getMonth() === selectedDate?.month &&
+      d.getFullYear() === selectedDate?.year
+    );
+  });
 
+  useEffect(() => {
+
+  }, [refresh])
   // --- JSX return ---
   return (
     <>
@@ -206,35 +195,90 @@ export const DbCalendarCard = () => {
               </div>
               <ScrollArea className="px-0 w-full mt-5">
                 <ul className="max-h-[500px]">
-                  {eventsForSelectedDay.length <= 0 && (
+                  {currentEvents.length <= 0 && (
                     <div className="text-center">No Events Present</div>
                   )}
-                  {eventsForSelectedDay.map((event) => (
-                    <li key={event.id} className="flex justify-center">
-                      <div className="bg-purple-400 w-55 lg:w-45 p-5 mt-2 rounded-2xl cursor-pointer">
-                        <div className="font-bold text-xl text-center w-full truncate">
-                          {event.title}
-                        </div>
-                        <div className="flex flex-row">
-                          <p className="pr-1">Host:</p>
-                          <p>Mayor Kurt Sereno</p>
-                        </div>
-                        <div className="flex flex-row">
-                          <p className="pr-1">Date:</p>
-                          <div>
-                            {event.start.toLocaleDateString("en-US", {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
+
+                  {currentEvents.length > 0 &&
+                    currentEvents.map((event) => (
+                      <li key={event.id} className="flex justify-center">
+                        <Dialog>
+                          <DialogTrigger>
+                            <div className="bg-purple-400 w-55 lg:w-45 p-5 mt-2 rounded-2xl cursor-pointer">
+                              <div className="font-bold text-xl text-center w-full truncate">
+                                {event.header}
+                              </div>
+                              <div className="flex flex-row  text-sm">
+                                <p className="pr-1">Host:</p>
+                                {event.users
+                                  ? `${event.users.firstname} ${event.users.lastname}`
+                                  : "Unknown Host"}
+                              </div>
+                              <div className="flex flex-row">
+                                <p className="pr-1">Date:</p>
+                                <div>
+                                  {new Date(event.date).toLocaleDateString("en-US", {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                          </DialogTrigger>
+                          <DialogContent className="bg-[#E6F1FF] w-full">
+                            <DialogHeader>
+                              <DialogTitle className="text-start text-xl lg:text-3xl lg:text-center">
+                                {event.header}
+                              </DialogTitle>
+                              <hr className="border-t border-black w-full lg:w-full" />
+                              <div className="flex flex-wrap gap-2 justify-center text-center">
+                                <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                                  <p className="text-sm">
+                                    {event.users
+                                      ? `${event.users.firstname} ${event.users.lastname}`
+                                      : "Unknown Host"}
+                                  </p>
+                                </div>
+                                <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                                  <p className="text-sm">{event.modality}</p>
+                                </div>
+                                <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                                  <p className="text-sm">
+                                    {new Date(event.date).toLocaleDateString("en-UK", {
+                                      day: "2-digit",
+                                      month: "long",
+                                      year: "numeric"
+                                    })}
+                                  </p>
+                                </div>
+                                <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                                  <p className="text-sm">
+                                    {new Date(event.date).toLocaleTimeString("en-US", {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      hour12: true,
+                                    })}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="bg-white text-balance h-100 mt-2 rounded-[20px]">
+                                <ScrollArea className="h-[90%] m-3 ">
+                                  <p className="p-5">
+                                    {event.details}
+                                  </p>
+                                </ScrollArea>
+                              </div>
+                            </DialogHeader>
+                          </DialogContent>
+                        </Dialog>
+                      </li>
+                    ))}
                 </ul>
               </ScrollArea>
             </div>
+
           </div>
         </div>
       </div>
@@ -259,6 +303,93 @@ export const DbCalendarCard = () => {
               )}
             </DialogTitle>
           </DialogHeader>
+          {eventsForSelectedDay.length > 0 ? (
+            <ScrollArea className="max-h-[300px] mt-4">
+              <ul className="space-y-3">
+                {eventsForSelectedDay.map((event) => (
+                  <li key={event.id} className="flex justify-center">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <div className="bg-purple-400 w-full p-4 rounded-2xl cursor-pointer hover:bg-purple-500 transition">
+                          <div className="font-bold text-lg text-center truncate">
+                            {event.header}
+                          </div>
+                          <div className="flex flex-row text-sm justify-center">
+                            <p className="pr-1 font-semibold">Time:</p>
+                            <p>
+                              {new Date(event.date).toLocaleTimeString("en-US", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              })}
+                            </p>
+                          </div>
+                          <div className="flex flex-row text-sm justify-center">
+                            <p className="pr-1 font-semibold">Host:</p>
+                            <p>
+                              {event.users
+                                ? `${event.users.firstname} ${event.users.lastname}`
+                                : "Unknown Host"}
+                            </p>
+                          </div>
+                        </div>
+                      </DialogTrigger>
+
+                      <DialogContent className="bg-[#E6F1FF] w-full max-w-lg">
+                        <DialogHeader>
+                          <DialogTitle className="text-center text-2xl font-bold">
+                            {event.header}
+                          </DialogTitle>
+                          <hr className="border-t border-black w-full mt-2" />
+
+                          <div className="flex flex-wrap gap-2 justify-center text-center mt-3">
+                            <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                              <p className="text-sm">
+                                {event.users
+                                  ? `${event.users.firstname} ${event.users.lastname}`
+                                  : "Unknown Host"}
+                              </p>
+                            </div>
+                            <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                              <p className="text-sm">{event.modality}</p>
+                            </div>
+                            <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                              <p className="text-sm">
+                                {new Date(event.date).toLocaleDateString("en-UK", {
+                                  day: "2-digit",
+                                  month: "long",
+                                  year: "numeric",
+                                })}
+                              </p>
+                            </div>
+                            <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                              <p className="text-sm">
+                                {new Date(event.date).toLocaleTimeString("en-US", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  hour12: true,
+                                })}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="bg-white text-balance h-100 mt-4 rounded-[20px]">
+                            <ScrollArea className="h-[90%] m-3">
+                              <p className="p-5 text-sm text-gray-700">{event.details}</p>
+                            </ScrollArea>
+                          </div>
+                        </DialogHeader>
+                      </DialogContent>
+                    </Dialog>
+                  </li>
+                ))}
+              </ul>
+            </ScrollArea>
+          ) : (
+            <div className="text-center text-gray-500 mt-4">
+              No meetings scheduled for this day.
+            </div>
+          )}
 
           <Button
             onClick={() => setIsMeetingDialogOpen(true)}

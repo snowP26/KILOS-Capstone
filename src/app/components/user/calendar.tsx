@@ -4,6 +4,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Meetings } from "../../lib/definitions";
 
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const monthNames = [
@@ -22,15 +23,10 @@ const monthNames = [
 ];
 
 
-interface CustomEvent {
-  id: string;
-  title: string;
-  start: Date;
-}
 
 interface ContinuousCalendarProps {
   onClick?: (_day: number, _month: number, _year: number) => void;
-  events?: CustomEvent[];
+  events?: Meetings[];
 }
 
 export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
@@ -45,6 +41,8 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
     name: month,
     value: `${index}`,
   }));
+
+
 
   const scrollToDay = (monthIndex: number, dayIndex: number) => {
     const targetDayIndex = dayRefs.current.findIndex(
@@ -153,7 +151,7 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
     }
 
     const calendar = calendarWeeks.map((week, weekIndex) => (
-      <div className="flex w-full" key={`week-${weekIndex}`}> 
+      <div className="flex w-full" key={`week-${weekIndex}`}>
         {week.map(({ month, day }, dayIndex) => {
           const index = weekIndex * 7 + dayIndex;
           const isNewMonth =
@@ -164,11 +162,16 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
             today.getFullYear() === year;
 
           const dayEvents = events.filter(
-            (ev) =>
-              ev.start.getDate() === day &&
-              ev.start.getMonth() === month &&
-              ev.start.getFullYear() === year
+            (ev) => {
+              const event = new Date(ev.date)
+              return (event.getDate() === day &&
+                event.getMonth() === month &&
+                event.getFullYear() === year)
+            }
+
           );
+          const dateObject = new Date(year, month, day);
+          const isPast = dateObject < new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
           return (
             <div
@@ -178,8 +181,14 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
               }}
               data-month={month}
               data-day={day}
-              onClick={() => handleDayClick(day, month, year)}
-              className={`relative z-10 m-[-0.5px] group aspect-square w-full grow cursor-pointer rounded-xl border font-medium transition-all hover:z-20 hover:border-cyan-400 sm:-m-px sm:size-20 sm:rounded-2xl sm:border-2 lg:size-36 lg:rounded-3xl 2xl:size-40`}
+              onClick={() => {
+                if (!isPast && month >= 0) handleDayClick(day, month, year);
+              }}
+              className={`relative z-10 m-[-0.5px] group aspect-square w-full grow rounded-xl border font-medium transition-all sm:-m-px sm:size-20 sm:rounded-2xl sm:border-2 lg:size-36 lg:rounded-3xl 2xl:size-40
+          ${isPast
+                  ? "cursor-not-allowed bg-gray-100 text-gray-400 opacity-60"
+                  : "cursor-pointer hover:z-20 hover:border-cyan-400"
+                }`}
             >
               <div className="flex flex-row items-center absolute left-1 top-1">
                 {/* Day number */}
@@ -190,7 +199,7 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
                       : month < 0
                         ? "text-gray-400"
                         : "text-gray-800"
-                    } ${dayEvents.length > 0 ? "border-red-500 rounded-2xl border-2 sm:border-none" : "" }`}
+                    } ${dayEvents.length > 0 ? "border-red-500 rounded-2xl border-2 sm:border-none" : ""}`}
                 >
                   {day}
                 </span>
@@ -202,16 +211,16 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
               </div>
 
               {isNewMonth && (
-                <span className="absolute bottom-0.5 left-0 w-full truncate px-1.5 text-sm font-semibold text-slate-300 sm:bottom-0 sm:text-lg lg:bottom-2.5 lg:left-3.5 lg:-mb-1 lg:w-fit lg:px-0 lg:text-xl 2xl:mb-[-4px] 2xl:text-2xl">
+                <span className="absolute bottom-0.5 left-0 w-full truncate px-1.5 text-sm font-semibold text-slate-300 sm:bottom-0 sm:text-lg lg:bottom-2.5 lg:left-3.5 lg:-mb-1 lg:w-fit lg:px-0 lg:text-xl 2xl:mb-[-4px] 2xl:text-2xl ">
                   {monthNames[month]}
                 </span>
               )}
 
               {dayEvents.length > 0 && (
-                <div className="hidden mb-7 md:absolute md:left-2 md:right-2 md:bottom-2 md:flex md:flex-col md:gap-1">
+                <div className="hidden mb-7 md:absolute md:left-2 md:right-2 md:bottom-2 md:flex md:flex-col md:gap-1 ">
                   {dayEvents.slice(0, 2).map((ev) => (
                     <div key={ev.id} className="lg:hidden xl:block truncate text-xs font-medium rounded px-1 py-0.5 bg-purple-500 text-white max-w-full">
-                      {ev.title}
+                      {ev.header}
                     </div>
                   ))}
                   {dayEvents.length > 2 && (
@@ -221,7 +230,6 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
               )}
 
               <button type="button" className="absolute right-2 top-2 rounded-full opacity-0 transition-all focus:opacity-100 group-hover:opacity-100">
-                {/* Placeholder for CirclePlus icon */}
                 <span className="size-8 scale-90 text-white transition-all hover:scale-100 group-focus:scale-100" aria-hidden="true">+</span>
               </button>
             </div>
@@ -271,7 +279,7 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
   return (
     <ScrollArea>
       <div className="calendar-container max-h-150 lg:max-h-180 overflow-auto mr-3 rounded-2xl bg-white pb-10 text-gray-800 shadow-xl">
-        <div className="-top-px w-full rounded-t-2xl bg-white px-5 pt-7 sm:px-8 sm:pt-8">
+        <div className="sticky z-30 -top-px w-full rounded-t-2xl bg-white px-5 pt-7 sm:px-8 sm:pt-8">
           <div className="mb-4 flex w-full flex-wrap items-center justify-between gap-6">
             <div className="flex flex-wrap gap-2 sm:gap-3">
               <Select name="month" value={`${selectedMonth}`} options={monthOptions} onChange={handleMonthChange} />
