@@ -190,7 +190,7 @@ export default function FacebookPage() {
         </div>
 
         {/* start of fb post card */}
-        <div className="w-[90%] mt-3 self-center lg:w-[50%] xl:w-3/5 lg:my-2 lg:mx-3">
+        <div className="w-[90%] mt-3 self-center lg:w-[50%] lg:self-start lg:my-2 lg:mx-3 xl:w-3/5">
           <Dialog>
             <DialogTrigger className="w-[100%]" asChild>
               <button className="w-[100%] h-10 cursor-pointer rounded-[20px] bg-[#B2D3FF] font-bold text-black hover:bg-blue-400 ">
