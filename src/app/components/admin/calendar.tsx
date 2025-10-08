@@ -206,7 +206,7 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
 
                 {/* Show question mark only if there are events */}
                 {dayEvents.length > 0 && (
-                  <span className="hidden sm:block w-4 h-4 text-red-500" title="Events present">?</span>
+                  <span className="hidden sm:block md:hidden lg:block xl:hidden w-4 h-4 text-red-500" title="Events present">?</span>
                 )}
               </div>
 
@@ -217,14 +217,14 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
               )}
 
               {dayEvents.length > 0 && (
-                <div className="hidden mb-7 md:absolute md:left-2 md:right-2 md:bottom-2 md:flex md:flex-col md:gap-1 ">
-                  {dayEvents.slice(0, 2).map((ev) => (
+                <div className="hidden mb-7 md:absolute md:left-2 md:right-2 md:top-8 md:flex md:flex-col md:gap-1 lg:top-10">
+                  {dayEvents.slice(0, 1).map((ev) => (
                     <div key={ev.id} className="lg:hidden xl:block truncate text-xs font-medium rounded px-1 py-0.5 bg-purple-500 text-white max-w-full">
                       {ev.header}
                     </div>
                   ))}
-                  {dayEvents.length > 2 && (
-                    <div className="text-xs text-gray-500">+{dayEvents.length - 2} more</div>
+                  {dayEvents.length > 1 && (
+                    <div className="lg:hidden xl:block text-xs text-gray-500">+{dayEvents.length - 1} more</div>
                   )}
                 </div>
               )}
