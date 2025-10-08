@@ -33,6 +33,7 @@ export default function LocationsID() {
   const [data, setData] = useState<Users[]>([]);
   const [locTitle, setLocTitle] = useState<string>("");
   const params = useParams();
+  const [refresh, setRefresh] = useState(0)
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -50,7 +51,7 @@ export default function LocationsID() {
     };
 
     fetchUsers();
-  }, [params.id]);
+  }, [params.id, refresh]);
 
   const { role } = useUserRole();
 
@@ -111,7 +112,7 @@ export default function LocationsID() {
         </div>
 
         <div className="text-black container mx-auto pb-10">
-          <DataTable columns={locColumns} data={data} />
+          <DataTable columns={locColumns} data={data} onPositionAdded={() => setRefresh((prev) => prev + 1)} />
         </div>
       </SidebarInset>
     </SidebarProvider>

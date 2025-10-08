@@ -25,7 +25,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import client from "@/src/api/client";
-import { fbPosts } from "@/src/app/lib/definitions";
+import { fbPosts, pageDetails } from "@/src/app/lib/definitions";
 import Swal from "sweetalert2";
 
 export default function FacebookPage() {
@@ -34,6 +34,37 @@ export default function FacebookPage() {
   const [response, setResponse] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [posts, setPosts] = useState<fbPosts[]>([]);
+  const [pageInfo, setPageInfo] = useState<pageDetails | null>(null);
+
+  const fetchPageInfo = async () => {
+    try {
+      const { data: sessionData } = await client.auth.getSession();
+      const session = sessionData?.session;
+
+      if (!session) {
+        setError("You must be logged in!");
+        return;
+      }
+
+      const res = await fetch("/api/details", {
+        method: "GET",
+        headers: {
+          Authorization: session.access_token,
+        },
+      });
+
+      const data = await res.json();
+      if (data.error) {
+        setError(data.error);
+      } else {
+        setPageInfo(data);
+        console.log(data)
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch page info");
+    }
+  };
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -74,7 +105,7 @@ export default function FacebookPage() {
 
   useEffect(() => {
     fetchPosts();
-    console.log(posts);
+    fetchPageInfo();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -134,7 +165,7 @@ export default function FacebookPage() {
     } finally {
       setLoading(false);
     }
-  };    
+  };
 
   return (
     <div className="w-[100%] min-h-screen max-h-fit">
@@ -144,40 +175,53 @@ export default function FacebookPage() {
 
       <div className="flex flex-col lg:flex-row">
         {/* Information */}
-        <div className="bg-white w-[90%] mt-6 pb-5 self-center h-fit rounded-[10px] lg:self-start lg:mt-3 lg:ml-3 lg:pt-5 lg:w-[25%] xl:w-1/5 ">
-          <p className="text-xl mt-3 font-semibold text-center text-shadow-lg lg:text-md lg:mt-0 lg:mx-5">
-            Bula Municipal Youth Officials
-          </p>
-          <hr className="border-t border-black w-[90%] mx-auto my-3" />
+        <div className="bg-white w-[90%] mt-6 pb-6 self-center h-fit rounded-[12px] shadow-sm border border-gray-200 lg:self-start lg:mt-3 lg:ml-3 lg:pt-5 lg:w-[25%] xl:w-1/5 transition-all">
+          {/* Page Name */}
+          <div className="text-center px-4">
+            <p className="text-xl font-semibold mt-4 text-gray-800">
+              {pageInfo?.name || "Page Name Unavailable"}
+            </p>
+            <hr className="border-t border-gray-300 w-[80%] mx-auto mt-3" />
+          </div>
 
-          {/* Information items */}
-          <div className="mx-auto w-[90%] space-y-3">
-            <div className="w-full flex flex-row gap-5 md:gap-2 lg:my-5 lg:gap-2 xl:my-10">
-              <Info className="w-[10%] h-full self-center md:p-3 lg:p-0" />
-              <p className="text-sm md:text-lg lg:text-sm self-center w-[90%]">
-                In the Service of the Bulaeño Youth
+          {/* Info Section */}
+          <div className="mx-auto w-[90%] mt-4 space-y-5 text-gray-700">
+            {/* Bio */}
+            <div className="flex items-start gap-3">
+              <Info className="w-5 h-5 text-gray-500 flex-shrink-0 mt-1" />
+              <p className="text-sm leading-snug">
+                {pageInfo?.bio || "No bio provided."}
               </p>
             </div>
-            <div className="w-full flex flex-row gap-5 md:gap-2 lg:my-5 lg:gap-2 xl:my-10">
-              <MapPin className="w-[10%] h-full self-center md:p-3 lg:p-0" />
-              <p className="text-sm md:text-lg lg:text-sm self-center w-[90%]">
-                Bula, Camarines Sur
+
+            {/* Location */}
+            <div className="flex items-start gap-3">
+              <MapPin className="w-5 h-5 text-gray-500 flex-shrink-0 mt-1" />
+              <p className="text-sm leading-snug">
+                {pageInfo?.location || "No location specified."}
               </p>
             </div>
-            <div className="w-full flex flex-row gap-5 md:gap-2 lg:my-5 lg:gap-2 xl:my-10">
-              <Mail className="w-[10%] h-full self-center md:p-3 lg:p-0" />
-              <p className="text-sm md:text-lg lg:text-sm self-center w-[90%] italic underline">
-                bmyouthofficials@gmail.com
+
+            {/* Email */}
+            <div className="flex items-start gap-3">
+              <Mail className="w-5 h-5 text-gray-500 flex-shrink-0 mt-1" />
+              <p className="text-sm leading-snug italic underline text-blue-700 break-words">
+                {pageInfo?.emails?.length
+                  ? pageInfo.emails.join(", ")
+                  : "No email address provided."}
               </p>
             </div>
-            <div className="w-full flex flex-row gap-5 md:gap-2 lg:my-5 lg:gap-2 xl:my-10">
-              <Phone className="w-[10%] h-full self-center md:p-3 lg:p-0" />
-              <p className="text-sm md:text-lg lg:text-sm self-center w-[90%] italic underline">
-                +639001118392
+
+            {/* Phone */}
+            <div className="flex items-start gap-3">
+              <Phone className="w-5 h-5 text-gray-500 flex-shrink-0 mt-1" />
+              <p className="text-sm leading-snug italic underline text-blue-700 break-words">
+                {pageInfo?.phone || "No phone number assigned yet."}
               </p>
             </div>
           </div>
         </div>
+
 
         {/* Tabs */}
         <div className="flex flex-row w-[70%] gap-0.5 mt-10 self-center text-center lg:hidden">

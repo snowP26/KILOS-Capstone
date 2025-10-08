@@ -53,20 +53,55 @@ export const locColumns: ColumnDef<Users>[] = [
                     Created At
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
-            )
+            );
+        },
+        cell: ({ row }) => {
+            const rawDate = row.getValue("youth_created_at") as Date;
+            if (rawDate) {
+                const formattedDate = new Date(rawDate).toLocaleString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                });
+                return <span>{formattedDate}</span>;
+            }
+            return <span>-</span>
         },
     },
     {
         accessorKey: "firstname",
-        header: () => <div className="text-center">First Name</div>
-    },
+        header: () => <div className="text-center">First Name</div>,
+        cell: ({ row }) => {
+            const firstname = row.getValue("firstname") as string;
 
+            if (!firstname) {
+                return (
+                    <span className="text-gray-400 italic">
+                        Registration code has not been assigned
+                    </span>
+                );
+            }
+
+            return <span>{firstname || "-"}</span>;
+        },
+    },
     {
         accessorKey: "lastname",
-        header: () => <div className="text-center">Last Name</div>
+        header: () => <div className="text-center">Last Name</div>,
+        cell: ({ row }) => {
+            const lastname = row.getValue("lastname") as string;
+
+            if (!lastname) {
+                return <span>-</span>; 
+            }
+
+            return <span>{lastname || "-"}</span>;
+        },
     },
     {
-        accessorKey:"registration_code",
+        accessorKey: "registration_code",
         header: () => <div className="text-center">Registration Code</div>
     },
     {
