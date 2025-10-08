@@ -206,7 +206,7 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
 
                 {/* Show question mark only if there are events */}
                 {dayEvents.length > 0 && (
-                  <span className="hidden sm:block w-4 h-4 text-red-500" title="Events present">?</span>
+                  <span className="hidden sm:block md:hidden lg:block xl:hidden w-4 h-4 text-red-500" title="Events present">?</span>
                 )}
               </div>
 
@@ -217,14 +217,14 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
               )}
 
               {dayEvents.length > 0 && (
-                <div className="hidden mb-7 md:absolute md:left-2 md:right-2 md:bottom-2 md:flex md:flex-col md:gap-1 ">
-                  {dayEvents.slice(0, 2).map((ev) => (
+                <div className="hidden mb-7 md:absolute md:left-2 md:right-2 md:top-8 md:flex md:flex-col md:gap-1 lg:top-10">
+                  {dayEvents.slice(0, 1).map((ev) => (
                     <div key={ev.id} className="lg:hidden xl:block truncate text-xs font-medium rounded px-1 py-0.5 bg-purple-500 text-white max-w-full">
                       {ev.header}
                     </div>
                   ))}
-                  {dayEvents.length > 2 && (
-                    <div className="text-xs text-gray-500">+{dayEvents.length - 2} more</div>
+                  {dayEvents.length > 1 && (
+                    <div className="lg:hidden xl:block text-xs text-gray-500">+{dayEvents.length - 1} more</div>
                   )}
                 </div>
               )}
@@ -283,7 +283,7 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
           <div className="mb-4 flex w-full flex-wrap items-center justify-between gap-6">
             <div className="flex flex-wrap gap-2 sm:gap-3">
               <Select name="month" value={`${selectedMonth}`} options={monthOptions} onChange={handleMonthChange} />
-              <button onClick={handleTodayClick} type="button" className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-900 hover:bg-gray-100 lg:px-5 lg:py-2.5">
+              <button onClick={handleTodayClick} type="button" className="cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-900 hover:bg-gray-100 lg:px-5 lg:py-2.5">
                 Today
               </button>
               {/* <button type="button" className="whitespace-nowrap rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 px-3 py-1.5 text-center text-sm font-medium text-white hover:bg-gradient-to-bl focus:outline-none focus:ring-4 focus:ring-cyan-300 sm:rounded-xl lg:px-5 lg:py-2.5">
@@ -326,8 +326,8 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
           {generateCalendar}
         </div>
       </ScrollArea> */}
-        
-          <div className="w-full min-w-50 h-full pt-4 sm:px-8 sm:pt-6">{generateCalendar}</div>
+
+        <div className="w-full min-w-50 h-full pt-4 sm:px-8 sm:pt-6">{generateCalendar}</div>
       </div>
 
 
