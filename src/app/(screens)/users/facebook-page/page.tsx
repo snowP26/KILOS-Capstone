@@ -179,7 +179,7 @@ export default function FacebookPage() {
           {/* Page Name */}
           <div className="text-center px-4">
             <p className="text-xl font-semibold mt-4 text-gray-800">
-              {pageInfo?.name || "Page Name Unavailable"}
+              {pageInfo?.name || "Loading..."}
             </p>
             <hr className="border-t border-gray-300 w-[80%] mx-auto mt-3" />
           </div>
@@ -318,11 +318,6 @@ export default function FacebookPage() {
                         <NavigationMenuContent className="bg-[#E6F1FF]">
                           <ul className="grid w-[80px] gap-3">
                             <li>
-                              <NavigationMenuLink asChild>
-                                <p className="hover:bg-blue-900 hover:text-white text-center">
-                                  Edit
-                                </p>
-                              </NavigationMenuLink>
                               <NavigationMenuLink asChild>
                                 <p className="hover:bg-blue-900 hover:text-white text-center">
                                   Delete

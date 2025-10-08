@@ -9,7 +9,7 @@ import { getLocFromAuth } from '@/src/app/actions/convert';
 
 export default function CommunityFeedback() {
 
-  const [feedback, setFeedback] = useState<commFeedback[]>()
+  const [feedback, setFeedback] = useState<commFeedback[]>([])
 
   useEffect(() => {
     const fetchFeedbackData = async () => {
@@ -34,8 +34,8 @@ export default function CommunityFeedback() {
 
       <div className="mx-25">
         <div className="flex flex-wrap justify-center">
-          {
-            feedback?.map((data) => (
+          { feedback.length > 0 ?
+            feedback.map((data) => (
               <FeedbackCard
                 key={data.id}
                 feedbackID={data.id}
@@ -52,7 +52,11 @@ export default function CommunityFeedback() {
                   })}
                 isWhite={true}
               />
-            ))
+            )) : (
+<p className="text-gray-500 italic text-center mt-10">
+            No feedback entries available yet.
+          </p>
+            )
           }
         </div>
       </div>
