@@ -14,7 +14,7 @@ export default function Ordinances() {
   const fetchData = async () => {
     const data = await getPendingOrdinances();
     if (data) return setOrdinances(data);
-    return console.log("No ordinance was found");
+
   };
 
   useEffect(() => {

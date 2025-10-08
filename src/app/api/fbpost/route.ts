@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import { getLocFromAuth } from "../../actions/convert";
+
 import client from "@/src/api/client";
 
 export async function POST(req: Request) {

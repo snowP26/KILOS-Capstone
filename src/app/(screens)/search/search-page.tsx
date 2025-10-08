@@ -23,7 +23,6 @@ export default function SearchPage() {
 
       const data = await searchData(query, loc);
       setResults(data ?? []);
-      console.log("Results: ", data);
     };
 
     fetchData();

@@ -52,8 +52,8 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-[#E6F1FF] flex flex-col lg:flex lg:flex-row lg:h-[100vh] lg:mx-5">
-      <div className="mt-5 h-[80%] lg:rounded-2xl lg:border-black lg:border-2 lg:w-[20%]">
+    <div className="bg-[#E6F1FF] flex flex-col lg:flex lg:flex-row lg:h-full lg:mx-5">
+      <div className="mt-5 h-50 sm:h-70 lg:h-200 xl:h-185 lg:rounded-2xl lg:border-black lg:border-2 lg:w-[20%]">
         <p className="font-bold text-3xl lg:text-xl xl:text-3xl text-center mt-5 mb-3">Recent Feedback</p>
         <ScrollArea className="h-[85%]">
           <div className="max-h-[350px] sm:h-auto lg:max-h-[570px]">
@@ -148,7 +148,7 @@ export default function Home() {
 
       </div>
 
-      <div className="mt-10 w-[90%] self-center lg:w-[90%] lg:mt-0 lg:self-start">
+      <div className="mt-10 w-[90%] self-center lg:w-[80%] lg:mt-0 lg:self-start">
         <DbCalendarCard />
       </div>
     </div>

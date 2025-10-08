@@ -25,7 +25,7 @@ export const getCodeData = async (code: string) => {
 
   if (data) {
     console.log("Successfully fetched registration code data.");
-    return data.user_type;
+    return data.role;
   }
 }
 
@@ -87,9 +87,9 @@ export const registerUser = async (
       email: email,
       firstname: firstName,
       lastname: lastName,
-      position: posData[0].position_name,
-      role: posData[0].user_type,
-      location: posData[0].location_id,
+      position: posData[0].position,
+      role: posData[0].role,
+      location: posData[0].location,
     },
   ]);
 
@@ -104,9 +104,9 @@ export const registerUser = async (
       data: {
         first_name: firstName,
         last_name: lastName,
-        position: posData[0].position_name,
-        role: posData[0].user_type,
-        location: posData[0].location_id,
+        position: posData[0].position,
+        role: posData[0].role,
+        location: posData[0].location,
       },
       emailRedirectTo: "http://localhost:3000/login",
     },
@@ -182,11 +182,15 @@ export const handleLogin = async (e: FormEvent<HTMLFormElement>, router: AppRout
     password: form.password
   })
 
-  if (error) {
-    console.log("Error with login: ", error);
-    console.log(form.email, form.password)
-    return
-  }
+if (error) {
+  Swal.fire({
+    icon: "error",
+    title: "Login Failed",
+    text: error.message, 
+    confirmButtonColor: "#052659", // optional styling
+  });
+  return;
+}
 
 
   const user = data.user

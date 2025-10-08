@@ -17,10 +17,11 @@ export const locNameToID = async (loc: string) => {
   const { data, error } = await client
     .from("location")
     .select("id")
-    .eq("name", loc.trim());
+    .ilike("name", loc.trim());
 
   if (error || data == null) {
-    return console.log("Data not found: ", error);
+    console.log("Data not found: ", error);
+    return 0
   }
 
   return data[0].id as number;
@@ -76,7 +77,7 @@ export const authorIDtoName = async (id: number) => {
 
 export const authorEmailToInfo = async (email: string) => {
   const { data, error } = await client
-    .from("youth_official") // adjust table name if different
+    .from("youth_official")
     .select("firstname, lastname, position, role")
     .eq("email", email.trim())
     .maybeSingle()
@@ -123,6 +124,18 @@ export const getUserID = async (): Promise<string> => {
 };
 
 export const getDisplayName = (fileName: string) => {
-    const parts = fileName.split("_");
-    return parts.length > 2 ? parts.slice(2).join("_") : fileName;
-  };
+  const parts = fileName.split("_");
+  return parts.length > 2 ? parts.slice(2).join("_") : fileName;
+};
+
+
+export const yoEmailtoID = async (email: string) => {
+  const { data, error } = await client.from("youth_official").select("id").eq("email", email).single();
+
+  if (error) {
+    console.error("Error fetching youth official ID:", error);
+    return null;
+  }
+
+  return data ? data.id : null;
+}

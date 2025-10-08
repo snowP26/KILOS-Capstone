@@ -1,62 +1,69 @@
-import { SideBar } from "../../components/superadmin/sideBar"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
+'use client';
 
+import { Button } from '@/components/ui/button'
+import { MapPin } from "lucide-react"
+import { useRouter } from 'next/navigation'
+import { useUserRole } from '../../actions/role';
+import Link from 'next/link';
 
-export default async function SAPage() {
+export default function SAPage() {
+  const router = useRouter();
+  const { role } = useUserRole();
+
+  if (role !== "superadmin") {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#1D1A1A] text-center px-6">
+        <h1 className="text-2xl font-semibold text-white mb-4">
+          Access Denied
+        </h1>
+        <p className="text-gray-400 mb-6">
+          You don’t have permission to view this page.
+        </p>
+        <Link href="/">
+          <Button className="bg-[#1D1A1A] text-[#C1E8FF] border border-[#2A2727] rounded-xl shadow-sm hover:bg-[#2A2727] hover:text-white transition-all">
+            Return Home
+          </Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
-    <SidebarProvider>
-      <SideBar />
-      <SidebarInset>
-        <header className="flex h-15 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink className="hover:text-gray-500 cursor-default">
-                    Manage Positions and Locations
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>...</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      <div className="absolute top-6 right-8 text-3xl font-extrabold tracking-wide text-[#C5EEEF] drop-shadow-lg">
+        KILOS
+      </div>
+      <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl p-10 w-full max-w-3xl text-center border border-white/20">
+        <h1 className="text-2xl font-bold text-white mb-8 tracking-wide">
+          Select a Location
+        </h1>
 
-        <hr className="border-t border-black w-full mx-auto my-3" />
+        <div className="flex flex-wrap justify-center gap-6">
+          <Button
+            className="cursor-pointer flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition-all"
+            onClick={() => router.push(`superadmin/locations/naga-city`)}
+          >
+            <MapPin className="h-5 w-5" />
+            Naga City
+          </Button>
 
-        {/* SKELETON */}
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="bg-muted/100 aspect-video rounded-xl" />
-            <div className="bg-muted/100 aspect-video rounded-xl" />
-            <div className="bg-muted/100 aspect-video rounded-xl" />
-          </div>
-          <div className="bg-muted/100 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
+          <Button
+            className="cursor-pointer flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition-all"
+            onClick={() => router.push(`superadmin/locations/bula`)}
+          >
+            <MapPin className="h-5 w-5" />
+            Bula
+          </Button>
+
+          <Button
+            className="cursor-pointer flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-4 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition-all"
+            onClick={() => router.push(`superadmin/locations/pili`)}
+          >
+            <MapPin className="h-5 w-5" />
+            Pili
+          </Button>
         </div>
-
-      </SidebarInset>
-    </SidebarProvider>
+      </div>
+    </div>
   )
 }

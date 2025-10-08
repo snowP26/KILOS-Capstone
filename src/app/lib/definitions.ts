@@ -1,3 +1,4 @@
+import { StringOrTemplateHeader } from "@tanstack/react-table";
 import { UUID } from "crypto";
 
 type AnnouncementType =
@@ -120,7 +121,7 @@ export type homeFeedback = {
 
 export type project = {
     id: number,
-    location_id: number,
+    location: number,
     author: number,
     created_at: string,
     title: string,
@@ -131,7 +132,7 @@ export type project = {
     budget: number,
 }
 
-export type project_approvals = { 
+export type project_approvals = {
     id: number,
     project_id: number,
     recipient: string,
@@ -156,4 +157,28 @@ export type fbPosts = {
     id: number,
     message: string,
     created_time: string,
+}
+
+export type Meetings = {
+    id: number;
+    created_at: string;
+    date: string;
+    host_id: string;
+    header: string;
+    details: string;
+    modality: "Online" | "Onsite" | "Hybrid";
+    users?: {
+        firstname: string;
+        lastname: string;
+    };
+}
+
+export type pageDetails = {
+    id: string,
+    name: string,
+    about: string,
+    bio: string,
+    emails: string[],
+    phone: string,
+    location: string
 }
