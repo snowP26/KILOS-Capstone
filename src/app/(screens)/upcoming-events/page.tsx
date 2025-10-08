@@ -9,16 +9,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { ArrowLeft, Search } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableFooter,
-    TableRow,
-} from "@/components/ui/table";
 
 import {
     Breadcrumb,
