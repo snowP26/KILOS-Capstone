@@ -1,3 +1,4 @@
+import { StringOrTemplateHeader } from "@tanstack/react-table";
 import { UUID } from "crypto";
 
 type AnnouncementType =
@@ -170,4 +171,14 @@ export type Meetings = {
         firstname: string;
         lastname: string;
     };
+}
+
+export type pageDetails = {
+    id: string,
+    name: string,
+    about: string,
+    bio: string,
+    emails: string[],
+    phone: string,
+    location: string
 }

@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { CirclePlus } from "lucide-react"
+import { Circle, CirclePlus } from "lucide-react"
 
 import {
     ColumnDef,
@@ -42,11 +42,13 @@ import Swal from "sweetalert2"
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    onPositionAdded?: () => void;
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
+    onPositionAdded
 }: DataTableProps<TData, TValue>) {
     const router = useRouter()
     const [isDialogOpen, setIsDialogOpen] = React.useState(false)
@@ -93,9 +95,9 @@ export function DataTable<TData, TValue>({
                 text: `${positionTitle} (${positionRole}) has been successfully created. Please refresh the page.`,
                 timer: 1250
             })
-                setIsDialogOpen(false)
-                form.reset()
-
+            setIsDialogOpen(false)
+            form.reset()
+            onPositionAdded?.();
         } catch (error) {
             Swal.fire({
                 icon: "error",
@@ -120,12 +122,63 @@ export function DataTable<TData, TValue>({
                 />
                 <div className="flex flex-row items-center">
                     <div className="flex items-center py-4">
-                        <Button variant="outline" className="bg-[#1D1A1A] text-white cursor-pointer ml-auto mr-5 lg:ml-auto">
-                            <div className="flex flex-row gap-2 items-center">
-                                <CirclePlus />
-                                <p>Add a Position</p>
-                            </div>
-                        </Button>
+                        <div className="flex flex-row gap-2 items-center">
+                            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                                <DialogTrigger asChild>
+                                    <Button variant="outline" className="cursor-pointer bg-[#1D1A1A] text-white ml-auto mr-5 lg:ml-auto">
+                                        <CirclePlus />
+                                        Add Position
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogTitle>
+                                        Create Role
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                        Generate a registration code for the users.
+                                    </DialogDescription>
+                                    <form className="space-y-4 mt-4" onSubmit={handleSubmit}>
+                                        {/* Position Title */}
+                                        <div className="flex flex-col text-left">
+                                            <label htmlFor="positionTitle" className="text-sm font-medium">
+                                                Position Title
+                                            </label>
+                                            <input
+                                                id="positionTitle"
+                                                name="positionTitle"
+                                                type="text"
+                                                placeholder="Enter position title"
+                                                className="border border-gray-300 rounded-md px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+
+                                        {/* Position Role */}
+                                        <div className="flex flex-col text-left">
+                                            <label htmlFor="positionRole" className="text-sm font-medium">
+                                                Position Role
+                                            </label>
+                                            <select
+                                                id="positionRole"
+                                                name="positionRole"
+                                                className="border border-gray-300 rounded-md px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            >
+                                                <option value="Legislative">Legislative</option>
+                                                <option value="Executive">Executive</option>
+                                                <option value="Treasurer">Treasurer</option>
+                                                <option value="Admin">Admin</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Submit Button */}
+                                        <div className="flex justify-end">
+                                            <Button type="submit" className="cursor-pointer">
+                                                Save
+                                            </Button>
+                                        </div>
+                                    </form>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
                     </div>
                     <DropdownMenu >
                         <DropdownMenuTrigger asChild>
@@ -203,60 +256,7 @@ export function DataTable<TData, TValue>({
                 </Table>
             </div>
             <div className="flex items-center justify-between py-4">
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button className="cursor-pointer">
-                            Add Position
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogTitle>
-                            Create Role
-                        </DialogTitle>
-                        <DialogDescription>
-                            Generate a registration code for the users.
-                        </DialogDescription>
-                        <form className="space-y-4 mt-4" onSubmit={handleSubmit}>
-                            {/* Position Title */}
-                            <div className="flex flex-col text-left">
-                                <label htmlFor="positionTitle" className="text-sm font-medium">
-                                    Position Title
-                                </label>
-                                <input
-                                    id="positionTitle"
-                                    name="positionTitle"
-                                    type="text"
-                                    placeholder="Enter position title"
-                                    className="border border-gray-300 rounded-md px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                            </div>
 
-                            {/* Position Role */}
-                            <div className="flex flex-col text-left">
-                                <label htmlFor="positionRole" className="text-sm font-medium">
-                                    Position Role
-                                </label>
-                                <select
-                                    id="positionRole"
-                                    name="positionRole"
-                                    className="border border-gray-300 rounded-md px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                >
-                                    <option value="Legislative">Legislative</option>
-                                    <option value="Executive">Executive</option>
-                                    <option value="Treasurer">Treasurer</option>
-                                    <option value="Admin">Admin</option>
-                                </select>
-                            </div>
-
-                            {/* Submit Button */}
-                            <div className="flex justify-end">
-                                <Button type="submit" className="cursor-pointer">
-                                    Save
-                                </Button>
-                            </div>
-                        </form>
-                    </DialogContent>
-                </Dialog>
 
 
                 <div className="flex items-center space-x-2">
