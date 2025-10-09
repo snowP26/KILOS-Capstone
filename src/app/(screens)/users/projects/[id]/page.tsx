@@ -25,26 +25,45 @@ export default function ViewProject() {
     const projectID = Number(slug.split("-").pop());
     const router = useRouter();
     const [project, setProject] = useState<project | null>(null);
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         const fetchProject = async () => {
-            console.log(projectID)
-            const data = await getProjectByID(projectID);
-            console.log("fetched:", data);
-            setProject(data);
+            setLoading(true)
+            try {
+                console.log(projectID)
+                const data = await getProjectByID(projectID);
+                console.log("fetched:", data);
+                setProject(data);
+            } finally {
+                setLoading(false)
+            }
+
         };
         fetchProject();
     }, [projectID]);
 
-    useEffect(() => {
-        if (project) {
-            console.log("project updated:", project);
-        }
-    }, [project]);
+
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen bg-[#F9FBFF] text-center px-5">
+                <div className="w-10 h-10 border-4 border-[#052659] border-t-transparent rounded-full animate-spin mb-4"></div>
+
+
+                <h1 className="text-lg font-semibold text-gray-700">
+                    Loading project details...
+                </h1>
+                <p className="text-sm text-gray-500 mt-1">
+                    Please wait while we fetch your data.
+                </p>
+            </div>
+        );
+    }
 
     if (!project) {
         return <h1>Not found</h1>
     }
+
 
     return (
         <div className="min-h-screen max-h-full mt-10">
@@ -129,5 +148,6 @@ export default function ViewProject() {
 
             </div>
 
-        </div>)}
+        </div>)
+}
 
