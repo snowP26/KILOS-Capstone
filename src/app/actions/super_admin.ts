@@ -34,7 +34,7 @@ export const createNewCode = async (loc: number, position: string, role: string)
     const { data, error } = await client.from("positions").insert([{
         position: position,
         role: role,
-        location: loc
+            location: loc
     }])
 
     if(error){
