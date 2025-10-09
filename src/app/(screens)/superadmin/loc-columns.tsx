@@ -18,7 +18,7 @@ export type Users = {
     created_at: string
     firstname: string
     lastname: string
-    position_name: string
+    position_title: string
     position_role: string
     email: string
     registration_code: string
@@ -105,7 +105,7 @@ export const locColumns: ColumnDef<Users>[] = [
         header: () => <div className="text-center">Registration Code</div>
     },
     {
-        accessorKey: "position_name",
+        accessorKey: "position_title",
         header: () => <div className="text-center">Position</div>
     },
     {
