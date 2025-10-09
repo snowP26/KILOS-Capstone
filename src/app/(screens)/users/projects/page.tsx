@@ -76,7 +76,7 @@ export default function Projects() {
             <div className="bg-[#E6F1FF] min-h-screen max-h-full">
                 <p className="font-bold text-3xl m-10">Current Projects</p>
                 <div className="flex flex-wrap justify-center gap-5">
-                    {projects?.map((data) => (
+                    {projects && projects.length > 0 ? projects?.map((data) => (
                         <div
                             onClick={() => router.push(`/users/projects/${data.title}-${data.id}`)}
                             key={data.id}
@@ -88,7 +88,19 @@ export default function Projects() {
                                 imgURL={data.imageURL}
                             />
                         </div>
-                    ))}
+                    )) : (
+                        <div className="flex flex-col items-center justify-center w-full py-16 px-6 text-center text-gray-600">
+                            <p className="text-lg sm:text-xl font-semibold italic text-[#052659]">
+                                No approved projects yet
+                            </p>
+                            <p className="text-sm sm:text-base text-gray-500 mt-2 max-w-md">
+                                Once projects are approved, they’ll appear here automatically.
+                                You can check back later or propose a new one.
+                            </p>
+                        </div>
+                    )
+
+                    }
                 </div>
             </div>
         );
@@ -158,9 +170,9 @@ export default function Projects() {
 
                     <div className="w-full my-4">
                         <div className="flex flex-wrap justify-center gap-5 lg:gap-3 xl:gap-5">
-                            {projects?.map((data) => (
+                            {projects && projects.length > 0 ? projects?.map((data) => (
                                 <div
-                                    onClick={() => router.push(`/users/projects/${(data.title).trim()}-${data.id}`)}
+                                    onClick={() => router.push(`/users/projects/${data.title}-${data.id}`)}
                                     key={data.id}
                                 >
                                     <ProjectCard
@@ -170,7 +182,19 @@ export default function Projects() {
                                         imgURL={data.imageURL}
                                     />
                                 </div>
-                            ))}
+                            )) : (
+                                <div className="flex flex-col items-center justify-center w-full py-16 px-6 text-center text-gray-600">
+                                    <p className="text-lg sm:text-xl font-semibold italic text-[#052659]">
+                                        No approved projects yet
+                                    </p>
+                                    <p className="text-sm sm:text-base text-gray-500 mt-2 max-w-md">
+                                        Once projects are approved, they’ll appear here automatically.
+                                        You can check back later or propose a new one.
+                                    </p>
+                                </div>
+                            )
+
+                            }
                         </div>
                     </div>
                 </div>
@@ -314,7 +338,7 @@ export default function Projects() {
                             Proposed Projects
                         </p>
                         <div className="flex flex-col gap-4">
-                            {proposedProjects?.map((data) => (
+                            {proposedProjects && proposedProjects.length > 0 ? proposedProjects?.map((data) => (
                                 <div
                                     onClick={() =>
                                         router.push(`/users/projects/proposed-project/${(data.title).trim()}-${data.id}`)
@@ -325,7 +349,11 @@ export default function Projects() {
                                     <ProposedProjCard Title={data.title} Description={data.description} Status={data.status} PhotoURL={data.imageURL} />
                                 </div>
 
-                            ))
+                            )) : (
+                                <p className="text-gray-500 italic text-center mt-5">
+                                    No proposed projects available yet.
+                                </p>
+                            )
 
                             }
                         </div>

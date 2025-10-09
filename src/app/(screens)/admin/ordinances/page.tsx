@@ -35,9 +35,9 @@ export default function Ordinances() {
         <div
             key={data.id}
           className="bg-white rounded-[8px] border drop-shadow-lg p-5 mx-5 lg:mx-30 mb-3 cursor-pointer hover:shadow-xl transition-all hover:border-blue-300"
-          onClick={() => router.push(`/admin/ordinances/${data.title}`)}
+          onClick={() => router.push(`/admin/ordinances/${data.id}`)}
         >
-          <p className="font-semibold text-2xl">Ordinance {data.title}</p>
+          <p className="font-semibold text-2xl">{data.title}</p>
           <p className="max-w-350 truncate text-sm overflow-clip pt-2">
             {data.description}
           </p>

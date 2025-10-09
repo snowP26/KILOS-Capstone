@@ -338,7 +338,7 @@ export const getPendingOrdinanceFile = async (ordinanceID: number | undefined) =
     .single();
 
   if (fileError || !ordinanceFileData?.file_path) {
-    console.log("No file path found for this ordinance.");
+
     return null;
   }
 

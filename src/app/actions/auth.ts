@@ -47,7 +47,8 @@ export const checkCode = async (code: string) => {
 
 export const registerUser = async (
   regData: users,
-  router: AppRouterInstance
+  router: AppRouterInstance,
+  clearFields: () => void
 ) => {
   const { email, password, firstName, lastName, regCode } = regData;
   const userType = await checkCode(regCode);
@@ -108,7 +109,7 @@ export const registerUser = async (
         role: posData[0].role,
         location: posData[0].location,
       },
-      emailRedirectTo: "http://localhost:3000/login",
+      emailRedirectTo: "https://kilos-capstone.vercel.app/",
     },
 
   });
@@ -123,6 +124,7 @@ export const registerUser = async (
     return console.log("error: ", error);
   }
   router.push("/login");
+  clearFields();
   return successPopup();
 };
 
@@ -187,7 +189,7 @@ if (error) {
     icon: "error",
     title: "Login Failed",
     text: error.message, 
-    confirmButtonColor: "#052659", // optional styling
+    confirmButtonColor: "#052659", 
   });
   return;
 }
@@ -204,8 +206,8 @@ if (error) {
       router.push("/users/home")
       console.log(role)
       break
-    case "admin":
-      router.push("/admin")
+    case "Admin":
+      router.push("/admin/home")
       console.log(role)
       break
     case "superadmin":
