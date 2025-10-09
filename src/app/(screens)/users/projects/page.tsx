@@ -21,12 +21,25 @@ import { Textarea } from "@/components/ui/textarea";
 import { ImagePlus } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-
 export default function Projects() {
-
     const router = useRouter();
-    const [projects, setProjects] = useState<project[] | null>(null);
-    const [proposedProjects, setProposedProjects] = useState<project[] | null>(null);
+    const [projects, setProjects] = useState<project[]>([]);
+    const [proposedProjects, setProposedProjects] = useState<project[]>([]);
+    const [currentProjectsPage, setCurrentProjectsPage] = useState(1);
+    const [currentProposedPage, setCurrentProposedPage] = useState(1);
+    const pageSize = 4;
+
+    const totalProjectsPages = Math.ceil(projects.length / pageSize);
+    const totalProposedPages = Math.ceil(proposedProjects.length / pageSize);
+
+    const paginatedProjects = projects.slice(
+        (currentProjectsPage - 1) * pageSize,
+        currentProjectsPage * pageSize
+    );
+    const paginatedProposedProjects = proposedProjects.slice(
+        (currentProposedPage - 1) * pageSize,
+        currentProposedPage * pageSize
+    );
 
     const [file, setFile] = useState<File | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -38,8 +51,8 @@ export default function Projects() {
         const fetchData = async () => {
             const data = await getProjects();
             const proposed = await getProposedProjects();
-            setProjects(data ?? null);
-            setProposedProjects(proposed ?? null)
+            setProjects(data ?? []);
+            setProposedProjects(proposed ?? []);
         };
 
         if (!isDialogOpen) {
@@ -49,15 +62,13 @@ export default function Projects() {
 
     if (loading) {
         return (
-            <main className="p-5 bg-[#E6F1FF] min-h-screen">
-                <p className="font-bold text-3xl mb-5">Loading Projects...</p>
-
-                {/* Skeleton cards */}
-                <div className="flex flex-wrap justify-center gap-5">
-                    {[...Array(3)].map((_, i) => (
+            <main className="p-6 bg-[#E6F1FF] min-h-screen flex flex-col items-center">
+                <p className="font-bold text-3xl mb-8">Loading Projects...</p>
+                <div className="flex flex-wrap justify-center gap-6">
+                    {[...Array(4)].map((_, i) => (
                         <div
                             key={i}
-                            className="flex flex-col items-center w-72 h-100 bg-white rounded-lg shadow-md p-4"
+                            className="flex flex-col items-center w-72 h-60 bg-white rounded-lg shadow-md p-4"
                         >
                             <Skeleton className="h-32 w-full rounded-md mb-3" />
                             <Skeleton className="h-5 w-3/4 mb-2" />
@@ -76,103 +87,89 @@ export default function Projects() {
             <div className="bg-[#E6F1FF] min-h-screen max-h-full">
                 <p className="font-bold text-3xl m-10">Current Projects</p>
                 <div className="flex flex-wrap justify-center gap-5">
-                    {projects && projects.length > 0 ? projects?.map((data) => (
-                        <div
-                            onClick={() => router.push(`/users/projects/${data.title}-${data.id}`)}
-                            key={data.id}
-                        >
-                            <ProjectCard
-                                title={data.title}
-                                status={data.status}
-                                date={data.target_date}
-                                imgURL={data.imageURL}
-                            />
-                        </div>
-                    )) : (
+                    {paginatedProjects.length > 0 ? (
+                        paginatedProjects.map((project) => (
+                            <div
+                                key={project.id}
+                                onClick={() =>
+                                    router.push(`/admin/projects/${project.title}-${project.id}`)
+                                }
+                                className="cursor-pointer"
+                            >
+                                <ProjectCard
+                                    title={project.title}
+                                    status={project.status}
+                                    imgURL={project.imageURL}
+                                    date={project.target_date}
+                                />
+                            </div>
+                        ))
+                    ) : (
                         <div className="flex flex-col items-center justify-center w-full py-16 px-6 text-center text-gray-600">
                             <p className="text-lg sm:text-xl font-semibold italic text-[#052659]">
                                 No approved projects yet
                             </p>
                             <p className="text-sm sm:text-base text-gray-500 mt-2 max-w-md">
                                 Once projects are approved, they’ll appear here automatically.
-                                You can check back later or propose a new one.
                             </p>
                         </div>
-                    )
-
-                    }
+                    )}
                 </div>
+
+                {totalProjectsPages > 1 && (
+                    <div className="flex justify-center items-center gap-2 mt-8 mb-10">
+                        <button
+                            className="px-4 py-2 cursor-pointer rounded-md border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={() =>
+                                setCurrentProjectsPage((p) => Math.max(p - 1, 1))
+                            }
+                            disabled={currentProjectsPage === 1}
+                        >
+                            Previous
+                        </button>
+
+                        {[...Array(totalProjectsPages)].map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setCurrentProjectsPage(i + 1)}
+                                className={`px-3 py-1.5 rounded-md text-sm font-semibold ${currentProjectsPage === i + 1
+                                        ? "bg-[#052659] text-white border border-[#052659]"
+                                        : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 cursor-pointer"
+                                    }`}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+
+                        <button
+                            className="px-4 py-2 cursor-pointer rounded-md border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={() =>
+                                setCurrentProjectsPage((p) =>
+                                    Math.min(p + 1, totalProjectsPages)
+                                )
+                            }
+                            disabled={currentProjectsPage === totalProjectsPages}
+                        >
+                            Next
+                        </button>
+                    </div>
+                )}
             </div>
         );
     } else if (normalizedRole === "executive") {
         content = (
             <div className="flex flex-col lg:flex-row bg-[#E6F1FF] min-h-screen max-h-full">
+                {/* Projects Section */}
                 <div className="w-full lg:w-[70%] xl:w-[80%] flex flex-col items-center lg:items-start">
-                    <p className="hidden lg:block font-bold text-3xl m-10">Current Projects</p>
+                    <p className="font-bold text-3xl m-10">Current Projects</p>
 
-                    <p className="lg:hidden font-bold text-3xl mt-5 mx-10">Current Projects</p>
-
-
-                    <hr className="border-t border-gray-400 w-[90%] mx-auto my-2 lg:hidden" />
-
-                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                        <DialogTrigger onClick={() => setIsDialogOpen(true)} asChild>
-                            <Button className="w-[90%] lg:w-full my-2 bg-[#93C2FF] text-black cursor-pointer py-1 px-3 rounded-md font-semibold hover:bg-black hover:text-[#93C2FF] lg:hidden">
-                                Propose a Project
-                            </Button>
-                        </DialogTrigger>
-
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle className="text-3xl mt-5">
-                                    Submitted Documents
-                                </DialogTitle>
-                                <DialogDescription>
-                                    Review and upload the required project proposal documents.
-                                </DialogDescription>
-                                <div className="flex h-[150px] mt-3 items-center justify-center rounded-md border border-dashed border-gray-400 text-sm cursor-pointer hover:bg-gray-100">
-                                    <div className="flex flex-row gap-2">
-                                        <div className="bg-gray-300 rounded-full w-10 h-10 flex items-center justify-center"></div>
-                                        <div className="flex flex-col">
-                                            <div className="flex flex-row gap-1">
-                                                <p className="font-semibold">Drop your Project File</p>
-                                                <p className="text-[#3B4EFF] font-semibold underline">
-                                                    Browse
-                                                </p>
-                                            </div>
-                                            <p className="text-gray-500 text-xs">.PDF only</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="bg-[#E6F1FF] flex flex-row h-10 items-center w-full rounded-md px-2 space-x-2">
-                                    {/* Filename */}
-                                    <p className="italic text-sm truncate flex-grow max-w-[50%]">
-                                        ProjectFile.pdf
-                                    </p>
-                                    {/* Progress Bar */}
-                                    <div className="flex-grow"></div>
-                                </div>
-
-                                <div className="bg-[#E6F1FF] flex flex-row h-10 items-center w-full rounded-md px-2 space-x-2"></div>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
-
-                    <div className="mt-5 flex flex-row gap-0.5 lg:hidden">
-                        <div className="bg-[#052659] text-white shadow-md shadow-gray-400 p-2 rounded-tl-2xl rounded-bl-2xl">
-                            <p>Current Projects</p>
-                        </div>
-                        <div className="bg-[#052659] opacity-60 text-gray-400 shadow-lg shadow-blue-800/40 p-2 rounded-tr-2xl rounded-br-2xl">
-                            <p>Proposed Projects</p>
-                        </div>
-                    </div>
-
-                    <div className="w-full my-4">
-                        <div className="flex flex-wrap justify-center gap-5 lg:gap-3 xl:gap-5">
-                            {projects && projects.length > 0 ? projects?.map((data) => (
+                    <div className="flex flex-wrap justify-center gap-5">
+                        {projects.length > 0 ? (
+                            paginatedProjects.map((data) => (
                                 <div
-                                    onClick={() => router.push(`/users/projects/${data.title}-${data.id}`)}
+                                    onClick={() =>
+                                        router.push(`/users/projects/${data.title}-${data.id}`)
+                                    }
                                     key={data.id}
                                 >
                                     <ProjectCard
@@ -182,29 +179,25 @@ export default function Projects() {
                                         imgURL={data.imageURL}
                                     />
                                 </div>
-                            )) : (
-                                <div className="flex flex-col items-center justify-center w-full py-16 px-6 text-center text-gray-600">
-                                    <p className="text-lg sm:text-xl font-semibold italic text-[#052659]">
-                                        No approved projects yet
-                                    </p>
-                                    <p className="text-sm sm:text-base text-gray-500 mt-2 max-w-md">
-                                        Once projects are approved, they’ll appear here automatically.
-                                        You can check back later or propose a new one.
-                                    </p>
-                                </div>
-                            )
-
-                            }
-                        </div>
+                            ))
+                        ) : (
+                            <div className="flex flex-col items-center justify-center w-full py-16 px-6 text-center text-gray-600">
+                                <p className="text-lg sm:text-xl font-semibold italic text-[#052659]">
+                                    No approved projects yet
+                                </p>
+                                <p className="text-sm sm:text-base text-gray-500 mt-2 max-w-md">
+                                    Once projects are approved, they’ll appear here automatically.
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
 
-
+                {/* Sidebar for Proposed Projects */}
                 <div className="hidden lg:flex lg:flex-col lg:w-[30%] w-[20%] mr-5 mb-10">
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-
-                        <DialogTrigger onClick={() => setIsDialogOpen(true)} asChild>
-                            <Button className="w-full my-2 bg-[#93C2FF] text-black cursor-pointer rounded-md font-semibold py-1  hover:bg-black hover:text-[#93C2FF]">
+                        <DialogTrigger asChild>
+                            <Button className="w-full my-2 bg-[#93C2FF] text-black cursor-pointer rounded-md font-semibold py-1 hover:bg-black hover:text-[#93C2FF]">
                                 Propose a Project
                             </Button>
                         </DialogTrigger>
@@ -215,21 +208,23 @@ export default function Projects() {
                                     Propose a Project
                                 </DialogTitle>
                                 <DialogDescription>
-                                    Fill out the form below to submit a new project proposal for
-                                    approval.
+                                    Fill out the form below to submit a new project proposal.
                                 </DialogDescription>
-                                <hr className="border-t border-black w-full " />
+                                <hr className="border-t border-black w-full" />
 
-                                <form className="space-y-4" onSubmit={(e) => {
-                                    postProject(e);
-                                    setFile(null);
-                                    (e.target as HTMLFormElement).reset();
-                                    setIsDialogOpen(false);
-                                }
-                                }>
-                                    {/* Project Title */}
+                                <form
+                                    className="space-y-4"
+                                    onSubmit={(e) => {
+                                        postProject(e);
+                                        setFile(null);
+                                        (e.target as HTMLFormElement).reset();
+                                        setIsDialogOpen(false);
+                                    }}
+                                >
                                     <div>
-                                        <label className="font-semibold block mb-1">Project Title</label>
+                                        <label className="font-semibold block mb-1">
+                                            Project Title
+                                        </label>
                                         <Input
                                             className="bg-[#E6F1FF] placeholder:italic"
                                             placeholder="e.g. The KILOS Project"
@@ -238,9 +233,10 @@ export default function Projects() {
                                         />
                                     </div>
 
-                                    {/* Project Details */}
                                     <div>
-                                        <label className="font-semibold block mb-1">Project Details</label>
+                                        <label className="font-semibold block mb-1">
+                                            Project Details
+                                        </label>
                                         <Textarea
                                             className="bg-[#E6F1FF] h-32 placeholder:italic"
                                             placeholder="e.g. This project is about..."
@@ -249,14 +245,14 @@ export default function Projects() {
                                         />
                                     </div>
 
-                                    {/* Project Document */}
                                     <div>
-                                        <label className="font-semibold block mb-1">Project Document</label>
+                                        <label className="font-semibold block mb-1">
+                                            Project Document
+                                        </label>
                                         <p className="text-gray-500 italic text-xs mb-2">
                                             Upload your project proposal (.pdf only)
                                         </p>
 
-                                        {/* Hidden input */}
                                         <input
                                             id="document"
                                             type="file"
@@ -269,7 +265,6 @@ export default function Projects() {
                                             }}
                                         />
 
-                                        {/* If no file, show dropzone */}
                                         {!file && (
                                             <label
                                                 htmlFor="document"
@@ -282,7 +277,9 @@ export default function Projects() {
                                                     <div className="flex flex-col text-center">
                                                         <p className="font-semibold">
                                                             Drop your file or{" "}
-                                                            <span className="text-[#3B4EFF] underline">Browse</span>
+                                                            <span className="text-[#3B4EFF] underline">
+                                                                Browse
+                                                            </span>
                                                         </p>
                                                         <p className="text-gray-500 text-xs">PDF only</p>
                                                     </div>
@@ -290,23 +287,23 @@ export default function Projects() {
                                             </label>
                                         )}
 
-                                        {/* If file selected, show file details */}
                                         {file && (
                                             <div className="flex items-center justify-between w-full max-w-md mx-auto mt-3 px-3 py-2 bg-[#E6F1FF] rounded-md">
-                                                {/* Left side: PDF icon */}
                                                 <div className="flex items-center gap-3">
                                                     <div className="bg-red-100 text-red-600 rounded-md p-2">
                                                         📄
                                                     </div>
                                                     <div className="flex flex-col">
-                                                        <p className="font-semibold truncate max-w-[200px]">{file.name}</p>
+                                                        <p className="font-semibold truncate max-w-[200px]">
+                                                            {file.name}
+                                                        </p>
                                                         <p className="text-xs text-gray-600">
-                                                            {file.type || "application/pdf"} • {(file.size / 1024 / 1024).toFixed(2)} MB
+                                                            {file.type || "application/pdf"} •{" "}
+                                                            {(file.size / 1024 / 1024).toFixed(2)} MB
                                                         </p>
                                                     </div>
                                                 </div>
 
-                                                {/* Remove button */}
                                                 <button
                                                     type="button"
                                                     onClick={() => setFile(null)}
@@ -318,8 +315,6 @@ export default function Projects() {
                                         )}
                                     </div>
 
-
-                                    {/* Submit */}
                                     <div className="flex justify-end">
                                         <Button
                                             type="submit"
@@ -338,26 +333,71 @@ export default function Projects() {
                             Proposed Projects
                         </p>
                         <div className="flex flex-col gap-4">
-                            {proposedProjects && proposedProjects.length > 0 ? proposedProjects?.map((data) => (
-                                <div
-                                    onClick={() =>
-                                        router.push(`/users/projects/proposed-project/${(data.title).trim()}-${data.id}`)
-                                    }
-                                    key={data.id}
-                                    className="min-w-full"
-                                >
-                                    <ProposedProjCard Title={data.title} Description={data.description} Status={data.status} PhotoURL={data.imageURL} />
-                                </div>
-
-                            )) : (
+                            {paginatedProposedProjects.length > 0 ? (
+                                paginatedProposedProjects.map((data) => (
+                                    <div
+                                        onClick={() =>
+                                            router.push(
+                                                `/users/projects/proposed-project/${data.title.trim()}-${data.id}`
+                                            )
+                                        }
+                                        key={data.id}
+                                        className="min-w-full"
+                                    >
+                                        <ProposedProjCard
+                                            Title={data.title}
+                                            Description={data.description}
+                                            Status={data.status}
+                                            PhotoURL={data.imageURL}
+                                        />
+                                    </div>
+                                ))
+                            ) : (
                                 <p className="text-gray-500 italic text-center mt-5">
                                     No proposed projects available yet.
                                 </p>
-                            )
-
-                            }
+                            )}
                         </div>
                     </div>
+
+                    {totalProposedPages > 1 && (
+                        <div className="flex justify-center items-center gap-2 mt-5 mb-10">
+                            <button
+                                className="px-4 py-2 cursor-pointer rounded-md border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                                onClick={() =>
+                                    setCurrentProposedPage((p) => Math.max(p - 1, 1))
+                                }
+                                disabled={currentProposedPage === 1}
+                            >
+                                Previous
+                            </button>
+
+                            {[...Array(totalProposedPages)].map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => setCurrentProposedPage(i + 1)}
+                                    className={`px-3 py-1.5 rounded-md text-sm font-semibold ${currentProposedPage === i + 1
+                                            ? "bg-[#052659] text-white border border-[#052659]"
+                                            : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 cursor-pointer"
+                                        }`}
+                                >
+                                    {i + 1}
+                                </button>
+                            ))}
+
+                            <button
+                                className="px-4 py-2 cursor-pointer rounded-md border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                                onClick={() =>
+                                    setCurrentProposedPage((p) =>
+                                        Math.min(p + 1, totalProposedPages)
+                                    )
+                                }
+                                disabled={currentProposedPage === totalProposedPages}
+                            >
+                                Next
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         );
