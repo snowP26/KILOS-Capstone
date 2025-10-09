@@ -55,6 +55,7 @@ export default function ViewProjectBudget() {
     const normalizedRole = role?.trim().toLowerCase();
     const formRef = useRef<HTMLFormElement>(null);
     const [refresh, setRefresh] = useState(0);
+    const [loading, setLoading] = useState(true)
 
     const totalSpent = budget.reduce(
         (sum, item) => sum + item.price * item.amt,
@@ -64,16 +65,38 @@ export default function ViewProjectBudget() {
 
     useEffect(() => {
         const setData = async () => {
-            if (projectID) {
-                const data = await getProjectByID(projectID);
-                setProject(data);
-                const budget = await getProjectBudgetById(projectID);
-                setBudget(budget);
+            setLoading(true);
+            try {
+                if (projectID) {
+                    const data = await getProjectByID(projectID);
+                    setProject(data);
+                    const budget = await getProjectBudgetById(projectID);
+                    setBudget(budget);
+                }
+            } finally {
+                setLoading(false);
             }
         };
 
-        setData();
+        setData()
     }, [projectID, refresh]);
+
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen bg-[#F9FBFF] text-center px-5">
+                <div className="w-10 h-10 border-4 border-[#052659] border-t-transparent rounded-full animate-spin mb-4"></div>
+
+
+                <h1 className="text-lg font-semibold text-gray-700">
+                    Loading project details...
+                </h1>
+                <p className="text-sm text-gray-500 mt-1">
+                    Please wait while we fetch your data.
+                </p>
+            </div>
+        );
+    }
+
 
     if (!projectID || !project) {
         return (
@@ -465,13 +488,6 @@ export default function ViewProjectBudget() {
 
 
                     </Table>
-                    <div
-                        className="flex items-center justify-center gap-2 h-10 w-full border-t border-b border-dashed border-gray-400 bg-white text-blue-500 font-medium cursor-pointer transition-colors hover:bg-blue-100 hover:border-blue-500"
-
-                    >
-                        <CirclePlus size={16} />
-                        <span>Add Item</span>
-                    </div>
                 </div>
 
 
