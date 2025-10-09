@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 export type Users = {
-    youth_id: string
-    youth_created_at: string
+    youth_official_id: string
+    created_at: string
     firstname: string
     lastname: string
     position_name: string
@@ -27,7 +27,7 @@ export type Users = {
 
 export const locColumns: ColumnDef<Users>[] = [
     {
-        accessorKey: "youth_id",
+        accessorKey: "youth_official_id",
         header: ({ column }) => {
             return (
                 <Button
@@ -42,7 +42,7 @@ export const locColumns: ColumnDef<Users>[] = [
         },
     },
     {
-        accessorKey: "youth_created_at",
+        accessorKey: "created_at",
         header: ({ column }) => {
             return (
                 <Button
@@ -56,7 +56,7 @@ export const locColumns: ColumnDef<Users>[] = [
             );
         },
         cell: ({ row }) => {
-            const rawDate = row.getValue("youth_created_at") as Date;
+            const rawDate = row.getValue("created_at") as Date;
             if (rawDate) {
                 const formattedDate = new Date(rawDate).toLocaleString("en-US", {
                     year: "numeric",
@@ -143,7 +143,7 @@ export const locColumns: ColumnDef<Users>[] = [
                     <DropdownMenuContent align="end" className="bg-[#1D1A1A] text-white">
                         <DropdownMenuLabel className="text-xs">Actions</DropdownMenuLabel>
                         <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(payment.youth_id)}
+                            onClick={() => navigator.clipboard.writeText(payment.youth_official_id)}
                         >
                             Copy payment ID
                         </DropdownMenuItem>
