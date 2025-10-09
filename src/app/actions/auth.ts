@@ -108,7 +108,7 @@ export const registerUser = async (
         role: posData[0].role,
         location: posData[0].location,
       },
-      emailRedirectTo: "http://localhost:3000/login",
+      emailRedirectTo: "https://kilos-capstone.vercel.app/",
     },
 
   });
