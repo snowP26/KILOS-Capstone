@@ -204,7 +204,7 @@ if (error) {
       router.push("/users/home")
       console.log(role)
       break
-    case "admin":
+    case "Admin":
       router.push("/admin")
       console.log(role)
       break
