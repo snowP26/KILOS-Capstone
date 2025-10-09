@@ -113,10 +113,10 @@ export default function SubmitOrdinances() {
                                 </div>
                                 <div className="flex flex-col">
                                     <div className="flex flex-row gap-1">
-                                        <p className="font-semibold">Drop your Image or</p>
+                                        <p className="font-semibold">Drop your Document or</p>
                                         <p className="text-[#3B4EFF] font-semibold underline">Browse</p>
                                     </div>
-                                    <p className="text-gray-500 text-xs">JPEG or .PNG only</p>
+                                    <p className="text-gray-500 text-xs">PDF only</p>
                                 </div>
                             </div>
                         </div>
@@ -126,7 +126,7 @@ export default function SubmitOrdinances() {
                     <Input
                         ref={fileInputRef}
                         type="file"
-                        accept="image/jpeg,image/png"
+                        accept=".pdf"
                         className="hidden"
                         name="image"
                         onChange={handleFileChange}

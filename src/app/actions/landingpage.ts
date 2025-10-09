@@ -14,7 +14,7 @@ export const getAllOrdinances = async (location: string) => {
     dbQuery = dbQuery.eq("location", locID)
   }
 
-  const { data, error } = await dbQuery.limit(4); // change it to approved.
+  const { data, error } = await dbQuery; // change it to approved.
 
   if (error) {
     console.log("Error retrieving ordinances: ", error)

@@ -15,7 +15,7 @@ export const UpcomingEventCard = ({ title, imgURL, loc, date }: cardParams) => {
     })
 
     return (
-        <div className="relative w-70 h-100 sm:h-140 sm:w-90 bg-blue-100 rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
+        <div className="relative w-70 h-100 sm:h-140 sm:w-90 bg-blue-100 rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)] transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
             <div className="flex justify-center rounded-t-md">
                 <img
                     className="h-75 sm:h-110 object-cover rounded-t-md"
