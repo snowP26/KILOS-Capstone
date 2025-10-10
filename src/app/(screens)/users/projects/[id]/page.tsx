@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button'
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
 import { SquarePen } from 'lucide-react';
 import { Trash2 } from 'lucide-react';
 import { Separator } from "@/components/ui/separator"
@@ -16,8 +16,9 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { project } from '@/src/app/lib/definitions';
-import { getProjectByID } from '@/src/app/actions/projects';
+import { deleteProjectPhoto, getProjectByID, uploadPhotoByID } from '@/src/app/actions/projects';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import Swal from 'sweetalert2';
 
 export default function ViewProject() {
     const params = useParams();
@@ -26,6 +27,8 @@ export default function ViewProject() {
     const router = useRouter();
     const [project, setProject] = useState<project | null>(null);
     const [loading, setLoading] = useState(false)
+    const [tempPosterFile, setTempPosterFile] = useState<File | null>(null);
+    const [refresh, setRefresh] = useState(0)
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -41,7 +44,7 @@ export default function ViewProject() {
 
         };
         fetchProject();
-    }, [projectID]);
+    }, [projectID, refresh]);
 
 
     if (loading) {
@@ -110,22 +113,113 @@ export default function ViewProject() {
 
                 <div className="flex flex-col lg:flex-row gap-1 place-items-center min-h-fit max-h-screen">
                     <div className="bg-white mt-10 w-[80%] h-full sm:h-150 lg:w-[35%] lg:h-155 justify-items-center place-content-center">
-                        {
-                            project.imageURL ? (
+                        {project?.imageURL ? (
+                            <div className="relative w-[70%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 flex items-center justify-center">
+                                <img
+                                    src={`${project.imageURL}?t=${new Date().getTime()}`}
+                                    alt="Project Poster"
+                                    className="w-full h-full object-cover rounded-md"
+                                    onClick={() => console.log(project.imageURL)}
+                                />
+                                <div className="absolute top-3 right-3 flex gap-2">
+                                    <Trash2
+                                        className="cursor-pointer rounded-full bg-white/90 p-2 shadow-md hover:bg-red-50 hover:text-red-500 active:scale-95 transition"
+                                        strokeWidth={2.3}
+                                        size={32}
+                                        onClick={async () => {
+                                            const result = await Swal.fire({
+                                                title: "Delete Project Poster?",
+                                                text: "This action cannot be undone.",
+                                                icon: "warning",
+                                                showCancelButton: true,
+                                                confirmButtonColor: "#d33",
+                                                cancelButtonColor: "#3085d6",
+                                                confirmButtonText: "Yes, delete it!",
+                                                cancelButtonText: "Cancel",
+                                            });
 
-                                <img src={project.imageURL} className="bg-black mt-10 w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130" />
-                            ) : (
-                                <div className="mt-10 flex items-center justify-center w-[70%] h-120 sm:h-[80%] xl:w-[80%] xl:h-130 rounded-[8px] bg-blue-100 text-blue-600 font-bold text-6xl shadow">
-                                    {project.title?.charAt(0).toUpperCase()}
+                                            if (result.isConfirmed) {
+                                                await deleteProjectPhoto(project.id);
+                                                Swal.fire("Deleted!", "Your project poster has been removed.", "success");
+                                                setRefresh((prev) => prev + 1)
+                                            }
+                                        }
+                                        }
+                                    />
                                 </div>
-                            )
-                        }
-                        {/* image placeholder */}
+                            </div>
+
+                        ) : tempPosterFile ? (
+                            <div className="flex flex-col items-center justify-center w-[70%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 overflow-hidden">
+                                <img
+                                    src={URL.createObjectURL(tempPosterFile)}
+                                    alt="Temp Poster Preview"
+                                    className="w-full h-full object-cover rounded-md"
+                                />
+                            </div>
+                        ) : (
+                            <label
+                                htmlFor="poster-upload"
+                                className="flex flex-col items-center justify-center mt-2 w-[90%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 border-2 border-dashed border-gray-400 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+                            >
+                                <svg
+                                    className="w-10 h-10 text-gray-400 mb-2"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M7 16V4a1 1 0 011-1h8a1 1 0 011 1v12m-4-4l4 4m0 0l-4 4m4-4H3"
+                                    />
+                                </svg>
+                                <p className="text-gray-500">Drop your poster here</p>
+                                <p className="text-sm text-gray-400">or click to upload</p>
+                                <input
+                                    id="poster-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            setTempPosterFile(file);
+                                        }
+                                    }}
+                                />
+                            </label>
+                        )}
                         <div className="flex flex-row w-[80%] justify-between my-3">
                             <p className="font-medium text-xl text-[#17A1FA]">Project Poster</p>
                             <div className="flex flex-row gap-2">
-                                <SquarePen className="cursor-pointer hover:bg-gray-300 rounded-[5px]" />
-                                <Trash2 className="cursor-pointer hover:bg-gray-300 rounded-[5px]" />
+                                {tempPosterFile && !project?.imageURL && (
+                                    <div className="flex flex-row gap-3">
+                                        {/* Save Poster Button */}
+                                        <button
+                                            onClick={async () => {
+                                                if (project?.id !== undefined && tempPosterFile) {
+                                                    await uploadPhotoByID(project.id, tempPosterFile);
+                                                    setRefresh((prev) => prev + 1);
+                                                }
+                                            }}
+                                            className="group flex items-center gap-2 bg-blue-500 text-white px-3 py-1.5 rounded-md hover:bg-blue-600 active:scale-95 transition cursor-pointer"
+                                        >
+                                            <Save size={18} />
+                                            <span
+                                                className="opacity-0 max-w-0 h-0 p-0 overflow-hidden group-hover:opacity-100 group-hover:max-w-[120px] transition-all duration-300 ease-in-out group-hover:h-5 "
+                                            >Save Poster</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setTempPosterFile(null)}
+                                            className="flex items-center gap-2 bg-gray-200 text-gray-700 px-3 py-1.5 rounded-md hover:bg-gray-300 active:scale-95 transition cursor-pointer"
+                                        >
+                                            <Trash2 size={18} />
+                                            <span>Cancel</span>
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
