@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 
 type ProjectCardProps = {
@@ -9,6 +9,10 @@ type ProjectCardProps = {
 }
 
 export const ProjectCard = ({ title, status, date, imgURL }: ProjectCardProps) => {
+    const [color, setColor] = useState<string>("");
+    // Under Review, Declined, Action Pending, Approved
+    // if(status == "For Approval")
+
     return (
         <div className="relative p-5 h-full w-65 lg:w-60 xl:w-90 bg-white rounded-md shadow-lg cursor-pointer transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
 
@@ -26,14 +30,20 @@ export const ProjectCard = ({ title, status, date, imgURL }: ProjectCardProps) =
             </p>
 
             <div className="flex flex-col xl:flex-row gap-3">
-                <div className="w-fit px-3 py-1 rounded-[10px] text-xs bg-amber-500">
+                <div className={`w-fit px-3 py-1 rounded-[10px] text-xs bg-amber-500 ${status === "For Approval" ? "bg-blue-100 text-blue-800"
+                        : status === "Approved" ? "bg-green-100 text-green-800"
+                            : status === "Action Pending" ? "bg-yellow-100 text-yellow-800"
+                                : status === "Declined" ? "bg-red-100 text-red-800"
+                                    : status === "Under Review" ? "bg-purple-100 text-purple-800"
+                                        : ""
+                    }`}>
                     {status}
                 </div>
                 <div className="w-fit px-3 py-1 rounded-[10px] text-xs bg-[#E6F1FF]">
                     {new Date(date).toLocaleString("en-GB", {
                         day: "2-digit",
                         month: "long",
-                        year:"numeric"
+                        year: "numeric"
                     })}
                 </div>
             </div>
