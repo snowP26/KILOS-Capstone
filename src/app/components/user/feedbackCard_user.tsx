@@ -66,29 +66,22 @@ export const FeedbackCard = ({
         <div
           className={`flex flex-col cursor-pointer w-60 h-60 lg:py-10 lg:px-10 lg:h-100 lg:w-100 p-8 rounded-md shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${bgColor}`}
         >
-          {/* Top Quote Icon */}
-          <div className="mb-4">
-            <Quote fill="black" className="w-6 h-6" />
+
+          <div className="justify-around flex flex-col h-full">
+            <Quote fill="black" />
+
+            <>
+              <p className="m-5 font-semibold text-4xl truncate sm:whitespace-normal sm:line-clamp-2">{header}</p>
+
+              <p className="m-5 text-gray-500 text-sm truncate sm:whitespace-normal sm:line-clamp-3">{body}</p>
+            </>
+
+            <div className="flex flex-row place-self-end ">
+              <p className="font-thin text-xs mr-5 content-center">{date}</p>
+              <Quote fill="black" />
+            </div>
           </div>
-
-
-          <h2 className="text-2xl font-bold mb-5 lg:mb-10">
-            {header}
-          </h2>
-
-
-
-          <div className="w-full h-[200px] max-h-[200px] truncate">
-            <p className="text-base mb-6">
-              {body}
-            </p>
-          </div>
-
-          {/* Bottom Row: Date and Quote */}
-          <div className="flex items-center self-end space-x-3">
-            <p className="text-xs font-thin text-gray-400">{date}</p>
-            <Quote fill="black" className="w-6 h-6" />
-          </div>
+          
         </div>
 
       </DialogTrigger>
