@@ -5,23 +5,23 @@ import { FormEvent, RefObject } from "react";
 export const getProjects = async () => {
     const loc = await getLocFromAuth();
 
-    const { data, error } = await client
+    const { data: approvedData } = await client
         .from("projects")
         .select("*")
-        .eq("location", loc as number).eq("status", "Approved");
+        .eq("location", Number(loc))
 
-
-    if (error) {
-        console.error("Error retrieving projects:", error);
-        return [];
+    if (!approvedData || approvedData.length === 0) {
+        console.log("Loc Data Error")
+        return []
     }
 
-    if (!data || data.length === 0) {
-        return [];
-    }
+    const approvedProjects = approvedData.filter(
+        (proj) => proj.status == "Approved"
+    );
 
-    console.log("Projects retrieved:", data);
-    return data;
+    console.log("Approved projects:", approvedProjects);
+
+    return approvedProjects;
 };
 
 export const getProposedProjects = async () => {
@@ -44,8 +44,6 @@ export const getProposedProjects = async () => {
         console.warn("No projects found for this location.");
         return [];
     }
-
-    console.log("Projects retrieved:", data);
     return data;
 };
 
@@ -142,7 +140,6 @@ export const getProposedProjectByID = async (id: number | string) => {
         return [];
     }
 
-    console.log("Projects retrieved:", data);
     return data;
 };
 

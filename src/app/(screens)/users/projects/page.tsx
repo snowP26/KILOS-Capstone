@@ -84,7 +84,7 @@ export default function Projects() {
 
     if (normalizedRole === "legislative" || normalizedRole === "treasurer") {
         content = (
-            <div className="bg-[#E6F1FF] min-h-screen max-h-full">
+            <div className="bg-[#E6F1FF] min-h-screen max-h-full w-full flex flex-col items-center">
                 <p className="font-bold text-3xl m-10">Current Projects</p>
                 <div className="flex flex-wrap justify-center gap-5">
                     {paginatedProjects.length > 0 ? (
@@ -92,7 +92,7 @@ export default function Projects() {
                             <div
                                 key={project.id}
                                 onClick={() =>
-                                    router.push(`/admin/projects/${project.title}-${project.id}`)
+                                    router.push(`/users/projects/${project.title}-${project.id}`)
                                 }
                                 className="cursor-pointer"
                             >
@@ -133,8 +133,8 @@ export default function Projects() {
                                 key={i}
                                 onClick={() => setCurrentProjectsPage(i + 1)}
                                 className={`px-3 py-1.5 rounded-md text-sm font-semibold ${currentProjectsPage === i + 1
-                                        ? "bg-[#052659] text-white border border-[#052659]"
-                                        : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 cursor-pointer"
+                                    ? "bg-[#052659] text-white border border-[#052659]"
+                                    : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 cursor-pointer"
                                     }`}
                             >
                                 {i + 1}
@@ -163,7 +163,7 @@ export default function Projects() {
                 <div className="w-full lg:w-[70%] xl:w-[80%] flex flex-col items-center lg:items-start">
                     <p className="font-bold text-3xl m-10">Current Projects</p>
 
-                    <div className="flex flex-wrap justify-center gap-5">
+                    <div className="flex flex-wrap justify-center gap-5 w-full px-4">
                         {projects.length > 0 ? (
                             paginatedProjects.map((data) => (
                                 <div
@@ -181,7 +181,7 @@ export default function Projects() {
                                 </div>
                             ))
                         ) : (
-                            <div className="flex flex-col items-center justify-center w-full py-16 px-6 text-center text-gray-600">
+                            <div className="flex flex-col items-center justify-center w-full h-[60vh] text-center text-gray-600">
                                 <p className="text-lg sm:text-xl font-semibold italic text-[#052659]">
                                     No approved projects yet
                                 </p>
@@ -377,8 +377,8 @@ export default function Projects() {
                                     key={i}
                                     onClick={() => setCurrentProposedPage(i + 1)}
                                     className={`px-3 py-1.5 rounded-md text-sm font-semibold ${currentProposedPage === i + 1
-                                            ? "bg-[#052659] text-white border border-[#052659]"
-                                            : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 cursor-pointer"
+                                        ? "bg-[#052659] text-white border border-[#052659]"
+                                        : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 cursor-pointer"
                                         }`}
                                 >
                                     {i + 1}
