@@ -18,7 +18,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
-import { Title } from "./components/community/title";
+import { set } from "date-fns";
+
+function chunkArray<T>(array: T[], chunkSize: number) {
+  const result: T[][] = []; for (let i = 0; i < array.length; i += chunkSize) {
+    result.push(array.slice(i, i + chunkSize));
+  }
+  return result;
+}
 
 export default function Home() {
   const router = useRouter();
@@ -31,6 +38,28 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchLoc, setSearchLoc] = useState<string | null>(null);
   const [projects, setProjects] = useState<project[]>([]);
+
+  const [itemsPerSlide, setItemsPerSlide] = useState(1);
+  const [ordinanceChunks, setOrdinanceChunks] = useState<ordinance[][]>([]);
+
+  useEffect(() => {
+    function updateItemsPerSlide() {
+      const width = window.innerWidth;
+
+      if (width >= 1024) {
+        setItemsPerSlide(4);
+      } else {
+        setItemsPerSlide(1);
+      }
+    }
+
+    updateItemsPerSlide();
+    window.addEventListener("resize", updateItemsPerSlide);
+
+    return () => window.removeEventListener("resize", updateItemsPerSlide);
+  }, []);
+
+  useEffect(() => { setOrdinanceChunks(chunkArray(ordinances, itemsPerSlide)); }, [ordinances, itemsPerSlide]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,6 +74,7 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       const ordinancesData = await getAllOrdinances(ordinanceLoc ?? "");
+      console.log(ordinancesData);
       setOrdinances(ordinancesData);
       const projectsData = await getAllProjects();
       setProjects(projectsData)
@@ -56,9 +86,9 @@ export default function Home() {
   return (
     <div>
       <ComNav />
-      <div className="min-h-screen overflow-y-auto">
+      <div className="min-h-screen">
         <div className="flex flex-col items-center">
-          <div className="flex flex-col items-center pb-80">
+          <div className="flex flex-col items-center pb-20 lg:pb-80">
             <h1 className="text-center mt-15 text-[50px] m-5 sm:mt-20 sm:m-0 sm:text-[48px] font-bold">
               <strong className="text-[#0073FF]">K</strong>
               <a className="hidden sm:inline">abataan&apos;s </a>
@@ -94,8 +124,8 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col items-center relative z-10 sm:w-[90%] sm:place-self-center sm:flex-row sm:justify-between sm:items-end">
-          <p className=" text-2xl w-[80%] font-bold text-center mb-3 sm:mb-0 sm:text-start">Upcoming Events</p>
-          <div className=" overflow-visible">
+          <p className="text-2xl w-[80%] font-bold text-center mb-3 sm:mb-0 sm:text-start">Upcoming Events</p>
+          <div className="overflow-visible">
             <LocationSelect onChange={setProjLoc} widthClass="sm:w-full" />
           </div>
 
@@ -103,33 +133,41 @@ export default function Home() {
 
         <hr className="border-t border-black w-[90%] mx-auto my-3" />
         {projects && projects.length > 0 ? (
+          <>
+            <div className="w-full mt-10 flex flex-wrap justify-center">
+              <Carousel opts={{ align: "start", }}
+                className="w-full min-w-auto sm:min-w-[70%] md:min-w-[80%] xl:min-w-[90%] max-w-sm"
+              >
+                <CarouselContent className="-ml-4">
+                  {projects.map((data) => (
+                    <CarouselItem
+                      className="basis-1/1 md:basis-2/3 lg:basis-2/4 xl:basis-1/3 2xl:basis-3/13"
+                      key={data.id}
+                    >
+                      <div className="cursor-pointer">
+                        <UpcomingEventCard
+                          title={data.title}
+                          imgURL={data.imageURL}
+                          loc={data.location}
+                          date={data.target_date}
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))
+                  }
+                </CarouselContent>
+                <CarouselPrevious className="cursor-pointer" />
+                <CarouselNext className="cursor-pointer" />
+              </Carousel>
 
-          <div className="w-full mt-10 flex flex-wrap justify-center">
-            <Carousel opts={{ align: "start", }}
-              className="w-full min-w-auto sm:min-w-[70%] md:min-w-[80%] xl:min-w-[90%] max-w-sm"
-            >
-              <CarouselContent className="-ml-4">
-                {projects.map((data) => (
-                  <CarouselItem
-                    className="basis-1/1 md:basis-2/3 lg:basis-2/4 xl:basis-1/3 2xl:basis-3/13"
-                    key={data.id}
-                  >
-                    <div className="cursor-pointer">
-                      <UpcomingEventCard
-                        title={data.title}
-                        imgURL={data.imageURL}
-                        loc={data.location}
-                        date={data.target_date}
-                      />
-                    </div>
-                  </CarouselItem>
-                ))
-                }
-              </CarouselContent>
-              <CarouselPrevious className="cursor-pointer" />
-              <CarouselNext className="cursor-pointer" />
-            </Carousel>
-          </div>
+
+            </div>
+            <Button onClick={() => router.push("/upcoming-events/")}
+              className="bg-white text-black hover:bg-[#052659] hover:text-white cursor-pointer underline text-xl mb-25 my-5 flex justify-self-center sm:mx-40 lg:mr-15 lg:justify-self-end">
+              See All
+            </Button>
+          </>
+
         ) : (
           <div className="flex flex-col items-center justify-center h-64 text-gray-500">
             <p className="text-lg font-medium">No Projects available</p>
@@ -138,9 +176,9 @@ export default function Home() {
         )
 
         }
-        <p className="underline text-xl mr-15 sm:mx-40 mb-25 my-5 text-end">See All</p>
 
-        <div className="flex flex-col items-center mx-25 relative z-10 sm:flex-row sm:justify-between sm:items-end">
+
+        <div className="flex flex-col items-center mx-25 relative z-10 sm:flex-row sm:justify-between sm:items-end lg:mt-15">
           <p className="text-2xl font-bold text-center mb-3 sm:mb-0 sm:text-start">Ordinances</p>
           <div className="overflow-visible">
             <LocationSelect onChange={setOrdinanceLoc} widthClass="sm:w-[100%]" />
@@ -150,31 +188,33 @@ export default function Home() {
         <hr className="border-t border-black w-[90%] mx-auto my-3" />
 
         {ordinances && ordinances.length > 0 ? (
-          <div>
+          <>
+            <div className="md:px-20">
+              <Carousel opts={{ align: "start", }}>
+                <CarouselContent className="-ml-4 pb-5">
+                  {ordinanceChunks.map((group, index) => (
 
-            <Carousel opts={{ align: "start", }} className="flex flex-row justify-center gap-10">
-              <CarouselContent className="mt-10 mx-10 grid grid-col-1 md:mx-20 md:grid-cols-2 md:grid-rows-2 gap-5 w-[100%]">
-                {ordinances.map((data) => (
-                  <div
-                    key={data.id}
-                    onClick={async () => await openOrdinancePDF(data.id)}
-                    className="cursor-pointer rounded-xl transition-all duration-200 hover:bg-white hover:shadow-lg hover:scale-[1.02]"
-                  >
-                    <OrdinancesLandingCard
-                      id={data.id}
-                      title={data.title}
-                      description={data.description}
-                      author={data.author}
-                    />
-                  </div>
-                ))}
+                    <CarouselItem key={index}
+                      className="gap-5 lg:grid lg:grid-cols-2 lg:grid-rows-2"
+                    > {group.map((data) => (
+                      <div key={data.id} onClick={async () => await openOrdinancePDF(data.id)}
+                        className="cursor-pointer rounded-xl transition-all duration-200 hover:bg-white hover:shadow-lg hover:scale-[1.02]"
+                      >
+                        <OrdinancesLandingCard id={data.id} title={data.title} description={data.description} author={data.author} />
+                      </div>
+                    ))}
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
                 <CarouselPrevious className="cursor-pointer" />
                 <CarouselNext className="cursor-pointer" />
-              </CarouselContent>
-            </Carousel>
-
-            <p className="underline text-xl mr-15 sm:mx-40 my-5 text-end">See All</p>
-          </div>
+              </Carousel>
+            </div>
+            <Button onClick={() => router.push("/published-ordinances/")}
+              className="bg-white text-black hover:bg-[#052659] hover:text-white cursor-pointer underline text-xl lg:mr-15 sm:mx-40 mb-25 my-5 flex justify-self-center lg:justify-self-end">
+              See All
+            </Button>
+          </>
         ) : (
           <div className="flex flex-col items-center justify-center h-64 text-gray-500">
             <p className="text-lg font-medium">No ordinances available</p>

@@ -42,8 +42,8 @@ export function RegisterForm({
         if (formData.password !== formData.confirmPass) {
             return alert("Passwords must match!");
         }
-        await registerUser(formData, router);
-        return clearFields();
+        await registerUser(formData, router, clearFields);
+        return;
     }
     return (
         <form

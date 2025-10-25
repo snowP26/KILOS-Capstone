@@ -283,7 +283,7 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
           <div className="mb-4 flex w-full flex-wrap items-center justify-between gap-6">
             <div className="flex flex-wrap gap-2 sm:gap-3">
               <Select name="month" value={`${selectedMonth}`} options={monthOptions} onChange={handleMonthChange} />
-              <button onClick={handleTodayClick} type="button" className="cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-900 hover:bg-gray-100 lg:px-5 lg:py-2.5">
+              <button onClick={handleTodayClick} type="button" className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-900 hover:bg-gray-100 lg:px-5 lg:py-2.5">
                 Today
               </button>
               {/* <button type="button" className="whitespace-nowrap rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 px-3 py-1.5 text-center text-sm font-medium text-white hover:bg-gradient-to-bl focus:outline-none focus:ring-4 focus:ring-cyan-300 sm:rounded-xl lg:px-5 lg:py-2.5">
@@ -326,8 +326,8 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
           {generateCalendar}
         </div>
       </ScrollArea> */}
-
-        <div className="w-full min-w-50 h-full pt-4 sm:px-8 sm:pt-6">{generateCalendar}</div>
+        
+          <div className="w-full min-w-50 h-full pt-4 sm:px-8 sm:pt-6">{generateCalendar}</div>
       </div>
 
 

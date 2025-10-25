@@ -14,7 +14,7 @@ export const getAllOrdinances = async (location: string) => {
     dbQuery = dbQuery.eq("location", locID)
   }
 
-  const { data, error } = await dbQuery.limit(4); // change it to approved.
+  const { data, error } = await dbQuery
 
   if (error) {
     console.log("Error retrieving ordinances: ", error)
@@ -74,7 +74,7 @@ export const searchData = async (query?: string, location?: number) => {
 // Projects
 
 export const getAllProjects = async () => {
-  const { data, error } = await client.from("projects").select("*").eq("status", "Approved")
+  const { data, error } = await client.from("projects").select("*").eq("status", "Approved").order("target_date", { ascending: true })
 
   if (error) {
     console.log("Project data retrieval failed: ", error)

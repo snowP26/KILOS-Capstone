@@ -1,5 +1,6 @@
 import client from "@/src/api/client";
 import { ordinance } from "../lib/definitions";
+import { getLocFromAuth } from "./convert";
 
 // Convert email → user id
 const emailToUserID = async (email: string) => {
@@ -15,7 +16,10 @@ const emailToUserID = async (email: string) => {
 
 // Get all ordinances (pending or otherwise)
 export const getPendingOrdinances = async () => {
-    const { data, error } = await client.from("ordinances").select("*").order("id", { ascending: false }).eq("status", "Pending");
+    const locID = await getLocFromAuth()
+
+
+    const { data, error } = await client.from("ordinances").select("*").order("id", { ascending: false }).eq("status", "Pending").eq("location", locID);
 
     if (error) {
         console.log("Error fetching data: ", error);
@@ -48,7 +52,7 @@ export const getOrdinanceByName = async (title: string) => {
     const { data, error } = await client
         .from("ordinances")
         .select("*")
-        .eq("title", title)
+        .eq("id", title)
         .limit(1)
         .single();
 

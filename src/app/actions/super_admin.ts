@@ -5,9 +5,9 @@ import client from "@/src/api/client";
 export const getUsersByLoc = async (locID: number) => {
 
     const { data: userData, error: userError } = await client
-        .from("youth_with_positions_v2")
+        .from("youth_officials_with_positions")
         .select("*")
-        .eq("location", locID);
+        .eq("position_location", locID);
     
     if(!userData){
         console.log("No records were found");
@@ -34,7 +34,7 @@ export const createNewCode = async (loc: number, position: string, role: string)
     const { data, error } = await client.from("positions").insert([{
         position: position,
         role: role,
-        location: loc
+            location: loc
     }])
 
     if(error){

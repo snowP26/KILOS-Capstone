@@ -74,7 +74,7 @@ export const AdminNav = () => {
 
                     <button
                         onClick={() => logoutUser(router)}
-                        className="text-white mt-10 lg:m-0 cursor-pointer hover:underline"
+                        className="mt-10 lg:mt-0 px-5 py-2 bg-red-200 text-red-900 font-medium rounded-md shadow-sm hover:bg-red-300 transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                     >
                         Log Out
                     </button>

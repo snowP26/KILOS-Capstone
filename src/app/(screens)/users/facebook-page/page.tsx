@@ -179,7 +179,7 @@ export default function FacebookPage() {
           {/* Page Name */}
           <div className="text-center px-4">
             <p className="text-xl font-semibold mt-4 text-gray-800">
-              {pageInfo?.name || "Page Name Unavailable"}
+              {pageInfo?.name || "Loading..."}
             </p>
             <hr className="border-t border-gray-300 w-[80%] mx-auto mt-3" />
           </div>
@@ -234,7 +234,7 @@ export default function FacebookPage() {
         </div>
 
         {/* start of fb post card */}
-        <div className="w-[90%] mt-3 self-center lg:w-[50%] xl:w-3/5 lg:my-2 lg:mx-3">
+        <div className="w-[90%] mt-3 self-center lg:w-[50%] lg:self-start lg:my-2 lg:mx-3 xl:w-3/5">
           <Dialog>
             <DialogTrigger className="w-[100%]" asChild>
               <button className="w-[100%] h-10 cursor-pointer rounded-[20px] bg-[#B2D3FF] font-bold text-black hover:bg-blue-400 ">
@@ -318,11 +318,6 @@ export default function FacebookPage() {
                         <NavigationMenuContent className="bg-[#E6F1FF]">
                           <ul className="grid w-[80px] gap-3">
                             <li>
-                              <NavigationMenuLink asChild>
-                                <p className="hover:bg-blue-900 hover:text-white text-center">
-                                  Edit
-                                </p>
-                              </NavigationMenuLink>
                               <NavigationMenuLink asChild>
                                 <p className="hover:bg-blue-900 hover:text-white text-center">
                                   Delete

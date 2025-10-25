@@ -4,12 +4,9 @@ import { format } from 'date-fns'
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogPortal,
-  DialogFooter,
 } from "@/components/ui/dialog"
 import { Pin } from 'lucide-react';
 
