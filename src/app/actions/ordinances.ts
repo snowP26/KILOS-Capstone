@@ -229,13 +229,15 @@ export const uploadFile = async (ordinance_id: number, doc: File) => {
   console.log("Success uploading your file");
 };
 
-export const getOrdinancesByLocID = async () => {
+export const getOrdinancesByLocID = async (filter: boolean) => {
   const locID = await getLocFromAuth();
+
   const { data, error } = await client
     .from("ordinances")
     .select("*")
     .eq("location", locID)
-    .eq("status", "Uploaded");
+    .eq("status", "Uploaded")
+    .order("created_at", { ascending: filter });
 
   if (error) {
     Swal.fire({
@@ -330,7 +332,9 @@ export const openOrdinancePDF = async (ordinanceID: number) => {
   return url?.signedUrl || null;
 };
 
-export const getPendingOrdinanceFile = async (ordinanceID: number | undefined) => {
+export const getPendingOrdinanceFile = async (
+  ordinanceID: number | undefined
+) => {
   const { data: ordinanceFileData, error: fileError } = await client
     .from("ordinance_files")
     .select("file_path")
@@ -338,7 +342,6 @@ export const getPendingOrdinanceFile = async (ordinanceID: number | undefined) =
     .single();
 
   if (fileError || !ordinanceFileData?.file_path) {
-
     return null;
   }
 
