@@ -5,23 +5,23 @@ import { FormEvent, RefObject } from "react";
 export const getProjects = async () => {
     const loc = await getLocFromAuth();
 
-    const { data, error } = await client
+    const { data: approvedData } = await client
         .from("projects")
         .select("*")
-        .eq("location", loc as number).eq("status", "Approved");
+        .eq("location", Number(loc))
 
-
-    if (error) {
-        console.error("Error retrieving projects:", error);
-        return [];
+    if (!approvedData || approvedData.length === 0) {
+        console.log("Loc Data Error")
+        return []
     }
 
-    if (!data || data.length === 0) {
-        return [];
-    }
+    const approvedProjects = approvedData.filter(
+        (proj) => proj.status == "Approved"
+    );
 
-    console.log("Projects retrieved:", data);
-    return data;
+    console.log("Approved projects:", approvedProjects);
+
+    return approvedProjects;
 };
 
 export const getProposedProjects = async () => {
@@ -44,8 +44,6 @@ export const getProposedProjects = async () => {
         console.warn("No projects found for this location.");
         return [];
     }
-
-    console.log("Projects retrieved:", data);
     return data;
 };
 
@@ -57,7 +55,7 @@ const uploadFile = async (file: File, title: string, projectID: number | null) =
 
     const locationID = await getLocFromAuth()
     const location = await locIDtoName(locationID)
-    const filename = `${location}_${title}_${file.name}`
+    const filename = `${location}_${Date.now()}_${title}_${file.name}`
 
     const { error: bucketError } = await client.storage.from("projects").upload(`files/${location}/${filename}`, file, { upsert: true })
 
@@ -99,7 +97,6 @@ export const postProject = async (e: FormEvent<HTMLFormElement>) => {
     }]).select("id")
 
     if (file) {
-
         await uploadFile(file, title, data ? data[0].id : null)
     }
     if (error) return console.log(error);
@@ -111,7 +108,7 @@ export const getProjectByID = async (id: number | undefined) => {
     if (id == undefined) return null
 
 
-    const { data, error } = await client.from("projects").select("*").eq("id", id)
+    const { data, error } = await client.from("projects").select("*").eq("id", id).single()
 
     if (!data) {
         console.log("No Project found!")
@@ -123,7 +120,7 @@ export const getProjectByID = async (id: number | undefined) => {
         return null
     }
 
-    return data[0]
+    return data
 }
 
 export const getProposedProjectByID = async (id: number | string) => {
@@ -142,7 +139,6 @@ export const getProposedProjectByID = async (id: number | string) => {
         return [];
     }
 
-    console.log("Projects retrieved:", data);
     return data;
 };
 
@@ -280,7 +276,6 @@ export const addBudget = async (e: FormEvent<HTMLFormElement>, formRef: RefObjec
 
     const authLoc = await getLocFromAuth();
     const loc = authLoc ? await locIDtoName(authLoc) : "unknown";
-    const form = e.currentTarget as HTMLFormElement
     const formdata = new FormData(formRef.current);
 
     const item = formdata.get("item_name") as string;
@@ -526,4 +521,47 @@ export const updateBudgetStatus = async (
 
     console.log(`Updated budgetID ${budgetID} to ${status} ${finalComment ? "with comment" : ""}`)
     return true
+}
+
+export const addFiles = async (file: File[], projectID: number, progress: (number: number) => void) => {
+    const project = await getProjectByID(projectID)
+    let completed = 0
+
+    await Promise.all(
+        file.map(async (data, i) => {
+            await uploadFile(data, project.title, projectID);
+            completed++;
+            if (progress) {
+                const percent = Math.round(((i + 1) / file.length) * 100);
+                progress(percent);
+            }
+        })
+    );
+}
+
+export const getFiles = async (projectID: number) => {
+    const { data, error } = await client
+        .from("project_files")
+        .select("*")
+        .eq("project_id", projectID)
+        .order("id", { ascending: false })
+
+    if (error) {
+        console.error("Error fetching files:", error.message);
+        throw new Error(error.message);
+    }
+
+
+    const filesWithUrls = data.map((file) => {
+        const { data: publicUrlData } = client.storage
+            .from("projects")
+            .getPublicUrl(file.filepath);
+
+        return {
+            ...file,
+            publicUrl: publicUrlData?.publicUrl || null,
+        };
+    });
+
+    return filesWithUrls;
 }

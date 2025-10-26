@@ -28,7 +28,6 @@ export const ProjectTable = ({ id }: ProjectTableProps) => {
         const fetchData = async () => {
             const data = await getApprovalsByID(id ?? 0)
             setApprovals(data);
-            console.log(data)
         }
 
         fetchData();

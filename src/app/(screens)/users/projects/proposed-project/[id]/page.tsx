@@ -60,7 +60,7 @@ export default function ViewProposedProject() {
 
     useEffect(() => {
         const fetchData = async () => {
-            console.log(projectId)
+
             if (projectId) {
                 const data = await getProposedProjectByID(projectId);
                 setProject(data);
@@ -123,11 +123,6 @@ export default function ViewProposedProject() {
                                     onClick={() => console.log(project.imageURL)}
                                 />
                                 <div className="absolute top-3 right-3 flex gap-2">
-                                    {/* <SquarePen
-                                        className="cursor-pointer rounded-full bg-white/90 p-2 shadow-md hover:bg-gray-100 hover:text-blue-500 active:scale-95 transition"
-                                        strokeWidth={2.3}
-                                        size={32}
-                                    /> */}
                                     <Trash2
                                         className="cursor-pointer rounded-full bg-white/90 p-2 shadow-md hover:bg-red-50 hover:text-red-500 active:scale-95 transition"
                                         strokeWidth={2.3}
@@ -319,7 +314,7 @@ export default function ViewProposedProject() {
                                 >
                                     {showDetails ? "View Project Status" : "View Project Details"}
                                 </Button>
-                                <SubmitDocCard />
+                                <SubmitDocCard projectID={project?.id} />
                             </div>
                         </div>
                     </div>

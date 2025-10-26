@@ -10,8 +10,6 @@ type ProjectCardProps = {
 
 export const ProjectCard = ({ title, status, date, imgURL }: ProjectCardProps) => {
     const [color, setColor] = useState<string>("");
-    // Under Review, Declined, Action Pending, Approved
-    // if(status == "For Approval")
 
     return (
         <div className="relative p-5 h-full w-65 lg:w-60 xl:w-90 bg-white rounded-md shadow-lg cursor-pointer transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
