@@ -76,25 +76,6 @@ export default function ViewUpcomingEvents() {
                         <strong className="text-[#0073FF]">S</strong>
                         <a className="hidden sm:inline">ystem</a>
                     </h1>
-                    <form className="flex flex-col w-screen gap-2 items-center md:w-[70%] justify-center md:flex-row" onSubmit={handleSearch}>
-                        <LocationSelect onChange={setSearchLoc} widthClass="sm:w-[20%]" />
-                        <div className="relative w-[80%] md:w-[70%] sm:max-w-[400px] md:max-w-[683px]">
-                            <div className="absolute inset-y-0 left-1 pl-3 flex items-center pointer-events-none">
-                                <Search />
-                            </div>
-                            <input
-                                type="text"
-                                name="Search-bar"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search for ordinances"
-                                className="pl-13 p-3 bg-[#D9D9D9] rounded-lg w-full placeholder-gray-600"
-                            />
-                        </div>
-                        <Button type="submit" className="cursor-pointer md:w-[10%] h-[100%] py-3 px-5 bg-[#052659] text-white rounded-lg hover:bg-white hover:text-[#052659] hover:border-black hover:border">
-                            Search
-                        </Button>
-                    </form>
                 </div>
             </div>
 

@@ -111,14 +111,14 @@ export function DataTable<TData, TValue>({
 
     return (
         <div>
-            <div className="flex justify-between items-center mx-5 lg:mx-0 py-4">
+            <div className="flex flex-col md:flex-row justify-between items-center mx-5 lg:mx-0 py-4">
                 <Input
                     placeholder="Filter emails..."
                     value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
                         table.getColumn("email")?.setFilterValue(event.target.value)
                     }
-                    className="max-w-sm"
+                    className="w-[90%] md:w-[50%] lg:max-w-sm"
                 />
                 <div className="flex flex-row items-center">
                     <div className="flex items-center py-4">
@@ -255,10 +255,8 @@ export function DataTable<TData, TValue>({
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-between py-4">
 
-
-
+            <div className="flex items-center justify-center lg:justify-end py-4">
                 <div className="flex items-center space-x-2">
                     <Button
                         variant="outline"
