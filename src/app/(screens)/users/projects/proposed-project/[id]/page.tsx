@@ -60,7 +60,7 @@ export default function ViewProposedProject() {
 
     useEffect(() => {
         const fetchData = async () => {
-            console.log(projectId)
+
             if (projectId) {
                 const data = await getProposedProjectByID(projectId);
                 setProject(data);
@@ -314,7 +314,7 @@ export default function ViewProposedProject() {
                                 >
                                     {showDetails ? "View Project Status" : "View Project Details"}
                                 </Button>
-                                <SubmitDocCard />
+                                <SubmitDocCard projectID={project?.id} />
                             </div>
                         </div>
                     </div>
