@@ -81,7 +81,6 @@ export const FeedbackCard = ({
               <Quote fill="black" />
             </div>
           </div>
-          
         </div>
 
       </DialogTrigger>

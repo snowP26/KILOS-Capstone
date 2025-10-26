@@ -295,7 +295,7 @@ export default function Announcement() {
                     key={a.id}
                     header={a.header}
                     body={a.body}
-                    author={a.author_email}
+                    author={a.authorName}
                     announcementType={a.type}
                   />
                 ))}

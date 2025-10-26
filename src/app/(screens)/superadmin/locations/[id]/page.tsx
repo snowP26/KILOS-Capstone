@@ -62,7 +62,7 @@ export default function LocationsID() {
           Access Denied
         </h1>
         <p className="text-gray-400 mb-6">
-          You don’t have permission to view this page.
+          You don&apos;t have permission to view this page.
         </p>
         <Link href="/">
           <Button className="bg-[#1D1A1A] text-[#C1E8FF] border border-[#2A2727] rounded-xl shadow-sm hover:bg-[#2A2727] hover:text-white transition-all">

@@ -97,6 +97,14 @@ export type ordinanceFiles = {
     type: string;
 }
 
+export type projectFiles = {
+    id: number,
+    project_id: number,
+    filepath: string,
+    filename: string,
+    publicUrl: string
+}
+
 export type commFeedback = {
     id: number,
     created_at: string,
