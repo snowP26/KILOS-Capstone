@@ -11,8 +11,10 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
-import { addFiles, getFiles } from "../../actions/projects";
+import { addFiles, deleteFile, getFiles } from "../../actions/projects";
 import { projectFiles } from "../../lib/definitions";
+import Swal from "sweetalert2";
+import { GoTrueAdminApi } from "@supabase/supabase-js";
 
 export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
     const [tempFiles, setTempFiles] = useState<File[]>([]);
@@ -91,7 +93,7 @@ export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
 
                     {tempFiles.map((data, i) => (
                         <div key={i} className="bg-[#E6F1FF] transition-all ease-in-out flex flex-row h-10 w-60 sm:w-full items-center rounded-md px-2 space-x-2">
-                            <CircleCheck className="flex-shrink-0" fill="green" size="15" />
+                            <CircleCheck className="flex-shrink-0" fill="gray" size="15" />
 
                             <FileText className="flex-shrink-0" size="15" />
 
@@ -102,7 +104,10 @@ export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
 
                             {/* Progress Bar */}
                             <div className="flex-grow hidden sm:block">
-                                <Progress value={progress} />
+                                <Progress
+                                    value={progress}
+                                    className="h-2 w-full bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden [&>div]:bg-gradient-to-r [&>div]:from-blue-400 [&>div]:to-blue-600 transition-all duration-300"
+                                />
                             </div>
                         </div>
                     ))
@@ -112,9 +117,8 @@ export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
                         <div
                             key={data.id}
                             className="bg-[#E6F1FF] flex h-10 w-full lg:max-w-full items-center rounded-md pr-5"
-                            onClick={() => window.open(data.publicUrl,  "_blank")}
                         >
-                            <div className="flex flex-row space-x-2 w-full lg:max-w-full px-2">
+                            <div className="flex flex-row items-center space-x-2 w-full lg:max-w-full px-2 py-2 rounded-md cursor-pointer transition-all duration-200 hover:bg-[#D8E8FF] active:scale-[0.98]" onClick={() => window.open(data.publicUrl, "_blank")}>
                                 <CircleCheck className="flex-shrink-0" fill="green" size="15" />
 
                                 <FileText className="flex-shrink-0" size="15" />
@@ -126,7 +130,33 @@ export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
                                     </p>
                                 </div>
                             </div>
-                            <CircleX className="flex-shrink-0 cursor-pointer" size="15" />
+                            <CircleX className="flex-shrink-0 cursor-pointer text-gray-600 hover:text-red-500 transition-colors duration-200" size="15" onClick={async () => {
+
+                                const result = await Swal.fire({
+                                    title: "Delete this file?",
+                                    text: "This action cannot be undone.",
+                                    icon: "warning",
+                                    showCancelButton: true,
+                                    confirmButtonColor: "#d33",
+                                    cancelButtonColor: "#3085d6",
+                                    confirmButtonText: "Yes, delete it",
+                                    cancelButtonText: "Cancel",
+                                    reverseButtons: true,
+                                });
+
+                                if (result.isConfirmed) {
+                                    await deleteFile(data.id)
+                                    console.log("delete")
+                                    setRefresh((prev) => prev + 1)
+
+                                    await Swal.fire({
+                                        title: "Delete Successful!",
+                                        text: "Your file has been deleted.",
+                                        icon: "success",
+                                        timer: 750,
+                                    })
+                                }
+                            }} />
                         </div>
                     ))
 
