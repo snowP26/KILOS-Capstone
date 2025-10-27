@@ -3,6 +3,21 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.swal2-container {
+    z-index: 2147483647 !important;
+    pointer-events: auto !important;
+}
+
+.swal2-backdrop {
+    z-index: 2147483646 !important;
+    pointer-events: auto !important;
+}
+
+.swal2-modal {
+    z-index: 2147483647 !important;
+    pointer-events: auto !important;
+}
+
 @theme inline {
     --radius-sm: calc(var(--radius) - 4px);
     --radius-md: calc(var(--radius) - 2px);
