@@ -92,9 +92,11 @@ export type ordinance_approvals = {
 }
 
 export type ordinanceFiles = {
+    id: number
     url: string;
     name: string;
     type: string;
+    uploaded: boolean;
 }
 
 export type projectFiles = {
