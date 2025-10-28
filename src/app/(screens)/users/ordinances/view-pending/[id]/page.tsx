@@ -38,25 +38,29 @@ export default function ViewOrdinance() {
   const params = useParams();
   const id = params?.id as string;
   const [ordinance, setOrdinance] = useState<ordinance[]>([]);
-  const [ordinanceFile, setOrdinanceFile] = useState<ordinanceFiles | null>(
-    null
-  );
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [ordinanceFile, setOrdinanceFile] = useState<ordinanceFiles[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File[]>([]);
   const [ordinanceApprovals, setOrdinanceApprovals] = useState<
     ordinance_approvals[]
   >([]);
+  const [selected, setSelected] = useState<number[]>([]);
 
   useEffect(() => {
     const setData = async () => {
       const data = await getOrdinanceByTitle(id);
+      const ordinanceID = data[0].id
       setOrdinance(data);
 
-      if (data && data.length > 0) {
-        const approvals = await getPendingOrdinanceStatus(data[0].id);
+      if (ordinanceID) {
+        const approvals = await getPendingOrdinanceStatus(ordinanceID);
         setOrdinanceApprovals(approvals);
 
-        const file = await getPendingOrdinanceFile(data[0].id);
-        if (file) setOrdinanceFile(file);
+        const file = await getPendingOrdinanceFile(ordinanceID);
+        if (file) {
+          setOrdinanceFile(
+            Array.isArray(file) ? (file as ordinanceFiles[]) : ([file] as ordinanceFiles[])
+          );
+        }
       }
     };
 
@@ -65,12 +69,11 @@ export default function ViewOrdinance() {
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSelectedFile([]);
     if (!selectedFile || ordinance.length === 0) return;
 
     try {
       await uploadOrdinanceFile(selectedFile, ordinance[0].id);
-      setSelectedFile(null);
-
       Swal.fire({
         title: "Success!",
         text: "Your file has been uploaded.",
@@ -93,7 +96,7 @@ export default function ViewOrdinance() {
   const handleDelete = async () => {
     const result = await Swal.fire({
       title: "Are you sure?",
-      text: "This file will be permanently deleted.",
+      text: "Deleted files are not going to be retrievable",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -104,8 +107,7 @@ export default function ViewOrdinance() {
 
     if (result.isConfirmed) {
       try {
-        deletePendingOrdinanceFile(ordinance[0].id);
-        setOrdinanceFile(null);
+        deletePendingOrdinanceFile(ordinance[0].id, selected);
 
         await Swal.fire({
           title: "Deleted!",
@@ -126,7 +128,7 @@ export default function ViewOrdinance() {
   };
 
   return (
-    <div className="bg-[#E6F1FF] min-h-screen max-h-fit mt-10">
+    <div className="bg-[#E6F1FF] min-h-screen max-h-fit mt-10 pb-10">
       {/* Breadcrumb */}
       <Breadcrumb className="ml-20">
         <BreadcrumbList>
@@ -198,15 +200,14 @@ export default function ViewOrdinance() {
                 </TableCell>
                 <TableCell className="text-center">
                   <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      data.status === "pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : data.status === "in progress"
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${data.status === "pending"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : data.status === "in progress"
                         ? "bg-blue-100 text-blue-800"
                         : data.status === "approved"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
                   >
                     {data.status.toUpperCase()}
                   </span>
@@ -214,19 +215,19 @@ export default function ViewOrdinance() {
                 <TableCell className="text-center italic">
                   {data.start_date
                     ? new Date(data.start_date).toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "2-digit",
-                        year: "numeric",
-                      })
+                      month: "long",
+                      day: "2-digit",
+                      year: "numeric",
+                    })
                     : "-"}
                 </TableCell>
                 <TableCell className="text-center italic">
                   {data.end_date
                     ? new Date(data.end_date).toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "2-digit",
-                        year: "numeric",
-                      })
+                      month: "long",
+                      day: "2-digit",
+                      year: "numeric",
+                    })
                     : "-"}
                 </TableCell>
                 <TableCell className="text-center">{data.approver}</TableCell>
@@ -244,105 +245,177 @@ export default function ViewOrdinance() {
           Please submit the PDF of the ordinance or any necessary documents.
         </p>
 
-        {ordinanceFile ? (
+        <div className="mt-4 space-y-4">
 
-          <div className="flex items-center justify-between mt-4 p-4 bg-white rounded-2xl shadow-md max-w-lg border border-gray-200">
-            <div className="flex flex-col">
-              <span className="font-medium text-gray-800">
-                {getDisplayName(ordinanceFile.name)}
-              </span>
-              <span className="text-sm text-gray-500">
-                {ordinanceFile.type.toUpperCase()}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-1"
-                onClick={() => window.open(ordinanceFile.url, "_blank")}
-              >
-                <Eye className="h-4 w-4" />
-                View
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleDelete}
-                title="Remove file"
-                className="rounded-full hover:bg-red-100"
-              >
-                <X className="h-5 w-5 text-red-500" />
-              </Button>
-            </div>
-          </div>
-        ) : selectedFile ? (
-          <form
-            className="flex items-center justify-between mt-4 p-4 bg-white rounded-2xl shadow-md max-w-lg border border-gray-200"
-            onSubmit={handleUpload}
-          >
-            <div className="flex flex-col">
-              <span className="font-medium text-gray-800">
-                {selectedFile.name}
-              </span>
-              <span className="text-sm text-gray-500">
-                {selectedFile.type.toUpperCase()}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-1 cursor-pointer"
-                type="submit"
-              >
-                Upload
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setSelectedFile(null)}
-                title="Remove file"
-                className="rounded-full hover:bg-red-100"
-              >
-                <X className="h-5 w-5 text-red-500" />
-              </Button>
-            </div>
-          </form>
-        ) : (
-          <div className="mt-4 flex">
-            <form
-              onSubmit={handleUpload}
-              className="flex items-center gap-3 bg-white p-4 rounded-xl border border-gray-200 shadow-sm max-w-md w-full"
-            >
-              <label className="flex flex-col items-center justify-center flex-1 cursor-pointer rounded-lg border-2 border-dashed border-gray-300 px-4 py-5 text-center text-gray-500 hover:border-blue-400 hover:bg-blue-50 transition">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-gray-400 mb-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
+          {selectedFile.length > 0 && (
+            <div className="mt-6 p-6 bg-blue-50 border border-blue-200 rounded-xl shadow-inner">
+              <div className="flex justify-between items-center mb-4">
+                <p className="text-blue-800 font-semibold text-lg">Files to Upload</p>
+                <Button
+                  onClick={() => setSelectedFile([])}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 16v-8m0 0l-3 3m3-3l3 3m6 2v5a2 2 0 01-2 2H7a2 2 0 01-2-2v-5m14-2l-4-4m0 0L12 4l-4 4"
-                  />
-                </svg>
-                <span className="text-sm font-medium">Upload File</span>
-                <span className="text-xs text-gray-400">.PDF only</span>
-                <Input
-                  type="file"
-                  className="hidden"
-                  onChange={(e) =>
-                    setSelectedFile(e.target.files ? e.target.files[0] : null)
-                  }
-                />
-              </label>
-            </form>
-          </div>
-        )}
+                  Clear All
+                </Button>
+                <Button
+                  onClick={handleUpload}
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-sm"
+                >
+                  Upload All
+                </Button>
+              </div>
+
+              <div className="flex flex-row flex-wrap gap-4">
+
+                {selectedFile.map((file, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between p-4 bg-white rounded-2xl shadow-md border border-blue-200 w-full sm:w-[48%] md:w-[45%] lg:w-[30%]"
+                  >
+                    <div className="flex flex-col min-w-0">
+                      <span className="font-medium text-gray-800 w-full truncate overflow-hidden whitespace-nowrap">
+                        {file.name}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        {file.type.toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-1 border-blue-400 text-blue-600 hover:bg-blue-50"
+                        onClick={handleUpload}
+                      >
+                        Upload
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() =>
+                          setSelectedFile((prev) => prev.filter((_, index) => index !== i))
+                        }
+                        title="Remove file"
+                        className="rounded-full hover:bg-red-100"
+                      >
+                        <X className="h-5 w-5 text-red-500" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+
+          {selectedFile.length === 0 && ordinanceFile.length > 0 && (
+            <>
+              <div className="flex flex-row items-center justify-between w-full gap-3 min-h-11">
+                <p className="text-gray-600 font-medium">Uploaded Files:</p>
+
+                <div className="flex flex-row items-center gap-2">
+
+
+                  {selected.length > 0 && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={handleDelete}
+                      title="Remove file"
+                      className="bg-red-100 cursor-pointer text-red-600 border border-red-200 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-red-200 hover:text-red-800 transition-all duration-200"
+                    >
+                      Delete Selected ({selected.length})
+                    </Button>
+                  )}
+                  {/* <Button
+                    variant="outline"
+                    className="cursor-pointer text-blue-600 border-blue-300 hover:bg-blue-50 hover:text-blue-800"
+                  >
+                    Upload Ordinance Files
+                  </Button> */}
+                </div>
+              </div>
+
+
+              <div className="flex flex-row flex-wrap gap-4">
+
+                <div className="flex items-center justify-between h-[78px] min-w-40 w-full max-w-lg rounded-2xl shadow-md border transition-all duration-200 bg-white">
+                  <form
+                    onSubmit={handleUpload}
+                    className="flex flex-row items-center justify-center gap-3 w-full h-full rounded-2xl"
+                  >
+                    <label className="flex items-center justify-center mx-3 my-2 flex-1 h-[80%] cursor-pointer rounded-2xl border-2 border-dashed border-gray-300 px-4 py-3 text-gray-500 hover:border-blue-400 hover:bg-blue-50 transition-all duration-200">
+                        <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-8 w-8 text-gray-400 mb-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={1.5}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 16v-8m0 0l-3 3m3-3l3 3m6 2v5a2 2 0 01-2 2H7a2 2 0 01-2-2v-5m14-2l-4-4m0 0L12 4l-4 4"
+                        />
+                      </svg>
+                      <div className="ml-3 flex flex-col">
+                        <span className="text-sm font-medium">Upload File</span>
+                        <span className="text-xs text-gray-400">.PDF only</span>
+                      </div>
+
+                      <Input
+                        type="file"
+                        className="hidden"
+                        accept="application/pdf"
+                        multiple
+                        onChange={(e) => {
+                          if (e.target.files) {
+                            const filesArray = Array.from(e.target.files);
+                            console.log(filesArray);
+                            setSelectedFile(filesArray);
+                          }
+                        }}
+                      />
+                    </label>
+                  </form>
+                </div>
+                {ordinanceFile.map((data, i) => {
+                  const isSelected = selected.includes(data.id)
+                  return (
+                    <div
+                      key={i}
+                      className={`flex items-center justify-between h-[78px] p-4 min-w-40 w-full rounded-2xl shadow-md max-w-lg border transition-all duration-200 ${isSelected ? "border-blue-300 bg-blue-200" : "border-gray-200 hover:bg-gray-50 bg-white "}`}
+                      onClick={() => {
+                        setSelected((prev) =>
+                          prev.includes(data.id) ? prev.filter((id) => id !== data.id) : [...prev, data.id]
+                        )
+                      }}
+                    >
+                      <div className="flex flex-col">
+                        <span className="font-medium text-gray-800">
+                          {getDisplayName(data.name)}
+                        </span>
+                        <span className="text-sm text-gray-500">{data.type.toUpperCase()}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex items-center gap-1"
+                          onClick={() => window.open(data.url, "_blank")}
+                        >
+                          <Eye className="h-4 w-4" />
+                          View
+                        </Button>
+
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
