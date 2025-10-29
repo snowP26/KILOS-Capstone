@@ -3,8 +3,7 @@ import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 import { useRouter } from "next/navigation"
-import { ChangeEvent, FormEvent, useState } from "react"
-import client from "@/src/api/client"
+import { ChangeEvent,  useState } from "react"
 import { handleLogin } from "../../actions/auth"
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"form">) {

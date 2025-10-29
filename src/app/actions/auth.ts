@@ -172,8 +172,6 @@ export const loginRoute = async (user: User, router: AppRouterInstance) => {
   if (!user) return
   const role = user.user_metadata.role as string
 
-  console.log(user.email)
-  console.log(user.user_metadata.role)
 
   switch (role) {
     case "Legislative":
@@ -220,27 +218,42 @@ export const handleLogin = async (e: FormEvent<HTMLFormElement>, router: AppRout
       Swal.showLoading();
     },
   });
+  try {
+    const { data, error } = await client.auth.signInWithPassword({
+      email: form.email,
+      password: form.password
+    })
 
-  const { data, error } = await client.auth.signInWithPassword({
-    email: form.email,
-    password: form.password
-  })
+    Swal.close();
 
-  const storage = form.remember ? localStorage : sessionStorage;
-  storage.setItem("sb-session", JSON.stringify(data.session));
+    if (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: error.message,
+        confirmButtonColor: "#052659",
+      });
+      return;
+    }
+    const storage = form.remember ? localStorage : sessionStorage;
+    storage.setItem("sb-session", JSON.stringify(data.session));
 
-  if (error) {
-    Swal.fire({
+    await Swal.fire({
+      icon: "success",
+      title: "Login Successful!",
+      text: "Please wait while we redirect you...",
+      timer: 1500,
+      showConfirmButton: false,
+    });
+    loginRoute(data.user, router);
+
+  } catch (error) {
+    Swal.close();
+    await Swal.fire({
       icon: "error",
-      title: "Login Failed",
-      text: error.message,
+      title: "Unexpected Error",
+      text: (error as Error).message || "Something went wrong.",
       confirmButtonColor: "#052659",
     });
-    return;
   }
-
-  loginRoute(data.user, router)
-
-  Swal.close();
-  return
 }

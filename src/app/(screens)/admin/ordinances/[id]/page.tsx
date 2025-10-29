@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, CircleCheck } from "lucide-react";
+import { ArrowLeft, CircleCheck, Eye } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -43,7 +43,7 @@ import {
 } from "@/src/app/actions/admin_ordinances";
 import { Input } from "@/components/ui/input";
 import Swal from "sweetalert2";
-import { getPendingOrdinanceFile } from "@/src/app/actions/ordinances";
+import { clearOrdinanceFile, getPendingOrdinanceFile, setOrdinanceFile } from "@/src/app/actions/ordinances";
 import { getDisplayName, getLocFromAuth } from "@/src/app/actions/convert";
 
 export default function SubmitOrdinances() {
@@ -53,8 +53,11 @@ export default function SubmitOrdinances() {
   const id = params.id as string;
   const [refresh, setRefresh] = useState(0);
   const [ordinance, setOrdinance] = useState<ordinance | null>(null);
-  const [files, setFiles] = useState<ordinanceFiles | null>(null);
+  const [files, setFiles] = useState<ordinanceFiles[]>([]);
   const [approval, setApproval] = useState<ordinance_approvals[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<{ id: number, uploaded: boolean } | null>(null);
+  const [uploaded, setUploaded] = useState(0)
 
   const [editingRow, setEditingRow] = useState<number | null>(null);
   const [formData, setFormData] = useState<Partial<ordinance_approvals>>({});
@@ -95,13 +98,12 @@ export default function SubmitOrdinances() {
   };
 
   const fetchData = async () => {
+    setLoading(true)
     const location = await getLocFromAuth()
-
-    console.log(location)
-
     const data = await getOrdinanceByName(id);
 
     if (location !== Number(data?.location)) {
+      setLoading(false)
       return null
     }
     const ordinanceStatus = await getApprovalPerOrdinance(data?.id);
@@ -109,13 +111,20 @@ export default function SubmitOrdinances() {
     setApproval(ordinanceStatus);
     setOrdinance(data as ordinance);
     setFiles(pendingFile);
+    setSelected(null)
+    setLoading(false)
   };
+
 
   useEffect(() => {
     fetchData();
   }, [refresh, id]);
 
-  if (!ordinance && !files && approval.length === 0) {
+  useEffect(() => {
+    setUploaded(files.filter((f) => f.uploaded).length)
+  }, [refresh])
+
+  if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#E6F1FF] px-4">
         <h1 className="text-xl font-semibold text-gray-700">
@@ -130,7 +139,7 @@ export default function SubmitOrdinances() {
 
 
 
-  if (ordinance) {
+  if (ordinance && !loading) {
     return (
       <div className="bg-[#E6F1FF] min-h-screen max-h-full mt-10">
         <Breadcrumb className="ml-5 lg:ml-20">
@@ -345,28 +354,89 @@ export default function SubmitOrdinances() {
               </TableBody>
             </Table>
           </div>
-          {files ? (
-            <div className="mt-10 flex justify-center lg:justify-start lg:mx-20">
-              <div
-                className="bg-white py-2 px-10 w-fit mt-2 flex flex-row gap-2 rounded-[8px]"
-                onClick={() => {
-                  window.open(files.url, "_blank")
-                }}
-              >
-                <CircleCheck fill="#A3C4A8" size="18" className="self-center" />
-                <p>{getDisplayName(files.name)}</p>
-                <p>{files.type.toUpperCase()}</p>
-              </div>
+          <div className="flex flex-row items-center gap-3 mt-6">
+            <div className="flex flex-col justify-center">
+              <h1 className="text-gray-600 font-medium">Uploaded Files:</h1>
+              <p className="text-sm text-gray-400">Select ordinance file to be uploaded</p>
             </div>
-          ) : (
-            <div className="flex justify-center lg:justify-start">
-              <h1 className="mt-10 lg:mt-5 lg:mx-20 bg-white py-2 px-10 w-fit font-semibold italic rounded-[8px]">No files attached.</h1>
-            </div>
-          )}
 
-          {/* <button onClick={() => getFilesPerOrdinance(ordinance?.id as number)}>
-          Hello
-        </button> */}
+            {selected && (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={async () => {
+                  await setOrdinanceFile(selected.id, selected.uploaded);
+                  setSelected(null);
+                  setRefresh((prev) => prev + 1);
+                }}
+                className="bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 cursor-pointer"
+              >
+                Set Ordinance File
+              </Button>
+            )}
+
+            {files.some((f) => f.uploaded) && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={async () => {
+                  await clearOrdinanceFile(id);
+                  setSelected(null);
+                  setRefresh((prev) => prev + 1);
+                }}
+                className="bg-red-600 text-white hover:bg-red-700 active:bg-red-800 cursor-pointer"
+              >
+                Clear Uploaded File
+              </Button>
+            )}
+          </div>
+
+          <div className="flex flex-row flex-wrap gap-4 mt-5">
+            {files.length > 0 ? (
+              [...files]
+                .sort((a, b) => (b.uploaded ? 1 : 0) - (a.uploaded ? 1 : 0))
+                .map((data) => {
+                  const isSelected = selected?.id === data.id;
+                  const hasUploaded = files.some((f) => f.uploaded);
+                  const isLocked = hasUploaded; 
+
+                  return (
+                    <div
+                      key={data.id}
+                      className={`flex items-center justify-between h-[78px] p-4 w-full rounded-2xl shadow-md max-w-lg border transition-all duration-200 ${isLocked ? "cursor-auto" : "cursor-pointer"} ${data.uploaded ? "border-green-500 bg-green-200" : isSelected ? "border-blue-300 bg-blue-100" : "border-gray-200 hover:bg-gray-50 bg-white"}`}
+                      onClick={() => {
+                        if (!isLocked) {
+                          setSelected({ id: data.id, uploaded: data.uploaded });
+                        }
+                      }}
+                    >
+                      <div className="flex flex-col">
+                        <span className="font-medium text-gray-800">
+                          {getDisplayName(data.name)}
+                        </span>
+                        <span className="text-sm text-gray-500">{data.type.toUpperCase()}</span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.open(data.url, "_blank")}
+                          className="flex items-center gap-1 cursor-pointer"
+                        >
+                          <Eye className="h-4 w-4" />
+                          View
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })
+            ) : (
+              <div className="flex justify-center lg:justify-start">
+                <h1 className="mt-10 lg:mt-5 lg:mx-20 bg-white py-2 px-10 w-fit font-semibold italic rounded-[8px]">No files attached.</h1>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );

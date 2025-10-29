@@ -326,12 +326,6 @@ export default function ViewOrdinance() {
                       Delete Selected ({selected.length})
                     </Button>
                   )}
-                  {/* <Button
-                    variant="outline"
-                    className="cursor-pointer text-blue-600 border-blue-300 hover:bg-blue-50 hover:text-blue-800"
-                  >
-                    Upload Ordinance Files
-                  </Button> */}
                 </div>
               </div>
 
@@ -344,7 +338,7 @@ export default function ViewOrdinance() {
                     className="flex flex-row items-center justify-center gap-3 w-full h-full rounded-2xl"
                   >
                     <label className="flex items-center justify-center mx-3 my-2 flex-1 h-[80%] cursor-pointer rounded-2xl border-2 border-dashed border-gray-300 px-4 py-3 text-gray-500 hover:border-blue-400 hover:bg-blue-50 transition-all duration-200">
-                        <svg
+                      <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-8 w-8 text-gray-400 mb-2"
                         fill="none"
@@ -379,39 +373,44 @@ export default function ViewOrdinance() {
                     </label>
                   </form>
                 </div>
-                {ordinanceFile.map((data, i) => {
-                  const isSelected = selected.includes(data.id)
-                  return (
-                    <div
-                      key={i}
-                      className={`flex items-center justify-between h-[78px] p-4 min-w-40 w-full rounded-2xl shadow-md max-w-lg border transition-all duration-200 ${isSelected ? "border-blue-300 bg-blue-200" : "border-gray-200 hover:bg-gray-50 bg-white "}`}
-                      onClick={() => {
-                        setSelected((prev) =>
-                          prev.includes(data.id) ? prev.filter((id) => id !== data.id) : [...prev, data.id]
-                        )
-                      }}
-                    >
-                      <div className="flex flex-col">
-                        <span className="font-medium text-gray-800">
-                          {getDisplayName(data.name)}
-                        </span>
-                        <span className="text-sm text-gray-500">{data.type.toUpperCase()}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="flex items-center gap-1"
-                          onClick={() => window.open(data.url, "_blank")}
+                {ordinanceFile.length > 0 && (
+                  [...ordinanceFile]
+                    .sort((a, b) => (b.uploaded ? 1 : 0) - (a.uploaded ? 1 : 0))
+                    .map((data, i) => {
+                      const isSelected = selected.includes(data.id)
+                      return (
+                        <div
+                          key={i}
+                          className={`flex items-center justify-between h-[78px] p-4 min-w-40 w-full rounded-2xl shadow-md max-w-lg border transition-all duration-200  ${data.uploaded ? "border-green-500 bg-green-200" : isSelected ? "border-blue-300 bg-blue-200" : "border-gray-200 hover:bg-gray-50 bg-white "}`}
+                          onClick={() => {
+                            setSelected((prev) =>
+                              prev.includes(data.id) ? prev.filter((id) => id !== data.id) : [...prev, data.id]
+                            )
+                          }}
                         >
-                          <Eye className="h-4 w-4" />
-                          View
-                        </Button>
+                          <div className="flex flex-col">
+                            <span className="font-medium text-gray-800">
+                              {getDisplayName(data.name)}
+                            </span>
+                            <span className="text-sm text-gray-500">{data.type.toUpperCase()}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex items-center gap-1"
+                              onClick={() => window.open(data.url, "_blank")}
+                            >
+                              <Eye className="h-4 w-4" />
+                              View
+                            </Button>
 
-                      </div>
-                    </div>
+                          </div>
+                        </div>
+                      )
+                    })
                   )
-                })}
+                }
               </div>
             </>
           )}

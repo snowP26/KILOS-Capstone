@@ -307,6 +307,7 @@ export const openOrdinancePDF = async (ordinanceID: number) => {
     .from("ordinance_files")
     .select("file_path")
     .eq("ordinance_id", ordinanceID)
+    .eq("uploaded", true)
     .single();
 
   if (ordinanceFileError) {
@@ -333,7 +334,7 @@ export const openOrdinancePDF = async (ordinanceID: number) => {
 export const getPendingOrdinanceFile = async (ordinanceID: number | undefined) => {
   const { data: ordinanceFileData, error: fileError } = await client
     .from("ordinance_files")
-    .select("id, file_path")
+    .select("id, file_path, uploaded")
     .eq("ordinance_id", ordinanceID)
 
   if (fileError || !ordinanceFileData?.length) {
@@ -353,11 +354,11 @@ export const getPendingOrdinanceFile = async (ordinanceID: number | undefined) =
       const type = name.split(".").pop() || "unknown";
       const id = file.id
 
-      return { id, url: signedUrlData.signedUrl, name, type };
+      return { id, url: signedUrlData.signedUrl, name, type, uploaded: file.uploaded };
     })
   );
 
-  return signedFiles.filter((f): f is { id: number; url: string; name: string; type: string } => f !== null);
+  return signedFiles.filter((f): f is { id: number; url: string; name: string; type: string, uploaded: boolean } => f !== null);
 };
 
 export const deletePendingOrdinanceFile = async (ordinanceID: number, files: number[]) => {
@@ -482,3 +483,35 @@ export const uploadOrdinanceFile = async (file: File[], ordinanceID: number) => 
     });
   }
 };
+
+
+export const setOrdinanceFile = async (id: number, uploaded: boolean) => {
+  try {
+    const { error } = await client
+      .from("ordinance_files")
+      .update({ uploaded: !uploaded })
+      .eq("id", id)
+    if (error) {
+      console.error("Supabase update error:", error);
+      throw error;
+    }
+
+    console.log(`File ${id} updated successfully!`);
+  }
+  catch (error) {
+    console.error("Unexpected error while updating file:", error);
+  }
+}
+
+export const clearOrdinanceFile = async (id: string) => {
+  const { error } = await client
+    .from("ordinance_files")
+    .update({ uploaded: false })
+    .eq("ordinance_id", id)
+
+  if (error) {
+    console.error("Error clearing ordinance files: ", error.message);
+    throw new Error("Failed to clear ordinance files.");
+  }
+
+}
