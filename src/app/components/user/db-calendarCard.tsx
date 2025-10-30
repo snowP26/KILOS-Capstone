@@ -37,7 +37,7 @@ interface CustomEvent {
 }
 
 export const DbCalendarCard = () => {
-  // --- States ---
+
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [currentEvents, setCurrentEvents] = useState<Meetings[]>([]);
   const [selectedDate, setSelectedDate] = useState<{
@@ -410,7 +410,26 @@ export const DbCalendarCard = () => {
             <hr className="border-t border-black/30 w-[90%] mx-auto mt-3" />
           </DialogHeader>
 
-          <form onSubmit={handleCreateMeeting} className="mt-6 space-y-6">
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+
+              Swal.fire({
+                title: "Please wait...",
+                text: "Processing your request.",
+                allowOutsideClick: false,
+                didOpen: () => {
+                  Swal.showLoading();
+                },
+              });
+
+              await handleCreateMeeting(e);
+
+              Swal.close();
+
+            }
+            }
+            className="mt-6 space-y-6">
             {/* Header */}
             <div className="flex flex-col gap-2">
               <Label className="text-sm font-medium text-gray-700">
