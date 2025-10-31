@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ComNav } from "../../components/community/nav";
 import LocationSelect from "../../components/community/locselect";
@@ -13,18 +13,18 @@ import { Separator } from "@/components/ui/separator";
 import {
     Breadcrumb,
     BreadcrumbItem,
-    BreadcrumbLink,
     BreadcrumbList,
     BreadcrumbPage,
-    BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { project } from "../../lib/definitions";
+import { getAllProjects } from "../../actions/landingpage";
+import { locIDtoName } from "../../actions/convert";
 
 export default function ViewUpcomingEvents() {
     const router = useRouter();
-    const [showDetails, setShowDetails] = useState(false);
-
     const [searchQuery, setSearchQuery] = useState("");
     const [searchLoc, setSearchLoc] = useState<string | null>(null);
+    const [events, setEvents] = useState<project[] | null>(null);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -35,6 +35,23 @@ export default function ViewUpcomingEvents() {
 
         router.push(`/search/?${queryParams.toString()}`);
     };
+
+    useEffect(() => {
+        const getData = async () => {
+            const data = await getAllProjects();
+
+            const projectsWithLoc = await Promise.all(
+                data.map(async (proj) => ({
+                    ...proj,
+                    locName: await locIDtoName(proj.location),
+                }))
+            );
+
+            setEvents(projectsWithLoc);
+        };
+
+        getData();
+    }, []);
 
     return (
         <div>
@@ -99,67 +116,42 @@ export default function ViewUpcomingEvents() {
             </div>
 
             <div className="flex flex-col mx-5 sm:mx-20 xl:mx-50 my-10 gap-5">
+                {events?.map((data) => (
 
-                {/*start of project Card */}
-                <div 
-                onClick={() => router.push("/view-project/[id]/")}
-                className="flex flex-col items-center lg:flex-row lg:gap-2 cursor-pointer"
-                >
-                    <div className="w-full h-60 sm:h-auto lg:h-60 xl:h-60 lg:w-[30%] lg:flex lg:justify-end">
-                        <div className="bg-black w-full lg:w-fit h-full aspect-square object-cover rounded-t-2xl lg:rounded-2xl">
-
-                        </div>
-                    </div>
-                    <div className="w-full lg:h-fit lg:w-[70%] bg-[#E6F1FF] rounded-b-2xl lg:rounded-2xl p-5 shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
-                        <h1 className="font-bold text-2xl truncate">
-                            HIBLA: Weaving Safety, Dignity, and Dialogue
-                        </h1>
-                        <p className="text-gray-600 mt-3 mb-10 line-clamp-3">
-                            Makiiba samuya sa paghabi kan sarong ciudad nin Naga na mas bukas sa pakikipag diyalogo, mas ligtas, asin mas inklusibong ciudad para sa satuyang mga tugang na miyembro kan komunidad kan LGBTQIA+.
-                            Mag-iribahan kita ngunyan na Sabado, Hunyo 21, 2025 sa Museo ni Jesse Robredo para sa &quot;HIBLA: Weaving Safety, Dignity, and Dialogue&quot; kun sain gaganapon an mga minasunod:
-                        </p>
-
-                        <div className="flex flex-row gap-2">
-                            <div className="bg-amber-200 px-3 py-2 text-xs font-semibold rounded-2xl">
-                                Naga City
-                            </div>
-                            <div className="bg-amber-200 px-3 py-2 text-xs font-semibold rounded-2xl">
-                                June 21, 2025
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {/*end of project Card */}
-
-                {/*start of project Card */}
-                <div 
-                onClick={() => router.push("/view-project/[id]/")}
-                className="flex flex-col items-center lg:flex-row lg:gap-2 cursor-pointer"
-                >
-                    <div className="w-full h-60 sm:h-auto lg:h-60 xl:h-60 lg:w-[30%] lg:flex lg:justify-end">
-                        <div className="bg-black w-full lg:w-fit h-full aspect-square object-cover rounded-t-2xl lg:rounded-2xl">
+                    <div
+                        key={data.id}
+                        onClick={() => router.push(`/view-project/${data.id}`)}
+                        className="flex flex-col items-center lg:flex-row lg:gap-2 cursor-pointer"
+                    >
+                        <div className="w-full h-60 sm:h-auto lg:h-60 xl:h-60 lg:w-[30%] lg:flex lg:justify-end">
+                            <img src={data.imageURL} className="w-full lg:w-fit h-full aspect-square object-cover rounded-t-2xl lg:rounded-2xl" />
 
                         </div>
-                    </div>
-                    <div className="w-full lg:h-fit lg:w-[70%] bg-[#E6F1FF] rounded-b-2xl lg:rounded-2xl p-5 shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
-                        <h1 className="font-bold text-2xl truncate">
-                            HIBLA: Weaving Safety, Dignity, and Dialogue
-                        </h1>
-                        <p className="text-gray-600 mt-3 mb-10 line-clamp-3">
-                            Makiiba samuya sa paghabi kan sarong ciudad nin Naga na mas bukas sa pakikipag diyalogo, mas ligtas, asin mas inklusibong ciudad para sa satuyang mga tugang na miyembro kan komunidad kan LGBTQIA+.
-                            Mag-iribahan kita ngunyan na Sabado, Hunyo 21, 2025 sa Museo ni Jesse Robredo para sa &quot;HIBLA: Weaving Safety, Dignity, and Dialogue&quot; kun sain gaganapon an mga minasunod:
-                        </p>
+                        <div className="w-full lg:h-fit lg:w-[70%] bg-[#E6F1FF] rounded-b-2xl lg:rounded-2xl p-5 shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
+                            <h1 className="font-bold text-2xl truncate">
+                                {data.title}
+                            </h1>
+                            <p className="text-gray-600 mt-3 mb-10 line-clamp-3">
+                                {data.description}
+                            </p>
 
-                        <div className="flex flex-row gap-2">
-                            <div className="bg-amber-200 px-3 py-2 text-xs font-semibold rounded-2xl">
-                                Naga City
-                            </div>
-                            <div className="bg-amber-200 px-3 py-2 text-xs font-semibold rounded-2xl">
-                                June 21, 2025
+                            <div className="flex flex-row gap-2">
+                                <div className="bg-amber-200 px-3 py-2 text-xs font-semibold rounded-2xl">
+                                    {data.locName}
+                                </div>
+                                <div className="bg-amber-200 px-3 py-2 text-xs font-semibold rounded-2xl">
+                                    {new Date(data.target_date).toLocaleDateString("en-US", {
+                                        month: "long",
+                                        day: "numeric",
+                                        year: "numeric",
+                                    })}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                ))
+
+                }
                 {/*end of project Card */}
             </div>
 
