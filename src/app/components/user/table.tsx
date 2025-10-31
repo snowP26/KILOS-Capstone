@@ -28,14 +28,13 @@ export const ProjectTable = ({ id }: ProjectTableProps) => {
         const fetchData = async () => {
             const data = await getApprovalsByID(id ?? 0)
             setApprovals(data);
-            console.log(data)
         }
 
         fetchData();
     }, [id])
 
     return (
-        <Table>
+        <Table className="mb-10">
             <TableHeader>
                 <TableRow>
                     <TableHead className="text-center">#</TableHead>

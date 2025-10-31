@@ -1,4 +1,5 @@
 import client from "@/src/api/client";
+import { createClient, User } from "@supabase/supabase-js";
 import { users } from "@/src/app/lib/definitions";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { FormEvent } from "react";
@@ -25,7 +26,7 @@ export const getCodeData = async (code: string) => {
 
   if (data) {
     console.log("Successfully fetched registration code data.");
-    return data.user_type;
+    return data.role;
   }
 }
 
@@ -47,7 +48,8 @@ export const checkCode = async (code: string) => {
 
 export const registerUser = async (
   regData: users,
-  router: AppRouterInstance
+  router: AppRouterInstance,
+  clearFields: () => void
 ) => {
   const { email, password, firstName, lastName, regCode } = regData;
   const userType = await checkCode(regCode);
@@ -87,9 +89,9 @@ export const registerUser = async (
       email: email,
       firstname: firstName,
       lastname: lastName,
-      position: posData[0].position_name,
-      role: posData[0].user_type,
-      location: posData[0].location_id,
+      position: posData[0].position,
+      role: posData[0].role,
+      location: posData[0].location,
     },
   ]);
 
@@ -104,11 +106,11 @@ export const registerUser = async (
       data: {
         first_name: firstName,
         last_name: lastName,
-        position: posData[0].position_name,
-        role: posData[0].user_type,
-        location: posData[0].location_id,
+        position: posData[0].position,
+        role: posData[0].role,
+        location: posData[0].location,
       },
-      emailRedirectTo: "http://localhost:3000/login",
+      emailRedirectTo: "https://kilos-capstone.vercel.app/",
     },
 
   });
@@ -123,6 +125,7 @@ export const registerUser = async (
     return console.log("error: ", error);
   }
   router.push("/login");
+  clearFields();
   return successPopup();
 };
 
@@ -165,33 +168,10 @@ const getRole = async () => {
 }
 
 
-
-
-export const handleLogin = async (e: FormEvent<HTMLFormElement>, router: AppRouterInstance) => {
-  e.preventDefault();
-  const loginForm = new FormData(e.currentTarget)
-
-  const form = {
-    email: loginForm.get("email") as string,
-    password: loginForm.get("password") as string
-  }
-
-
-  const { data, error } = await client.auth.signInWithPassword({
-    email: form.email,
-    password: form.password
-  })
-
-  if (error) {
-    console.log("Error with login: ", error);
-    console.log(form.email, form.password)
-    return
-  }
-
-
-  const user = data.user
+export const loginRoute = async (user: User, router: AppRouterInstance) => {
   if (!user) return
   const role = user.user_metadata.role as string
+
 
   switch (role) {
     case "Legislative":
@@ -200,8 +180,8 @@ export const handleLogin = async (e: FormEvent<HTMLFormElement>, router: AppRout
       router.push("/users/home")
       console.log(role)
       break
-    case "admin":
-      router.push("/admin")
+    case "Admin":
+      router.push("/admin/home")
       console.log(role)
       break
     case "superadmin":
@@ -214,5 +194,66 @@ export const handleLogin = async (e: FormEvent<HTMLFormElement>, router: AppRout
       router.push("/users/home")
   }
 
-  return
+}
+
+
+
+export const handleLogin = async (e: FormEvent<HTMLFormElement>, router: AppRouterInstance) => {
+  e.preventDefault();
+  const loginForm = new FormData(e.currentTarget)
+
+  const form = {
+    email: loginForm.get("email") as string,
+    password: loginForm.get("password") as string,
+    remember: loginForm.get("remember") === "on"
+  }
+
+  Swal.fire({
+    title: "Logging you in...",
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timerProgressBar: true,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+  try {
+    const { data, error } = await client.auth.signInWithPassword({
+      email: form.email,
+      password: form.password
+    })
+
+    Swal.close();
+
+    if (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: error.message,
+        confirmButtonColor: "#052659",
+      });
+      return;
+    }
+    const storage = form.remember ? localStorage : sessionStorage;
+    storage.setItem("sb-session", JSON.stringify(data.session));
+
+    await Swal.fire({
+      icon: "success",
+      title: "Login Successful!",
+      text: "Please wait while we redirect you...",
+      timer: 1500,
+      showConfirmButton: false,
+    });
+    loginRoute(data.user, router);
+
+  } catch (error) {
+    Swal.close();
+    await Swal.fire({
+      icon: "error",
+      title: "Unexpected Error",
+      text: (error as Error).message || "Something went wrong.",
+      confirmButtonColor: "#052659",
+    });
+  }
 }

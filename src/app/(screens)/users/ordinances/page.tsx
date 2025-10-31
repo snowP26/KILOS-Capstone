@@ -22,20 +22,22 @@ import { useUserRole } from "@/src/app/actions/role";
 export default function Ordinances() {
   const [ordinances, setOrdinances] = useState<ordinance[]>([]);
   const [loadingOrdinances, setLoadingOrdinances] = useState(true);
+  const [filter, setFilter] = useState(false)
   const router = useRouter();
   const { role } = useUserRole();
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoadingOrdinances(true)
       try {
-        const data = await getOrdinancesByLocID();
+        const data = await getOrdinancesByLocID(filter);
         setOrdinances(data);
       } finally {
         setLoadingOrdinances(false);
       }
     };
     fetchData();
-  }, []);
+  }, [filter]);
 
   const normalizedRole = role?.trim().toLowerCase();
 
@@ -61,7 +63,7 @@ export default function Ordinances() {
       )}
     </div>
   );
-  // Skeleton component
+  
   const SkeletonList = () => (
     <div className="mt-5 space-y-4 px-40">
       {[1, 2, 3].map((i) => (
@@ -125,17 +127,17 @@ export default function Ordinances() {
 
         <hr className="border-t border-black w-[90%] mx-auto my-3" />
 
-        {/* Sort By */}
         <div className="mr-10 xl:mr-35 place-self-end">
-          <Select>
+          <Select onValueChange={(value) => {
+            setFilter(value === "true")
+          }}>
             <SelectTrigger className="w-[100%] bg-white cursor-pointer">
               <SelectValue placeholder="Sort By" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="newest ordinance">Newest Ordinance</SelectItem>
-                <SelectItem value="oldest ordinance">Oldest Ordinance</SelectItem>
-                <SelectItem value="submission date">Submission Date</SelectItem>
+                <SelectItem value="false">Newest Ordinance</SelectItem>
+                <SelectItem value="true">Oldest Ordinance</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>

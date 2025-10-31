@@ -13,22 +13,21 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type Users = {
-    id: string
-    createdAt: string
-    firstName: string
-    lastName: string
-    position: string
-    role: string
+    youth_official_id: string
+    created_at: string
+    firstname: string
+    lastname: string
+    position_title: string
+    position_role: string
     email: string
-    password: string
+    registration_code: string
+
 }
 
 export const locColumns: ColumnDef<Users>[] = [
     {
-        accessorKey: "id",
+        accessorKey: "youth_official_id",
         header: ({ column }) => {
             return (
                 <Button
@@ -43,7 +42,7 @@ export const locColumns: ColumnDef<Users>[] = [
         },
     },
     {
-        accessorKey: "createdAt",
+        accessorKey: "created_at",
         header: ({ column }) => {
             return (
                 <Button
@@ -54,23 +53,63 @@ export const locColumns: ColumnDef<Users>[] = [
                     Created At
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
-            )
+            );
+        },
+        cell: ({ row }) => {
+            const rawDate = row.getValue("created_at") as Date;
+            if (rawDate) {
+                const formattedDate = new Date(rawDate).toLocaleString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                });
+                return <span>{formattedDate}</span>;
+            }
+            return <span>-</span>
         },
     },
     {
-        accessorKey: "firstName",
-        header: () => <div className="text-center">First Name</div>
+        accessorKey: "firstname",
+        header: () => <div className="text-center">First Name</div>,
+        cell: ({ row }) => {
+            const firstname = row.getValue("firstname") as string;
+
+            if (!firstname) {
+                return (
+                    <span className="text-gray-400 italic">
+                        Registration code has not been assigned
+                    </span>
+                );
+            }
+
+            return <span>{firstname || "-"}</span>;
+        },
     },
     {
-        accessorKey: "lastName",
-        header: () => <div className="text-center">Last Name</div>
+        accessorKey: "lastname",
+        header: () => <div className="text-center">Last Name</div>,
+        cell: ({ row }) => {
+            const lastname = row.getValue("lastname") as string;
+
+            if (!lastname) {
+                return <span>-</span>; 
+            }
+
+            return <span>{lastname || "-"}</span>;
+        },
     },
     {
-        accessorKey: "position",
+        accessorKey: "registration_code",
+        header: () => <div className="text-center">Registration Code</div>
+    },
+    {
+        accessorKey: "position_title",
         header: () => <div className="text-center">Position</div>
     },
     {
-        accessorKey: "role",
+        accessorKey: "position_role",
         header: () => <div className="text-center">Role</div>
     },
     {
@@ -79,7 +118,7 @@ export const locColumns: ColumnDef<Users>[] = [
             return (
                 <Button
                     variant="ghost"
-                    className="cursor-pointer"
+                    className="cursor-pointer justify-center w-full text-center"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
                     Email
@@ -87,10 +126,6 @@ export const locColumns: ColumnDef<Users>[] = [
                 </Button>
             )
         },
-    },
-    {
-        accessorKey: "password",
-        header: "Password",
     },
     {
         id: "actions",
@@ -108,7 +143,7 @@ export const locColumns: ColumnDef<Users>[] = [
                     <DropdownMenuContent align="end" className="bg-[#1D1A1A] text-white">
                         <DropdownMenuLabel className="text-xs">Actions</DropdownMenuLabel>
                         <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(payment.id)}
+                            onClick={() => navigator.clipboard.writeText(payment.youth_official_id)}
                         >
                             Copy payment ID
                         </DropdownMenuItem>

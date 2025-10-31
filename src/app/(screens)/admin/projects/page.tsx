@@ -10,7 +10,7 @@ export default function Projects() {
   const router = useRouter();
   const [projects, setProjects] = useState<project[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 4; 
+  const pageSize = 4;
 
   useEffect(() => {
     const getData = async () => {
@@ -47,34 +47,34 @@ export default function Projects() {
         ))}
       </div>
 
-      {/* pagination controls */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-3 mt-8">
+        <div className="flex flex-wrap justify-center items-center gap-2 mt-8 mb-10">
+          {/* Previous Button */}
           <button
-            className="cursor-pointer px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+            className="px-4 py-2 rounded-md border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             disabled={currentPage === 1}
           >
             Previous
           </button>
 
-          {/* page numbers */}
+          {/* Page Numbers */}
           {[...Array(totalPages)].map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`px-3 py-1 rounded ${
-                currentPage === i + 1
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 hover:bg-gray-300 cursor-pointer"
-              }`}
+              className={`cursor-pointer px-3 py-1.5 rounded-md text-sm font-semibold transition ${currentPage === i + 1
+                ? "bg-[#052659] text-white border border-[#052659]"
+                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
+                }`}
             >
               {i + 1}
             </button>
           ))}
 
+          {/* Next Button */}
           <button
-            className="cursor-pointer px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+            className="cursor-pointer px-4 py-2 rounded-md border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             disabled={currentPage === totalPages}
           >

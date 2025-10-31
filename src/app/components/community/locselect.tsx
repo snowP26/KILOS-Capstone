@@ -47,7 +47,7 @@ export default function LocationSelect({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between rounded-lg bg-gray-100 px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="cursor-pointer flex w-full items-center justify-between rounded-lg bg-gray-100 px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         <span className={selected ? "text-gray-900" : "text-gray-500"}>
           {selected ? selected.name : "Location"}

@@ -23,7 +23,7 @@ export const OrdinancesLandingCard = ({ title, description, author, id }: ordina
 
     return (
         <div
-            className="bg-blue-100 rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)] 
+            className="bg-blue-100 min-h-120 max-h-full w-full sm:w-[50%] md:min-h-100 md:w-full lg:min-h-full lg:w-full mx-auto rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)] 
                  transition-all duration-300 ease-in-out transform 
                  hover:scale-[1.02] hover:shadow-lg cursor-pointer relative group"
             onClick={async () => await openOrdinancePDF(id)}
@@ -38,11 +38,11 @@ export const OrdinancesLandingCard = ({ title, description, author, id }: ordina
                     No Image
                 </div>
 
-                <div className="mt-5 flex flex-col justify-around sm:ml-10">
+                <div className="mt-5 flex flex-col justify-around sm:ml-10 md:ml-0">
                     <strong className="text-balance mb-5 sm:mb-0 line-clamp-3 group-hover:text-blue-800 transition-colors">
                         {description}
                     </strong>
-                    <span className="font-medium text-gray-700 group-hover:text-blue-900 transition-colors">
+                    <span className="font-medium line-clamp-3 sm:line-clamp-none text-gray-700 group-hover:text-blue-900 transition-colors">
                         Ordinance {title}
                     </span>
                 </div>

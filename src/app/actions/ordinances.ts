@@ -45,9 +45,8 @@ export const postOrdinance = async (
   e.preventDefault();
 
   const formdata = new FormData(e.currentTarget);
-  const title = `${formdata.get("title-year") as string}-${
-    formdata.get("title-number") as string
-  }`;
+  const title = `${formdata.get("title-year") as string}-${formdata.get("title-number") as string
+    }`;
   const description = formdata.get("description") as string;
   const file = formdata.get("document") as File;
 
@@ -136,9 +135,8 @@ export const postOrdinance = async (
 
   // Handle file only if it exists
   if (file && file.name) {
-    const fileName = `${verboseLocation.name.trim()}_${ordinanceID}_${
-      file.name
-    }`;
+    const fileName = `${verboseLocation.name.trim()}_${ordinanceID}_${file.name
+      }`;
     const filepath = `${verboseLocation.name.trim()}/${fileName}`;
 
     // Insert document metadata
@@ -229,13 +227,15 @@ export const uploadFile = async (ordinance_id: number, doc: File) => {
   console.log("Success uploading your file");
 };
 
-export const getOrdinancesByLocID = async () => {
+export const getOrdinancesByLocID = async (filter: boolean) => {
   const locID = await getLocFromAuth();
+
   const { data, error } = await client
     .from("ordinances")
     .select("*")
     .eq("location", locID)
-    .eq("status", "Uploaded");
+    .eq("status", "Uploaded")
+    .order("created_at", { ascending: filter });
 
   if (error) {
     Swal.fire({
@@ -307,6 +307,7 @@ export const openOrdinancePDF = async (ordinanceID: number) => {
     .from("ordinance_files")
     .select("file_path")
     .eq("ordinance_id", ordinanceID)
+    .eq("uploaded", true)
     .single();
 
   if (ordinanceFileError) {
@@ -333,74 +334,80 @@ export const openOrdinancePDF = async (ordinanceID: number) => {
 export const getPendingOrdinanceFile = async (ordinanceID: number | undefined) => {
   const { data: ordinanceFileData, error: fileError } = await client
     .from("ordinance_files")
-    .select("file_path")
+    .select("id, file_path, uploaded")
     .eq("ordinance_id", ordinanceID)
-    .single();
 
-  if (fileError || !ordinanceFileData?.file_path) {
-    console.log("No file path found for this ordinance.");
-    return null;
+  if (fileError || !ordinanceFileData?.length) {
+    return [];
   }
+  const signedFiles = await Promise.all(
+    ordinanceFileData.map(async (file) => {
+      const { data: signedUrlData, error: signedUrlError } = await client
+        .storage
+        .from("ordinances")
+        .createSignedUrl(file.file_path, 3600);
 
-  const { data } = await client.storage
-    .from("ordinances")
-    .createSignedUrl(ordinanceFileData.file_path, 3600);
+      if (signedUrlError || !signedUrlData?.signedUrl) return null;
 
-  if (data?.signedUrl) {
-    const pathParts = ordinanceFileData.file_path.split("/");
-    const name = pathParts[pathParts.length - 1];
-    const type = name.split(".").pop() || "unknown";
+      const pathParts = file.file_path.split("/");
+      const name = pathParts[pathParts.length - 1];
+      const type = name.split(".").pop() || "unknown";
+      const id = file.id
 
-    return { url: data.signedUrl, name, type };
-  }
+      return { id, url: signedUrlData.signedUrl, name, type, uploaded: file.uploaded };
+    })
+  );
 
-  return null;
+  return signedFiles.filter((f): f is { id: number; url: string; name: string; type: string, uploaded: boolean } => f !== null);
 };
 
-export const deletePendingOrdinanceFile = async (ordinanceID: number) => {
-  const filepath = await client
-    .from("ordinance_files")
-    .select("file_path")
-    .eq("ordinance_id", ordinanceID)
-    .single();
+export const deletePendingOrdinanceFile = async (ordinanceID: number, files: number[]) => {
+  const pathList: string[] = await Promise.all(
+    files.map(async (data) => {
+      const { data: fileData, error } = await client
+        .from("ordinance_files")
+        .delete()
+        .eq("ordinance_id", ordinanceID)
+        .eq("id", data)
+        .select("file_path")
+        .single();
 
-  const { error: bucketError } = await client.storage
-    .from("ordinances")
-    .remove([filepath.data?.file_path]);
+      if (error) {
+        Swal.fire({
+          title: "Error deleting the file.",
+          text: `Try deleting again later, Error: ${error}`,
+          icon: "error",
+        });
 
-  if (bucketError) {
-    Swal.fire({
-      title: "Error deleting the file.",
-      text: `Try deleting again later, Error: ${bucketError}`,
-      icon: "error",
-    });
+        return console.log("db error: ", error);
+      }
+      return fileData.file_path;
+    })
+  );
 
-    return console.log("bucket error: ", bucketError);
-  }
+  pathList.map(async (filepath) => {
+    const { error: bucketError } = await client.storage
+      .from("ordinances")
+      .remove([filepath]);
 
-  const { error: dbError } = await client
-    .from("ordinance_files")
-    .delete()
-    .eq("file_path", filepath.data?.file_path);
+    if (bucketError) {
+      Swal.fire({
+        title: "Error deleting the file.",
+        text: `Try deleting again later, Error: ${bucketError}`,
+        icon: "error",
+      });
 
-  if (dbError) {
-    Swal.fire({
-      title: "Error deleting the file.",
-      text: `Try deleting again later, Error: ${dbError}`,
-      icon: "error",
-    });
-
-    return console.log("db error: ", dbError);
-  }
+      return console.log("bucket error: ", bucketError);
+    }
+  })
 
   return console.log("deletion success");
 };
 
-export const uploadOrdinanceFile = async (file: File, ordinanceID: number) => {
+export const uploadOrdinanceFile = async (file: File[], ordinanceID: number) => {
   try {
-    if (!file) throw new Error("No file was provided.");
-
     const { data: authData } = await client.auth.getSession();
+
 
     const { data, error: dbError } = await client
       .from("ordinances")
@@ -410,16 +417,8 @@ export const uploadOrdinanceFile = async (file: File, ordinanceID: number) => {
 
     if (dbError || !data) {
       throw new Error("No data was found: ", dbError);
+
     }
-
-    const loc = await locIDtoName(data?.location);
-    const filename = `${loc}/${loc}_${ordinanceID}_${file.name}`;
-
-    const upload = await client.storage
-      .from("ordinances")
-      .upload(filename, file, { upsert: true });
-    if (!upload) throw new Error("Error uploading the file, try again.");
-
     const { data: userData, error: userError } = await client
       .from("youth_official")
       .select("id")
@@ -430,19 +429,89 @@ export const uploadOrdinanceFile = async (file: File, ordinanceID: number) => {
       throw new Error("Could not find user in youth_officials table.");
     }
 
+    Swal.fire({
+      title: "Uploading...",
+      text: "Please wait while we process your files.",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
     const authorID = userData.id;
 
-    const { error: insertError } = await client.from("ordinance_files").insert({
-      ordinance_id: ordinanceID,
-      file_path: filename,
-      file_name: `${loc}_${ordinanceID}_${file.name}`,
-      author: authorID,
-    });
+    await Promise.all(
+      file.map(async (files) => {
+        const loc = await locIDtoName(data?.location);
+        const filename = `${loc}/${loc}_${ordinanceID}_${files.name}`;
 
-    if (insertError) {
-      throw new Error(
-        `Error inserting into ordinance_files: ${insertError.message}`
-      );
-    }
-  } catch (error) {}
+        const upload = await client.storage
+          .from("ordinances")
+          .upload(filename, files, { upsert: true });
+
+        if (!upload) throw new Error("Error uploading the file, try again.");
+
+        const { error: insertError } = await client.from("ordinance_files").insert({
+          ordinance_id: ordinanceID,
+          file_path: filename,
+          file_name: `${loc}_${ordinanceID}_${files.name}`,
+          author: authorID,
+        });
+
+        if (insertError) {
+          throw new Error(
+            `Error inserting into ordinance_files: ${insertError.message}`
+          );
+        }
+
+      }))
+
+    Swal.close()
+
+    Swal.fire({
+      icon: "success",
+      title: "Upload complete!",
+      showConfirmButton: false,
+      timer: 950,
+    });
+  } catch (error) {
+
+    Swal.fire({
+      icon: "error",
+      title: "Upload Failed",
+      text: "An unexpected error occurred during upload.",
+      confirmButtonColor: "#DC2626",
+    });
+  }
 };
+
+
+export const setOrdinanceFile = async (id: number, uploaded: boolean) => {
+  try {
+    const { error } = await client
+      .from("ordinance_files")
+      .update({ uploaded: !uploaded })
+      .eq("id", id)
+    if (error) {
+      console.error("Supabase update error:", error);
+      throw error;
+    }
+
+    console.log(`File ${id} updated successfully!`);
+  }
+  catch (error) {
+    console.error("Unexpected error while updating file:", error);
+  }
+}
+
+export const clearOrdinanceFile = async (id: string) => {
+  const { error } = await client
+    .from("ordinance_files")
+    .update({ uploaded: false })
+    .eq("ordinance_id", id)
+
+  if (error) {
+    console.error("Error clearing ordinance files: ", error.message);
+    throw new Error("Failed to clear ordinance files.");
+  }
+
+}

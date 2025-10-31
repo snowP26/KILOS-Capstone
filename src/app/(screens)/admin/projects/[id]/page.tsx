@@ -65,7 +65,7 @@ const checkStatuses = async (approval: project_approvals[] | null, id: number) =
 
     if (status.includes("Accepted")) {
         projectStatusValue = "Under Review";
-            await updateProjectStatus(id, projectStatusValue)
+        await updateProjectStatus(id, projectStatusValue)
         return projectStatusValue;
     }
 
@@ -93,7 +93,7 @@ export default function ViewProposedProj() {
 
     useEffect(() => {
         const fetchProject = async () => {
-            if(!projectID) return
+            if (!projectID) return
             const projectData = await getProjectByID(projectID);
             const approvalData = await getProjectApprovals(projectID);
             if (projectData) {
@@ -412,7 +412,28 @@ export default function ViewProposedProj() {
                                 {status === "For Approval" ? (
                                     <Button
                                         className="bg-[#A3C4A8] w-fit text-black cursor-pointer hover:bg-blue-500 hover:text-[#A3C4A8]"
-                                        onClick={() => console.log("Marking as approved...")}
+                                        onClick={() => {
+                                            Swal.fire({
+                                                title: "Mark as Approved?",
+                                                text: "Are you sure you want to mark this as approved?",
+                                                icon: "question",
+                                                showCancelButton: true,
+                                                confirmButtonText: "Yes, approve it",
+                                                cancelButtonText: "Cancel",
+                                                confirmButtonColor: "#3085d6",
+                                                cancelButtonColor: "#d33",
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    Swal.fire({
+                                                        icon: "success",
+                                                        title: "Approved!",
+                                                        text: "The record has been marked as approved.",
+                                                        timer: 1500,
+                                                        showConfirmButton: false,
+                                                    });
+                                                }
+                                            });
+                                        }}
                                     >
                                         Mark as Approved
                                     </Button>) : (<></>)

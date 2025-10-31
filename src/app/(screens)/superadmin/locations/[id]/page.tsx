@@ -1,7 +1,11 @@
-import { locColumns, Users } from "../../(screens)/superadmin/../../loc-columns"
-import { DataTable } from "../../(screens)/superadmin/../../locData-table"
+"use client";
 
-import { SideBar } from "@/src/app/components/superadmin/sideBar"
+import {
+  locColumns,
+  Users,
+} from "../../(screens)/superadmin/../../loc-columns";
+import { DataTable } from "../../(screens)/superadmin/../../locData-table";
+import { SideBar } from "@/src/app/components/superadmin/sideBar";
 
 import {
   Breadcrumb,
@@ -10,86 +14,107 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getUsersByLoc } from "@/src/app/actions/super_admin";
+import { locNameToID } from "@/src/app/actions/convert";
+import { useUserRole } from "@/src/app/actions/role";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
-async function getData(): Promise<Users[]> {
-    // Fetch data from your API here.
-    return [
-        {
-            id: "001",
-            createdAt: "2025-08-09 15:51:51.68962+08",
-            firstName: "James Gabriel",
-            lastName: "Verceluz",
-            position: "Youth Mayor",
-            role: "Executive",
-            email: "m@example.com",
-            password: "asdasdas",
-        },
-        {
-            id: "002",
-            createdAt: "2025-08-09 15:52:51.68962+08",
-            firstName: "Jamarcus JanGavril",
-            lastName: "Mariano",
-            position: "Youth Vice Mayor",
-            role: "Treasurer",
-            email: "m+1@example.com",
-            password: "asdasdas",
-        },
-    ]
-}
+export default function LocationsID() {
+  const [data, setData] = useState<Users[]>([]);
+  const [locTitle, setLocTitle] = useState<string>("");
+  const params = useParams();
+  const [refresh, setRefresh] = useState(0)
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const location = Array.isArray(params.id) ? params.id[0] : params.id;
+        if (!location) return;
+        const cleanLocation = location.replace(/-/g, " ");
+        setLocTitle(cleanLocation);
+        const locID = await locNameToID(cleanLocation);
+        const youthOfficials = await getUsersByLoc(locID);
+        setData(youthOfficials || []);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
 
-export default async function LocationsID() {
-    const data = await getData()
+    fetchUsers();
+  }, [params.id, refresh]);
 
+  const { role } = useUserRole();
+
+  if (role !== "superadmin") {
     return (
-        <SidebarProvider>
-            <SideBar />
-            <SidebarInset>
-                <header className="flex h-15 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-                    <div className="flex items-center gap-2 px-4">
-                        <SidebarTrigger className="-ml-1" />
-                        <Separator
-                            orientation="vertical"
-                            className="mr-2 data-[orientation=vertical]:h-4"
-                        />
-                        <Breadcrumb>
-                            <BreadcrumbList>
-                                <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink className="hover:text-gray-500 cursor-default">
-                                        Manage Locations
-                                    </BreadcrumbLink>
-                                </BreadcrumbItem>
-                                <BreadcrumbSeparator className="hidden md:block" />
-                                <BreadcrumbItem>
-                                    <BreadcrumbPage>ID</BreadcrumbPage>
-                                </BreadcrumbItem>
-                            </BreadcrumbList>
-                        </Breadcrumb>
-                    </div>
-                </header>
-
-                <hr className="border-t border-black w-full mx-auto my-3" />
-
-                <div className="text-center mb-10 lg:text-start lg:mx-5 lg:mt-10">
-                    <h1 className="text-black text-4xl font-bold underline">
-                        Bula
-                    </h1>
-                </div>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#1D1A1A] text-center px-6">
+        <h1 className="text-2xl font-semibold text-white mb-4">
+          Access Denied
+        </h1>
+        <p className="text-gray-400 mb-6">
+          You don&apos;t have permission to view this page.
+        </p>
+        <Link href="/">
+          <Button className="bg-[#1D1A1A] text-[#C1E8FF] border border-[#2A2727] rounded-xl shadow-sm hover:bg-[#2A2727] hover:text-white transition-all">
+            Return Home
+          </Button>
+        </Link>
+      </div>
+    );
+  }
 
 
-                <div className="text-black container mx-auto pb-10">
-                    <DataTable columns={locColumns} data={data} />
-                </div>
+  return (
+    <SidebarProvider>
+      <SideBar />
+      <SidebarInset>
+        <header className="flex h-15 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator
+              orientation="vertical"
+              className="mr-2 data-[orientation=vertical]:h-4"
+            />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink className="hover:text-gray-500 cursor-default">
+                    Manage Locations
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>
+                    {locTitle.toUpperCase() || "Loading..."}
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+        </header>
 
-            </SidebarInset>
-        </SidebarProvider>
-    )
+        <hr className="border-t border-black w-full mx-auto my-3" />
+
+        <div className="text-center mb-10 lg:text-start lg:mx-5 lg:mt-10">
+          <h1 className="text-black text-4xl font-bold underline capitalize">
+            {locTitle}
+          </h1>
+        </div>
+
+        <div className="text-black container mx-auto pb-10">
+          <DataTable columns={locColumns} data={data} onPositionAdded={() => setRefresh((prev) => prev + 1)} />
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  );
 }
-

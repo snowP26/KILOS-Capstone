@@ -68,15 +68,21 @@ export const FeedbackCard = ({
         <div
           className={`cursor-pointer p-5 h-70 w-70 sm:h-100 sm:w-100 ${bgColor} rounded-md shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl`}
         >
-          <Quote fill="black" />
-          <p className="m-5 font-semibold text-4xl">{header}</p>
-
-          <p className="m-5 text-gray-500 text-sm">{body}</p>
-
-          <div className="flex flex-row justify-end">
-            <p className="font-thin text-xs mr-5 content-center">{date}</p>
+          <div className="justify-around flex flex-col h-full">
             <Quote fill="black" />
+
+            <>
+              <p className="m-5 font-semibold text-4xl truncate sm:whitespace-normal sm:line-clamp-2">{header}</p>
+
+              <p className="m-5 text-gray-500 text-sm truncate sm:whitespace-normal sm:line-clamp-3">{body}</p>
+            </>
+
+            <div className="flex flex-row place-self-end ">
+              <p className="font-thin text-xs mr-5 content-center">{date}</p>
+              <Quote fill="black" />
+            </div>
           </div>
+
         </div>
       </DialogTrigger>
       <DialogContent className={bgColor}>
@@ -91,7 +97,7 @@ export const FeedbackCard = ({
           <hr className="border-t border-black w-[100%] mx-auto my-3" />
 
           {comments.length === 0 ? (
-            <div className="w-full py-10 flex items-center justify-center bg-gray-100 rounded-lg">
+            <div className="w-full py-10 flex items-center justify-center rounded-lg">
               <p className="text-gray-500 italic">No comments yet.</p>
             </div>
           ) : (

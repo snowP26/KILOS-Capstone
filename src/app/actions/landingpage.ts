@@ -1,40 +1,39 @@
 import client from "@/src/api/client"
 import { locNameToID } from "./convert";
-import { spec } from "node:test/reporters";
 
 // =====================================================================================================================
 // =================================================== Ordinances ======================================================
 // =====================================================================================================================
 
 export const getAllOrdinances = async (location: string) => {
-    let dbQuery = client.from("ordinances").select("*").eq("status", "Uploaded")
-    
-    if(location && location !== ""){
-        const locID = await locNameToID(location as string)
-        dbQuery = dbQuery.eq("location", locID)
-    }
+  let dbQuery = client.from("ordinances").select("*").eq("status", "Uploaded")
 
-    const { data, error } = await dbQuery.limit(4); // change it to approved.
+  if (location && location !== "") {
+    const locID = await locNameToID(location as string)
+    dbQuery = dbQuery.eq("location", locID)
+  }
 
-    if (error) {
-        console.log("Error retrieving ordinances: ", error)
-        return []
-    }
+  const { data, error } = await dbQuery
 
-    console.log("Data retrieval successful!", data);
-    return data
+  if (error) {
+    console.log("Error retrieving ordinances: ", error)
+    return []
+  }
+
+  console.log("Data retrieval successful!", data);
+  return data
 }
 
 export const getOrdinanceByLocation = async (locationID: number) => {
-    const { data, error } = await client.from("ordinances").select("*").eq("location", locationID);
+  const { data, error } = await client.from("ordinances").select("*").eq("location", locationID);
 
-    if (error) {
-        console.log("Error retrieving ordinances: ", error)
-        return []
-    }
+  if (error) {
+    console.log("Error retrieving ordinances: ", error)
+    return []
+  }
 
-    console.log("Data retrieval successful!", data);
-    return data
+  console.log("Data retrieval successful!", data);
+  return data
 }
 
 
@@ -50,9 +49,9 @@ export const searchData = async (query?: string, location?: number) => {
     .select("*")
 
 
-    if(query){
+  if (query) {
     searchQuery.or(`title.ilike.%${query}%,description.ilike.%${query}%`);
-    }
+  }
 
   if (location) {
     searchQuery = searchQuery.eq("location", location);
@@ -67,3 +66,19 @@ export const searchData = async (query?: string, location?: number) => {
 
   return data;
 };
+
+
+
+
+// Projects
+
+export const getAllProjects = async () => {
+  const { data, error } = await client.from("projects").select("*").eq("status", "Approved").order("target_date", { ascending: true })
+
+  if (error) {
+    console.log("Project data retrieval failed: ", error)
+    return []
+  }
+  
+  return data
+}
