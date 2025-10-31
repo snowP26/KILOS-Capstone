@@ -1,4 +1,4 @@
-import { StringOrTemplateHeader } from "@tanstack/react-table";
+
 import { UUID } from "crypto";
 
 type AnnouncementType =
@@ -140,6 +140,7 @@ export type project = {
     status: string,
     imageURL: string,
     budget: number,
+    locName: string,
 }
 
 export type project_approvals = {
