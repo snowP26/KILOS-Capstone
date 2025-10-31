@@ -12,11 +12,12 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbList,
-    BreadcrumbPage,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
+import { PublishedOrdinanceCard } from "../../components/community/pub-ordinanceCard";
 
 export default function SearchPage() {
   const router = useRouter();
@@ -81,7 +82,7 @@ export default function SearchPage() {
 
       <div className="w-full max-w-5xl mx-auto mt-5">
         <div className="flex flex-col items-center">
-          <div className="flex flex-col items-center pb-30">
+          <div className="flex flex-col items-center pb-10 md:mx-2 lg:pb-10">
             <h1 className="text-center mt-15 text-[50px] m-5 sm:mt-20 sm:m-0 sm:text-[48px] font-bold">
               <strong className="text-[#0073FF]">K</strong>
               <a className="hidden sm:inline">abataan&apos;s </a>
@@ -123,6 +124,7 @@ export default function SearchPage() {
         {results.length > 0 ? (
           <div className="w-[90%] mx-auto mb-10 grid grid-cols-1 gap-4 sm:w-full sm:mx-0 md:grid-cols-2 md:w-[90%] md:mx-auto lg:w-[90%] lg:flex lg:flex-wrap xl:w-full">
             {results.map((ord) => (
+              // replace this with PublishedOrdinanceCard
               <OrdinancesLandingCard
                 key={ord.id}
                 id={ord.id}

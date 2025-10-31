@@ -52,8 +52,8 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-[#E6F1FF] flex flex-col lg:flex lg:flex-row lg:h-full lg:mx-5">
-      <div className="mt-5 h-50 sm:h-70 lg:h-200 xl:h-185 lg:rounded-2xl lg:border-black lg:border-2 lg:w-[20%]">
+    <div className="bg-[#E6F1FF] flex flex-col lg:flex lg:flex-row lg:h-full lg:mx-5 xl:pb-3">
+      <div className="mt-2 h-60 shadow-[-4px_4px_4px_rgba(0,0,0,0.15),4px_4px_4px_rgba(0,0,0,0.15)] mx-5 lg:mx-0 sm:h-70 lg:h-209 rounded-2xl lg:shadow-[-4px_4px_4px_rgba(0,0,0,0.15)] bg-white lg:w-[22%] xl:w-[15%]">
         <p className="font-bold text-3xl lg:text-xl xl:text-3xl text-center mt-5 mb-3">Recent Feedback</p>
         <ScrollArea className="h-[85%]">
           <div className="max-h-[350px] sm:h-auto lg:max-h-[570px]">
@@ -133,7 +133,7 @@ export default function Home() {
                         />
                         <button
                           type="submit"
-                          className="self-end bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow transition-colors cursor-pointer"
+                          className="self-end bg-[#052659] text-white font-semibold px-4 py-2 rounded-lg shadow transition-colors cursor-pointer"
                         >
                           Post
                         </button>
@@ -148,7 +148,7 @@ export default function Home() {
 
       </div>
 
-      <div className="mt-10 w-[90%] self-center lg:w-[80%] lg:mt-0 lg:self-start">
+      <div className="mt-2 w-[90%] self-center lg:w-[78%] xl:w-[85%] xl:h-209 lg:mt-0 lg:self-start">
         <DbCalendarCard />
       </div>
     </div>

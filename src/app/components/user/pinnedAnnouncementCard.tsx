@@ -24,7 +24,7 @@ export const PinnedAnnouncementCard: React.FC<PinnedAnnouncementCardProps> = ({ 
 
     <Dialog>
       <DialogTrigger className="mb-5">
-        <div className="cursor-pointer w-70 xl:w-40 2xl:w-60 min-h-fit max-h-full justify-items-start p-5 bg-[#E6F1FF] rounded-md shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
+        <div className="cursor-pointer w-70 xl:w-40 2xl:w-60 min-h-fit max-h-full justify-items-start p-5 bg-[#C1E8FF] rounded-md transform transition-all duration-300 hover:-translate-y-1 hover:shadow-[4px_4px_4px_rgba(0,0,0,0.15)]">
           <p className="font-semibold text-xl xl:text-sm 2xl:text-xl text-black">{header}</p>
 
           <div className="flex flex-row w-full place-items-center gap-3 mb-2">
@@ -40,30 +40,37 @@ export const PinnedAnnouncementCard: React.FC<PinnedAnnouncementCardProps> = ({ 
       <DialogContent className="bg-[#E6F1FF]">
         <DialogHeader>
           <DialogTitle></DialogTitle>
-          <div className="flex flex-row">
-            <div className="flex flex-col">
-              <p className="font-semibold text-sm lg:text-xl mt-5">Author</p>
+          <div className="bg-white max-w-115 my-5 px-5 rounded-2xl shadow-[-4px_4px_4px_rgba(0,0,0,0.15),4px_4px_4px_rgba(0,0,0,0.15)] ">
+            <div className="flex flex-row">
+              <div className="flex flex-col">
+                <p className="font-semibold text-sm lg:text-xl mt-5">Author</p>
 
-              <div className="flex flex-row gap-5">
-                {/* apply author position/title in the db */}
-                <p className="text-xs font-thin">Local Municipal Youth Developmental Officer</p>
-                <p className="text-xs font-thin">September 1, 2000</p>
+                <div className="flex flex-row gap-5">
+                  {/* apply author position/title in the db */}
+                  <p className="text-xs font-thin">Local Municipal Youth Developmental Officer</p>
+                  <p className="text-xs font-thin">September 1, 2000</p>
+                </div>
+
+              </div>
+            </div>
+            <div className="mt-7 mb-5 flex flex-col">
+              <div className="flex flex-col">
+                <p className="font-semibold text-xl">Header</p>
+                <p className="mb-3 text-white bg-[#58AEFF] rounded-2xl text-center min-w-15 max-w-fit px-2 text-xs">
+                  Hello
+                </p>
+                <p className="pb-3 lg:pb-10 lg:w-100">
+                  Body Body Body Bod Body Bod y Body Body Body Body Body Body Body Body Body Body Body
+                </p>
+              </div>
+              <div className="self-center">
+                <div className="bg-black aspect-3/4 object-cover h-70 w-50">
+                  <p className="text-white">Image Placeholder</p>
+                </div>
               </div>
 
-            </div>
-          </div>
-          <div className="mt-7 mb-10 flex flex-col xl:flex-row justify-between">
-            <div className="flex flex-col">
-              <p className="font-semibold text-xl">Header</p>
-              <p className="mb-3 text-white bg-[#58AEFF] rounded-2xl text-center min-w-15 max-w-fit px-2 text-xs">
-                Hello
-              </p>
-              <p className="pb-3 lg:pb-0 lg:w-150">
-                Body
-              </p>
-            </div>
-            Photo
 
+            </div>
           </div>
         </DialogHeader>
       </DialogContent>

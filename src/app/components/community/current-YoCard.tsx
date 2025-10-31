@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export const CurrentYoCard = () => {
   return (
-    <div className="relative m-10 p-5 h-90 w-100 bg-blue-100 rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
+    <div className="relative m-10 p-5 h-90 w-100 bg-white rounded-md border ">
       <Avatar className="w-[150px] h-[150px] place-self-center">
           <AvatarImage src="https://github.com/shadcn.png"/>
         <AvatarFallback>CN</AvatarFallback>

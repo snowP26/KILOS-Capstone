@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { authorIDtoName } from "../../actions/convert";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { FileText } from "lucide-react";
 
 type OrdinanceCardProps = {
   title: string;
@@ -14,7 +16,7 @@ export const OrdinancesCard = ({
   description,
   author,
   submit_date,
-  className,   
+  className,
 }: OrdinanceCardProps) => {
   const [authorName, setAuthorName] = useState<string>("");
 
@@ -39,21 +41,41 @@ export const OrdinancesCard = ({
   }, [author]);
 
   return (
+      <div
+        className="flex flex-col items-center lg:flex-row lg:gap-2 cursor-pointer rounded-2xl border-[0.2px] border-gray-300 transform transition-all duration-300 hover:-translate-y-2  hover:shadow-[-4px_4px_4px_rgba(0,0,0,0.15)] lg:border-none lg:hover:shadow-none lg:hover:-translate-y-0 lg:cursor-default relative group"
+      >
+        {/* Hover overlay */}
+        <div className="absolute z-1 inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center lg:hidden">
+          <FileText className="w-10 h-10 text-white drop-shadow-md" />
+        </div>
 
-    <div className={`flex flex-col place-items-center shadow-xl rounded-2xl py-5 m-5 lg:flex-row lg:mx-10 lg:my-0 lg:shadow-none xl:mx-20 ${className || ""}`}>
-      <div className="lg:w-[20%] xl:w-[10%] xl:mx-15">
-        <div className="bg-blue-300 w-40 h-40 rounded-full"></div>
+        <div className="w-70 bg-white lg:bg-transparent py-2 rounded-t-2xl lg:w-[20%]">
+          <Avatar className="object-cover w-35 h-35 place-self-center lg:place-self-end lg:w-50 lg:h-50">
+            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+        </div>
+
+        <div className="w-70 lg:h-fit lg:w-[70%] bg-white rounded-b-2xl lg:rounded-2xl p-5 lg:border-[0.2px] lg:border-gray-300 lg:transform lg:transition-all lg:duration-300 lg:hover:-translate-y-2 lg:hover:shadow-[-4px_4px_4px_rgba(0,0,0,0.15)] lg:cursor-pointer relative group">
+
+          {/* Hover overlay */}
+          <div className="absolute z-1 inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300  items-center justify-center hidden lg:flex">
+            <FileText className="w-10 h-10 text-white drop-shadow-md" />
+          </div>
+          <h1 className="font-bold text-2xl truncate">
+            Ordinance {title}
+          </h1>
+          <p className="text-black font-semibold mt-3 mb-10 lg:mb-4 line-clamp-3">
+            {description}
+          </p>
+          <p className="text-xl font-thin">
+            {authorName || "Loading..."}
+          </p>
+          <p className="text-sm font-thin">
+            {submit_date}
+          </p>
+
+        </div>
       </div>
-
-
-      <div className="bg-white rounded-[20px] w-[90%] lg:w-[80%] px-10 py-5 mt-5 xl:mr-5 hover:shadow-lg hover:transition-all duration-250">
-        <p className="font-semibold text-2xl">Ordinance {title}</p>
-        <p className="font-semibold text-xl xl:truncate my-2 mr-10">
-          {description}
-        </p>
-        <p className="text-xl font-thin">{authorName || "Loading..."}</p>
-        <p className="text-xs font-thin">{submit_date}</p>
-      </div>
-    </div>
   );
 };

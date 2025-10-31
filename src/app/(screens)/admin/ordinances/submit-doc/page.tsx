@@ -76,12 +76,12 @@ export default function SubmitOrdinances() {
 
                     <form className="w-full">
                         <p className="font-semibold">Ordinance Title</p>
-                        <Input className="bg-[#E6F1FF] placeholder:italic" placeholder="eg. An ordinance..." />
+                        <Input className="bg-[#E6F1FF] border border-gray-300 placeholder:italic" placeholder="eg. An ordinance..." />
                     </form>
 
                     <form className="w-full lg:w-[70%] mt-5">
                         <p className="font-semibold">Ordinance Year and Ordinance Number</p>
-                        <Input className="bg-[#E6F1FF] placeholder:italic" placeholder="eg. 2000 - 001" />
+                        <Input className="bg-[#E6F1FF] border-gray-300  placeholder:italic" placeholder="eg. 2000 - 001" />
                     </form>
 
                     <p className="font-semibold pt-5">Ordinance Document</p>

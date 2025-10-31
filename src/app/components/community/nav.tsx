@@ -38,7 +38,7 @@ export const ComNav = () => {
 // nav=flex items-center justify-between py-5 px-20 border-b-2 sticky top-0 bg-white z-50
 
     return (
-        <nav className="flex sticky top-0 border-b-2 py-5 z-50 w-screen bg-white p-4 sm:p-6 md:flex md:justify-between md:items-center">
+        <nav className="flex sticky top-0 border-b-2 py-5 z-50 w-full bg-white p-4 sm:p-6 md:flex md:justify-between md:items-center">
             <div className="container flex mx-auto justify-center lg:justify-around sm:items-center">
                 <h1 className="inline-block text-[#0073FF] font-bold text-3xl cursor-pointer" onClick={() => { router.push("/") }}>KILOS</h1>
                 <div className={getMenuClassname()}>

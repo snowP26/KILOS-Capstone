@@ -35,6 +35,7 @@ export default function FacebookPage() {
   const [error, setError] = useState<string | null>(null);
   const [posts, setPosts] = useState<fbPosts[]>([]);
   const [pageInfo, setPageInfo] = useState<pageDetails | null>(null);
+  const [activeTab, setActiveTab] = useState<"feed" | "inbox" >("feed");
 
   const fetchPageInfo = async () => {
     try {
@@ -168,9 +169,9 @@ export default function FacebookPage() {
   };
 
   return (
-    <div className="w-[100%] min-h-screen max-h-fit">
+    <div className="w-[100%] min-h-screen max-h-full">
       {/* Title */}
-      <p className="font-bold text-2xl mt-6 mx-10 sm:text-3xl">Facebook Page</p>
+      <p className="font-bold text-2xl mt-10 mb-5 mx-15 sm:text-3xl">Facebook Page</p>
       <hr className="border-t border-black w-[90%] lg:w-[95%] mx-auto mt-1" />
 
       <div className="flex flex-col lg:flex-row">
@@ -225,10 +226,20 @@ export default function FacebookPage() {
 
         {/* Tabs */}
         <div className="flex flex-row w-[70%] gap-0.5 mt-10 self-center text-center lg:hidden">
-          <div className="bg-[#052659] w-[100%] text-white shadow-md shadow-gray-400 text-xs lg:text-lg p-2 rounded-tl-2xl rounded-bl-2xl cursor-pointer">
+          <div className={`${activeTab === "feed"
+            ? "bg-[#052659] text-white"
+            : "bg-[#052659] opacity-60 text-gray-400"
+          } w-[100%] shadow-md shadow-gray-400 text-xs lg:text-lg p-2 rounded-tl-2xl rounded-bl-2xl cursor-pointer`}
+            onClick={() => setActiveTab("feed")}
+          >
             <p>Feed</p>
           </div>
-          <div className="bg-[#052659] w-[100%] opacity-60 text-gray-400 shadow-lg shadow-blue-800/40 text-xs lg:text-lg p-2 rounded-tr-2xl rounded-br-2xl cursor-pointer">
+          <div className={`${activeTab === "inbox"
+            ? "bg-[#052659] text-white"
+            : "bg-[#052659] opacity-60 text-gray-400"
+          } w-[100%] shadow-md shadow-gray-400 text-xs lg:text-lg p-2 rounded-tr-2xl rounded-br-2xl cursor-pointer`}
+            onClick={() => setActiveTab("inbox")}
+          >
             <p>Page Inbox</p>
           </div>
         </div>
@@ -237,7 +248,7 @@ export default function FacebookPage() {
         <div className="w-[90%] mt-3 self-center lg:w-[50%] lg:self-start lg:my-2 lg:mx-3 xl:w-3/5">
           <Dialog>
             <DialogTrigger className="w-[100%]" asChild>
-              <button className="w-[100%] h-10 cursor-pointer rounded-[20px] bg-[#B2D3FF] font-bold text-black hover:bg-blue-400 ">
+              <button className="w-[100%] h-10 cursor-pointer rounded-[20px] bg-[#B2D3FF] font-bold text-black hover:bg-black hover:text-blue-400 ">
                 Create a new post
               </button>
             </DialogTrigger>
@@ -252,9 +263,9 @@ export default function FacebookPage() {
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
                   placeholder="What's on your mind?"
-                  className="border rounded p-2"
+                  className="rounded-md border border-gray-300 p-2"
                 />
-                <Button type="submit" disabled={loading}>
+                <Button type="submit" disabled={loading} className="cursor-pointer bg-[#052659] text-white hover:bg-[#052659] hover:text-white">
                   {loading ? "Posting..." : "Post"}
                 </Button>
               </form>
@@ -263,7 +274,7 @@ export default function FacebookPage() {
           {posts.map((data) => (
             <div
               key={data.id}
-              className="bg-white rounded-2xl w-[100%] px-5 pb-2 mt-3 mb-2 lg:mt-2"
+              className={`${activeTab === "feed" ? "block" : "hidden" } transition-all ease-in-out duration-300 bg-white rounded-2xl shadow-sm border border-gray-200 w-[100%] px-5 pb-2 mt-3 mb-2 lg:mt-2`}
             >
               <div className="w-full flex flex-row justify-between">
                 <div className="w-full mt-5 flex flex-row gap-2">
@@ -344,10 +355,11 @@ export default function FacebookPage() {
           ))}
           {/* end of fb post card */}
         </div>
-        <div className="self-center mb-5 w-[95%] lg:w-[25%] xl:w-1/5 lg:mr-3 lg:self-start">
+
+        <div className={`${activeTab == "inbox" ? "block" : "hidden" } transition-all ease-in-out duration-300 lg:block self-center mb-5 w-[95%] lg:w-[25%] xl:w-1/5 lg:mr-3 lg:self-start`}>
           {/* <Button className="bg-[#052659] w-[100%] my-2">Create Announcement</Button> */}
 
-          <div className="bg-white rounded-[10px] mt-2 pt-5 h-fit pb-5">
+          <div className="bg-white shadow-sm border border-gray-200 rounded-[10px] mt-2 pt-5 h-fit pb-5">
             <p className="text-center text-2xl font-semibold">Page Inbox</p>
             <hr className="border-t border-black w-[90%] mx-auto mt-5" />
             <div>

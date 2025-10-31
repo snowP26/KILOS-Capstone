@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { commFeedback } from '@/src/app/lib/definitions';
 import { getLocFromAuth } from '@/src/app/actions/convert';
 import { getFeedback } from '@/src/app/actions/feedback';
-import { FeedbackCard } from '@/src/app/components/community/feedbackCard';
+import { FeedbackCard } from '@/src/app/components/admin/admnFeedbackCard';
 
 export default function CommunityFeedback() {
   const [feedback, setFeedback] = useState<commFeedback[]>()

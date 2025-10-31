@@ -71,7 +71,7 @@ export const FeedbackCard = ({
             <Quote fill="black" />
 
             <>
-              <p className="m-5 font-semibold text-4xl truncate sm:whitespace-normal sm:line-clamp-2">{header}</p>
+              <p className="lg:m-5 font-semibold text-4xl truncate sm:whitespace-normal sm:line-clamp-2">{header}</p>
 
               <p className="m-5 text-gray-500 text-sm truncate sm:whitespace-normal sm:line-clamp-3">{body}</p>
             </>
@@ -141,12 +141,12 @@ export const FeedbackCard = ({
               name="comment"
               placeholder="Write your comment..."
               rows={3}
-              className="w-full rounded-lg border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+              className="w-full rounded-lg border bg-white border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
               required
             />
             <button
               type="submit"
-              className="self-end bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow transition-colors cursor-pointer"
+              className="self-end bg-[#052659] text-white hover:bg-[#052659] hover:text-white font-semibold px-4 py-2 rounded-lg shadow transition-colors cursor-pointer"
             >
               Post
             </button>
