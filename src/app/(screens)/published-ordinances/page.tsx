@@ -7,7 +7,7 @@ import LocationSelect from "../../components/community/locselect";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft, Search, FileText } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 import {
@@ -29,6 +29,7 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { PublishedOrdinanceCard } from "../../components/community/pub-ordinanceCard";
 
 export default function ViewPublishedOrdinances() {
     const router = useRouter();
@@ -48,7 +49,7 @@ export default function ViewPublishedOrdinances() {
     };
 
     return (
-        <div>
+        <div className="bg-[#EEF2ED] min-h-screen max-h-full pb-10">
             <ComNav />
             <Breadcrumb className="ml-5 lg:mt-2 xl:ml-20">
                 <BreadcrumbList>
@@ -74,7 +75,7 @@ export default function ViewPublishedOrdinances() {
                 </BreadcrumbList>
             </Breadcrumb>
             <div className="flex flex-col items-center">
-                <div className="flex flex-col items-center ">
+                <div className="flex flex-col items-center pb-10 md:mx-2 lg:pb-10">
                     <h1 className="text-center mt-15 text-[50px] m-5 sm:mt-20 sm:m-0 sm:text-[48px] font-bold">
                         <strong className="text-[#0073FF]">K</strong>
                         <a className="hidden sm:inline">abataan&apos;s </a>
@@ -109,67 +110,12 @@ export default function ViewPublishedOrdinances() {
                 </div>
             </div>
 
-            <div className="flex flex-col mx-5 sm:mx-20 xl:mx-50 my-10 gap-5">
+            <div className="flex flex-wrap justify-center lg:flex-col mx-5 sm:mx-20 xl:mx-50 my-10 gap-5">
+                <PublishedOrdinanceCard/>
 
-                {/*start of ordinance Card */}
-                <div
-                    
-                    className="flex flex-col items-center lg:flex-row lg:gap-2 cursor-pointer"
-                >
-                    <div className="w-full bg-gray-100 rounded-t-2xl md:w-[50%] md:bg-transparent lg:w-[30%] xl:h-60 xl:pl-50">
-                        <Avatar className="object-cover w-full h-full">
-                            <AvatarImage src="https://github.com/shadcn.png"/>
-                            <AvatarFallback>CN</AvatarFallback>
-                        </Avatar>
-                    </div>
-                    <div className="w-full lg:h-fit lg:w-[70%] bg-[#E6F1FF] rounded-b-2xl lg:rounded-2xl p-5 shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
-                        <h1 className="font-bold text-2xl truncate">
-                            Ordinance 2001-001
-                        </h1>
-                        <p className="text-black font-semibold mt-3 mb-10 line-clamp-3">
-                            An Ordinance Makiiba samuya sa paghabi kan sarong ciudad nin Naga na mas bukas sa pakikipag diyalogo, mas ligtas, asin mas inklusibong ciudad para sa satuyang mga tugang na miyembro kan komunidad kan LGBTQIA+.
-                            Mag-iribahan kita ngunyan na Sabado, Hunyo 21, 2025 sa Museo ni Jesse Robredo para sa &quot;HIBLA: Weaving Safety, Dignity, and Dialogue&quot; kun sain gaganapon an mga minasunod:
-                        </p>
-                        <p className="text-xl font-thin">
-                            Juan Dela Cruz
-                        </p>
-                        <p className="text-sm font-thin">
-                            February 10, 2001
-                        </p>
+                <PublishedOrdinanceCard/>
 
-                    </div>
-                </div>
-                {/*end of ordinance Card */}
-
-                {/*start of ordinance Card */}
-                <div
-                    
-                    className="flex flex-col items-center lg:flex-row lg:gap-2 cursor-pointer"
-                >
-                    <div className="w-full bg-gray-100 rounded-t-2xl md:w-[50%] md:bg-transparent lg:w-[30%] xl:h-60 xl:pl-50">
-                        <Avatar className="object-cover w-full h-full">
-                            <AvatarImage src="https://github.com/shadcn.png"/>
-                            <AvatarFallback>CN</AvatarFallback>
-                        </Avatar>
-                    </div>
-                    <div className="w-full lg:h-fit lg:w-[70%] bg-[#E6F1FF] rounded-b-2xl lg:rounded-2xl p-5 shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
-                        <h1 className="font-bold text-2xl truncate">
-                            Ordinance 2001-001
-                        </h1>
-                        <p className="text-black font-semibold mt-3 mb-10 line-clamp-3">
-                            An Ordinance Makiiba samuya sa paghabi kan sarong ciudad nin Naga na mas bukas sa pakikipag diyalogo, mas ligtas, asin mas inklusibong ciudad para sa satuyang mga tugang na miyembro kan komunidad kan LGBTQIA+.
-                            Mag-iribahan kita ngunyan na Sabado, Hunyo 21, 2025 sa Museo ni Jesse Robredo para sa &quot;HIBLA: Weaving Safety, Dignity, and Dialogue&quot; kun sain gaganapon an mga minasunod:
-                        </p>
-                        <p className="text-xl font-thin">
-                            Juan Dela Cruz
-                        </p>
-                        <p className="text-sm font-thin">
-                            February 10, 2001
-                        </p>
-
-                    </div>
-                </div>
-                {/*end of ordinance Card */}
+                <PublishedOrdinanceCard/>
             </div>
 
         </div>

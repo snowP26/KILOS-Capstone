@@ -59,7 +59,7 @@ export default function Page() {
   const currentFeedback = feedback.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <div>
+    <div className="bg-[#EEF2ED] min-h-screen max-h-full pb-20">
       <ComNav />
       <div className="mt-10">
         <CommunityBanner

@@ -54,14 +54,16 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <NavItems items={data.navItems} />
                 </div>
 
-                <div className="p-4">
-                    <Button
-                        className="w-full flex items-center justify-center gap-2 bg-[#1D1A1A] text-[#C1E8FF] font-medium rounded-xl shadow-sm border border-[#2A2727] hover:bg-[#2A2727] hover:text-white transition-all duration-200 ease-in-out sm:text-sm md:text-base"
-                        onClick={handleLogout}
-                    >
-                        <LogOut size={18} className="opacity-90" />
-                        Logout
-                    </Button>
+                <div>
+                    <div className="p-4">
+                        <Button
+                            className="group-data-[collapsible=icon]:border-0 w-full flex items-center justify-center gap-2 bg-[#1D1A1A] text-[#C1E8FF] font-medium rounded-xl shadow-sm border border-[#2A2727] hover:bg-[#2A2727] hover:text-white transition-all duration-200 ease-in-out sm:text-sm md:text-base"
+                            onClick={handleLogout}
+                        >
+                            <LogOut size={18} className="opacity-90 group-data-[collapsible=icon]:ml-10"/>
+                            <a className="group-data-[collapsible=icon]:opacity-0">Logout</a>
+                        </Button>
+                    </div>
                 </div>
 
             </SidebarContent>

@@ -412,7 +412,7 @@ export default function ViewProjectBudget() {
                                                         <input
                                                             type="text"
                                                             placeholder="Enter item name"
-                                                            className="border rounded-md p-2"
+                                                            className="border border-gray-300 rounded-md p-2"
                                                             name="item_name"
                                                             required
                                                         />
@@ -425,7 +425,7 @@ export default function ViewProjectBudget() {
                                                             type="number"
                                                             placeholder="0.00"
                                                             step="1.00"
-                                                            className="border rounded-md p-2"
+                                                            className="border border-gray-300 rounded-md p-2"
                                                             name="price"
                                                             required
                                                         />
@@ -438,7 +438,7 @@ export default function ViewProjectBudget() {
                                                             type="number"
                                                             step="any"
                                                             placeholder="0"
-                                                            className="border rounded-md p-2"
+                                                            className="border border-gray-300 rounded-md p-2"
                                                             name="amt"
                                                             required
                                                         />
@@ -450,7 +450,7 @@ export default function ViewProjectBudget() {
                                                         <input
                                                             type="file"
                                                             accept="image/*"
-                                                            className="border rounded-md p-2 cursor-pointer"
+                                                            className="border border-gray-300 rounded-md p-2 cursor-pointer"
                                                             name="receipt"
                                                         />
                                                     </div>
@@ -461,7 +461,7 @@ export default function ViewProjectBudget() {
                                                         <input
                                                             type="file"
                                                             accept="image/*"
-                                                            className="border rounded-md p-2 cursor-pointer"
+                                                            className="border border-gray-300 rounded-md p-2 cursor-pointer"
                                                             name="item_photo"
                                                         />
                                                     </div>

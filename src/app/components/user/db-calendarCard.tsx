@@ -177,7 +177,10 @@ export const DbCalendarCard = () => {
     <>
       <div>
         <div className="flex flex-col mb-10 lg:flex-row">
-          <div className="w-full rounded-2xl lg:w-[70%] lg:mt-10 lg:mx-3 lg:max-h-180 xl:w-[80%]">
+          <div className="w-full rounded-2xl lg:w-[70%] lg:mt-2 lg:mx-3 lg:max-h-180 xl:w-[80%]">
+             <div className="mb-2">
+              <DateTodayCard />
+            </div>
             <ContinuousCalendar
               onClick={handleDayClick}
               events={currentEvents}
@@ -185,16 +188,13 @@ export const DbCalendarCard = () => {
           </div>
 
           <div className="w-full lg:w-[30%] xl:w-[20%]">
-            <div className="mt-5 bg-white">
-              <DateTodayCard />
-            </div>
 
-            <div className="border-black border-2 h-[80%] rounded-2xl p-5 mt-5">
+            <div className="bg-white shadow-[-4px_4px_4px_rgba(0,0,0,0.15),4px_4px_4px_rgba(0,0,0,0.15)] lg:shadow-[4px_4px_4px_rgba(0,0,0,0.15)] h-209 rounded-2xl p-5 mt-2">
               <div className="text-3xl font-bold text-center">
                 Upcoming Events
               </div>
               <ScrollArea className="px-0 w-full mt-5">
-                <ul className="max-h-[500px]">
+                <ul className="max-h-[700px]">
                   {currentEvents.length <= 0 && (
                     <div className="text-center">No Events Present</div>
                   )}
@@ -204,7 +204,7 @@ export const DbCalendarCard = () => {
                       <li key={event.id} className="flex justify-center">
                         <Dialog>
                           <DialogTrigger>
-                            <div className="bg-purple-400 w-55 lg:w-45 p-5 mt-2 rounded-2xl cursor-pointer">
+                            <div className="bg-[#5483B3] text-white w-55 lg:w-45 p-5 mt-2 rounded-2xl cursor-pointer transform transition-all duration-300 hover:-translate-y-1 hover:shadow-[4px_4px_4px_rgba(0,0,0,0.15)]">
                               <div className="font-bold text-xl text-center w-full truncate">
                                 {event.header}
                               </div>
@@ -233,17 +233,17 @@ export const DbCalendarCard = () => {
                               </DialogTitle>
                               <hr className="border-t border-black w-full lg:w-full" />
                               <div className="flex flex-wrap gap-2 justify-center text-center">
-                                <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                                <div className="bg-[#C1E8FF] border border-gray-600 rounded-2xl px-2">
                                   <p className="text-sm">
                                     {event.users
                                       ? `${event.users.firstname} ${event.users.lastname}`
                                       : "Unknown Host"}
                                   </p>
                                 </div>
-                                <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                                <div className="bg-[#C1E8FF] border border-gray-600 rounded-2xl px-2">
                                   <p className="text-sm">{event.modality}</p>
                                 </div>
-                                <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                                <div className="bg-[#C1E8FF] border border-gray-600 rounded-2xl px-2">
                                   <p className="text-sm">
                                     {new Date(event.date).toLocaleDateString("en-UK", {
                                       day: "2-digit",
@@ -252,7 +252,7 @@ export const DbCalendarCard = () => {
                                     })}
                                   </p>
                                 </div>
-                                <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                                <div className="bg-[#C1E8FF] border border-gray-600 rounded-2xl px-2">
                                   <p className="text-sm">
                                     {new Date(event.date).toLocaleTimeString("en-US", {
                                       hour: "2-digit",
@@ -263,7 +263,7 @@ export const DbCalendarCard = () => {
                                 </div>
                               </div>
 
-                              <div className="bg-white text-balance h-100 mt-2 rounded-[20px]">
+                              <div className="bg-white text-balance h-100 mt-2 rounded-[20px] shadow-[4px_4px_4px_rgba(0,0,0,0.15),-4px_4px_4px_rgba(0,0,0,0.15)]">
                                 <ScrollArea className="h-[90%] m-3 ">
                                   <p className="p-5">
                                     {event.details}
@@ -310,7 +310,7 @@ export const DbCalendarCard = () => {
                   <li key={event.id} className="flex justify-center">
                     <Dialog>
                       <DialogTrigger asChild>
-                        <div className="bg-purple-400 w-full p-4 rounded-2xl cursor-pointer hover:bg-purple-500 transition">
+                        <div className="bg-[#5483B3] w-full p-4 rounded-2xl cursor-pointer hover:bg-[#052659] hover:text-white transition">
                           <div className="font-bold text-lg text-center truncate">
                             {event.header}
                           </div>
@@ -343,17 +343,17 @@ export const DbCalendarCard = () => {
                           <hr className="border-t border-black w-full mt-2" />
 
                           <div className="flex flex-wrap gap-2 justify-center text-center mt-3">
-                            <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                            <div className="bg-[#C1E8FF] border border-gray-600 rounded-2xl px-2">
                               <p className="text-sm">
                                 {event.users
                                   ? `${event.users.firstname} ${event.users.lastname}`
                                   : "Unknown Host"}
                               </p>
                             </div>
-                            <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                            <div className="bg-[#C1E8FF] border border-gray-600 rounded-2xl px-2">
                               <p className="text-sm">{event.modality}</p>
                             </div>
-                            <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                            <div className="bg-[#C1E8FF] border border-gray-600 rounded-2xl px-2">
                               <p className="text-sm">
                                 {new Date(event.date).toLocaleDateString("en-UK", {
                                   day: "2-digit",
@@ -362,7 +362,7 @@ export const DbCalendarCard = () => {
                                 })}
                               </p>
                             </div>
-                            <div className="bg-[#C1E8FF] border border-black rounded-2xl px-2">
+                            <div className="bg-[#C1E8FF] border border-gray-600 rounded-2xl px-2">
                               <p className="text-sm">
                                 {new Date(event.date).toLocaleTimeString("en-US", {
                                   hour: "2-digit",
@@ -373,7 +373,7 @@ export const DbCalendarCard = () => {
                             </div>
                           </div>
 
-                          <div className="bg-white text-balance h-100 mt-4 rounded-[20px]">
+                          <div className="bg-white text-balance h-100 mt-4 rounded-[20px] shadow-[4px_4px_4px_rgba(0,0,0,0.15),-4px_4px_4px_rgba(0,0,0,0.15)]">
                             <ScrollArea className="h-[90%] m-3">
                               <p className="p-5 text-sm text-gray-700">{event.details}</p>
                             </ScrollArea>
@@ -393,7 +393,7 @@ export const DbCalendarCard = () => {
 
           <Button
             onClick={() => setIsMeetingDialogOpen(true)}
-            className="bg-[#E6F1FF] text-black border border-dashed border-black hover:text-white mt-4"
+            className="bg-[#E6F1FF] text-black border border-dashed border-black hover:text-white mt-4 cursor-pointer"
           >
             Set Up a Meeting
           </Button>
@@ -442,7 +442,7 @@ export const DbCalendarCard = () => {
                 value={newEventTitle}
                 onChange={(e) => setNewEventTitle(e.target.value)}
                 required
-                className="border border-black rounded-xl bg-white placeholder:italic focus:ring-2 focus:ring-[#052659]"
+                className="border border-gray-300 rounded-xl bg-white placeholder:italic "
               />
             </div>
 
@@ -453,7 +453,7 @@ export const DbCalendarCard = () => {
               </Label>
               <Textarea
                 placeholder="Describe the agenda or discussion points..."
-                className="border w-full max-w-112 border-black rounded-xl h-28 bg-white placeholder:italic focus:ring-2 focus:ring-[#052659]"
+                className="border w-full max-w-112 border-gray-300 rounded-xl h-28 bg-white placeholder:italic"
                 name="details"
                 required
               />
@@ -474,7 +474,7 @@ export const DbCalendarCard = () => {
                       variant="outline"
                       id="date-picker"
                       disabled
-                      className="w-full bg-white justify-between border border-black rounded-xl text-left"
+                      className="w-full bg-white justify-between border border-gray-300 rounded-xl text-left"
                     >
                       {date ? date.toLocaleDateString() : "Select date"}
                       <ChevronDownIcon className="ml-2 h-4 w-4 opacity-70" />
@@ -506,7 +506,7 @@ export const DbCalendarCard = () => {
                   id="time-picker"
                   step="60"
                   defaultValue="10:30"
-                  className="border border-black rounded-xl bg-white cursor-pointer"
+                  className="border border-gray-300 rounded-xl bg-white cursor-pointer"
                 />
               </div>
             </div>
@@ -523,7 +523,7 @@ export const DbCalendarCard = () => {
                 }
                 className="w-fit self-center"
               >
-                <TabsList className="border border-black rounded-xl overflow-hidden bg-white">
+                <TabsList className="border border-gray-300 rounded-xl overflow-hidden bg-white">
                   <TabsTrigger
                     value="online"
                     className="data-[state=active]:bg-[#052659] cursor-pointer data-[state=active]:text-white"
@@ -550,14 +550,14 @@ export const DbCalendarCard = () => {
                 value={emails}
                 onChange={(e) => setEmails(e.target.value)}
                 placeholder="example@email.com, another@email.com"
-                className="border w-full max-w-112 border-black rounded-xl h-20 bg-white placeholder:italic focus:ring-2 focus:ring-[#052659]"
+                className="border w-full max-w-112 border-gray-300 rounded-xl h-20 bg-white placeholder:italic focus:ring-2 focus:ring-[#052659]"
               />
             </div>
 
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-[#052659] text-white rounded-xl py-2 mt-2 hover:bg-[#0A4A9C] transition"
+              className="w-full bg-[#052659] hover:bg-[#052659] text-white rounded-xl py-2 mt-2 cursor-pointer transition"
             >
               Send to Participants
             </Button>

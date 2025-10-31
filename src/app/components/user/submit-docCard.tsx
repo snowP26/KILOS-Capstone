@@ -13,8 +13,12 @@ import {
 import { useEffect, useState } from "react";
 import { addFiles, deleteFile, getFiles } from "../../actions/projects";
 import { projectFiles } from "../../lib/definitions";
+
+import { ScrollArea } from "@/components/ui/scroll-area";
+
 import Swal from "sweetalert2";
 import { GoTrueAdminApi } from "@supabase/supabase-js";
+
 
 export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
     const [tempFiles, setTempFiles] = useState<File[]>([]);
@@ -47,14 +51,16 @@ export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
                 </Button>
             </DialogTrigger>
 
-            <DialogContent>
-                <DialogHeader className="w-60 place-self-center lg:max-w-full sm:w-[70%] sm:place-self-start ">
+            <DialogContent className="w-110 sm:w-150">
+                <DialogHeader className="place-self-start">
                     <DialogTitle className="text-3xl text-center mt-5">
                         Submitted Documents
                     </DialogTitle>
+                </DialogHeader>
+                <div className="min-w-60 w-auto sm:w-[65%] lg:w-[32%]">
                     <form>
                         <div
-                            className="flex h-[150px] w-auto my-3 items-center justify-center rounded-md border border-dashed border-gray-400 text-sm cursor-pointer hover:bg-gray-100 lg:h-[150px] lg:w-[300px] lg:place-self-center"
+                            className="flex h-[150px] w-auto my-3 items-center justify-center rounded-md border border-dashed border-gray-400 text-sm cursor-pointer hover:bg-gray-100 sm:w-[450px] lg:h-[150px]"
                             onClick={() => document.getElementById("pdfUpload")?.click()}
                         >
                             <input
@@ -91,78 +97,93 @@ export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
                         </div>
                     </form>
 
-                    {tempFiles.map((data, i) => (
-                        <div key={i} className="bg-[#E6F1FF] transition-all ease-in-out flex flex-row h-10 w-60 sm:w-full items-center rounded-md px-2 space-x-2">
-                            <CircleCheck className="flex-shrink-0" fill="gray" size="15" />
+                    <ScrollArea className=" flex  justify-self-center sm:justify-self-start h-50 w-70 sm:w-120 px-5 sm:px-0">
+                        {tempFiles.map((data, i) => (
+                            <div key={i} className="bg-[#E6F1FF] transition-all ease-in-out flex h-10 w-60 max-w-auto sm:w-115 items-center justify-between rounded-md my-1">
+                                <div className="flex flex-row pl-1 justify-between sm:justify-start sm:space-x-2 sm:px-5 w-full lg:space-x-2 lg:max-w-full">
+                                    <CircleCheck className="flex-shrink-0" fill="green" size="15" />
 
-                            <FileText className="flex-shrink-0" size="15" />
+                                    <FileText className="flex-shrink-0" size="15" />
 
-                            {/* Filename */}
-                            <p className="italic text-sm truncate flex-grow max-w-full lg:max-w-[50%]">
-                                {data.name}
-                            </p>
+                                    {/* Filename */}
+                                    <div className="w-full sm:w-[50%] lg:w-[60%]">
+                                        <p className="italic text-sm truncate flex-grow w-50 sm:w-full">
+                                            {data.name}
+                                        </p>
+                                    </div>
 
-                            {/* Progress Bar */}
-                            <div className="flex-grow hidden sm:block">
-                                <Progress
-                                    value={progress}
-                                    className="h-2 w-full bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden [&>div]:bg-gradient-to-r [&>div]:from-blue-400 [&>div]:to-blue-600 transition-all duration-300"
-                                />
-                            </div>
-                        </div>
-                    ))
-                    }
+                                    {/* Progress Bar */}
+                                    <div className="flex-grow self-center hidden sm:block">
+                                        <Progress value={10} />
+                                    </div>
+                                </div>
 
-                    {files.map((data) => (
-                        <div
-                            key={data.id}
-                            className="bg-[#E6F1FF] flex h-10 w-full lg:max-w-full items-center rounded-md pr-5"
-                        >
-                            <div className="flex flex-row items-center space-x-2 w-full lg:max-w-full px-2 py-2 rounded-md cursor-pointer transition-all duration-200 hover:bg-[#D8E8FF] active:scale-[0.98]" onClick={() => window.open(data.publicUrl, "_blank")}>
-                                <CircleCheck className="flex-shrink-0" fill="green" size="15" />
-
-                                <FileText className="flex-shrink-0" size="15" />
-
-                                {/* Filename */}
-                                <div className="w-[90%]">
-                                    <p className="italic text-sm truncate flex-grow w-35 sm:w-auto sm:max-w-auto lg:max-w-full">
-                                        {data.filename.split('_').slice(3).join('_')}
-                                    </p>
+                                {/* Progress Bar */}
+                                <div className="flex-grow hidden sm:block">
+                                    <Progress
+                                        value={progress}
+                                        className="h-2 w-full bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden [&>div]:bg-gradient-to-r [&>div]:from-blue-400 [&>div]:to-blue-600 transition-all duration-300"
+                                    />
                                 </div>
                             </div>
-                            <CircleX className="flex-shrink-0 cursor-pointer text-gray-600 hover:text-red-500 transition-colors duration-200" size="15" onClick={async () => {
+                        ))}
 
-                                const result = await Swal.fire({
-                                    title: "Delete this file?",
-                                    text: "This action cannot be undone.",
-                                    icon: "warning",
-                                    showCancelButton: true,
-                                    confirmButtonColor: "#d33",
-                                    cancelButtonColor: "#3085d6",
-                                    confirmButtonText: "Yes, delete it",
-                                    cancelButtonText: "Cancel",
-                                    reverseButtons: true,
-                                });
+                        {files.map((data) => (
+                            <div
+                                key={data.id}
+                                className="bg-[#E6F1FF] flex h-10 w-full sm:w-115 items-center justify-between rounded-md pr-5 my-1"
+                                onClick={() => window.open(data.publicUrl, "_blank")}
+                            >
+                                <div className="flex flex-row pl-1 justify-between sm:justify-start sm:space-x-5 sm:px-5 w-full sm:max-w-[95%] lg:max-w-[70%]">
+                                    <CircleCheck className="flex-shrink-0" fill="green" size="15" />
 
-                                if (result.isConfirmed) {
-                                    await deleteFile(data.id)
-                                    console.log("delete")
-                                    setRefresh((prev) => prev + 1)
+                                    <FileText className="flex-shrink-0" size="15" />
 
-                                    await Swal.fire({
-                                        title: "Delete Successful!",
-                                        text: "Your file has been deleted.",
-                                        icon: "success",
-                                        timer: 750,
-                                    })
-                                }
-                            }} />
-                        </div>
-                    ))
+                                    {/* Filename */}
+                                    <div className="w-[90%] sm:w-[70%] lg:w-full">
+                                        <p className="italic text-sm truncate flex-grow w-40 sm:w-full sm:max-w-150 lg:max-w-[90%]">
+                                            {data.filename.split('_').slice(3).join('_')}
+                                        </p>
+                                    </div>
+                                </div>
+                                <CircleX
+                                    className="flex-shrink-0 cursor-pointer text-gray-600 hover:text-red-500 transition-colors duration-200"
+                                    size="15"
+                                    onClick={async (e) => {
+                                        e.stopPropagation();
 
-                    }
-                </DialogHeader>
+                                        const result = await Swal.fire({
+                                            title: "Delete this file?",
+                                            text: "This action cannot be undone.",
+                                            icon: "warning",
+                                            showCancelButton: true,
+                                            confirmButtonColor: "#d33",
+                                            cancelButtonColor: "#3085d6",
+                                            confirmButtonText: "Yes, delete it",
+                                            cancelButtonText: "Cancel",
+                                            reverseButtons: true,
+                                        });
+
+                                        if (result.isConfirmed) {
+                                            await deleteFile(data.id)
+                                            console.log("delete")
+                                            setRefresh((prev) => prev + 1)
+
+                                            await Swal.fire({
+                                                title: "Delete Successful!",
+                                                text: "Your file has been deleted.",
+                                                icon: "success",
+                                                timer: 750,
+                                            })
+                                        }
+                                    }}
+                                />
+                            </div>
+                        ))}
+                    </ScrollArea>
+                </div>
             </DialogContent>
         </Dialog>
     );
 };
+            

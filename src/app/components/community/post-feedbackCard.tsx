@@ -61,14 +61,17 @@ export const PostFeedbackCard = ({
                 }
               }}
             >
+              <p className="font-medium text-start">Feedback Header</p>
               <Input
-                className="max-w-[100%] wrap-anywhere border-black placeholder:italic"
-                placeholder="Feedback Header"
+                className="max-w-[100%] mb-5 wrap-anywhere border-gray-300 placeholder:italic"
+                placeholder="e.g. Feedback for Youth Programs"
                 name="header"
               />
+
+              <p className="font-medium text-start">Feedback Body</p>
               <Textarea
-                className="max-w-[100%] h-50 wrap-anywhere mt-5 border-black placeholder:italic"
-                placeholder="Feedback Body"
+                className="max-w-[100%] h-50 wrap-anywhere  border-gray-300 placeholder:italic"
+                placeholder="e.g. The youth programs in our community have been very beneficial..."
                 name="body"
               />
               <div className="flex flex-row gap-2 justify-end mt-5">
