@@ -19,7 +19,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
-import { set } from "date-fns";
+
 
 function chunkArray<T>(array: T[], chunkSize: number) {
   const result: T[][] = []; for (let i = 0; i < array.length; i += chunkSize) {

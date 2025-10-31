@@ -11,9 +11,14 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
-import { addFiles, getFiles } from "../../actions/projects";
+import { addFiles, deleteFile, getFiles } from "../../actions/projects";
 import { projectFiles } from "../../lib/definitions";
+
 import { ScrollArea } from "@/components/ui/scroll-area";
+
+import Swal from "sweetalert2";
+import { GoTrueAdminApi } from "@supabase/supabase-js";
+
 
 export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
     const [tempFiles, setTempFiles] = useState<File[]>([]);
@@ -92,9 +97,9 @@ export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
                         </div>
                     </form>
 
-                    <ScrollArea className=" flex justify-self-center sm:justify-self-start h-50 w-70 sm:w-120 px-5 sm:px-0">
+                    <ScrollArea className=" flex  justify-self-center sm:justify-self-start h-50 w-70 sm:w-120 px-5 sm:px-0">
                         {tempFiles.map((data, i) => (
-                            <div key={i} className="bg-[#E6F1FF] flex h-10 w-60 max-w-auto sm:w-115 items-center justify-between rounded-md my-1">
+                            <div key={i} className="bg-[#E6F1FF] transition-all ease-in-out flex h-10 w-60 max-w-auto sm:w-115 items-center justify-between rounded-md my-1">
                                 <div className="flex flex-row pl-1 justify-between sm:justify-start sm:space-x-2 sm:px-5 w-full lg:space-x-2 lg:max-w-full">
                                     <CircleCheck className="flex-shrink-0" fill="green" size="15" />
 
@@ -111,13 +116,17 @@ export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
                                     <div className="flex-grow self-center hidden sm:block">
                                         <Progress value={10} />
                                     </div>
-
-
                                 </div>
 
+                                {/* Progress Bar */}
+                                <div className="flex-grow hidden sm:block">
+                                    <Progress
+                                        value={progress}
+                                        className="h-2 w-full bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden [&>div]:bg-gradient-to-r [&>div]:from-blue-400 [&>div]:to-blue-600 transition-all duration-300"
+                                    />
+                                </div>
                             </div>
-                        ))
-                        }
+                        ))}
 
                         {files.map((data) => (
                             <div
@@ -137,16 +146,44 @@ export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
                                         </p>
                                     </div>
                                 </div>
-                                <CircleX className="flex-shrink-0 cursor-pointer" size="15" />
+                                <CircleX
+                                    className="flex-shrink-0 cursor-pointer text-gray-600 hover:text-red-500 transition-colors duration-200"
+                                    size="15"
+                                    onClick={async (e) => {
+                                        e.stopPropagation();
+
+                                        const result = await Swal.fire({
+                                            title: "Delete this file?",
+                                            text: "This action cannot be undone.",
+                                            icon: "warning",
+                                            showCancelButton: true,
+                                            confirmButtonColor: "#d33",
+                                            cancelButtonColor: "#3085d6",
+                                            confirmButtonText: "Yes, delete it",
+                                            cancelButtonText: "Cancel",
+                                            reverseButtons: true,
+                                        });
+
+                                        if (result.isConfirmed) {
+                                            await deleteFile(data.id)
+                                            console.log("delete")
+                                            setRefresh((prev) => prev + 1)
+
+                                            await Swal.fire({
+                                                title: "Delete Successful!",
+                                                text: "Your file has been deleted.",
+                                                icon: "success",
+                                                timer: 750,
+                                            })
+                                        }
+                                    }}
+                                />
                             </div>
-                        ))
-
-                        }
+                        ))}
                     </ScrollArea>
-
                 </div>
-
             </DialogContent>
         </Dialog>
     );
 };
+            

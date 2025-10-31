@@ -565,3 +565,34 @@ export const getFiles = async (projectID: number) => {
 
     return filesWithUrls;
 }
+
+export const deleteFile = async (fileID: number) => {
+    const { data, error: fileError } = await client
+        .from("project_files")
+        .delete()
+        .eq("id", fileID)
+        .select("filepath")
+        
+
+    if (fileError) {
+        console.log("Database deletion error: ", fileError)
+        return
+    }
+
+    const filepath = data?.[0]?.filepath;
+
+    console.log(filepath.split("/").slice(2))
+
+    const { error: bucketError } = await client
+        .storage
+        .from("projects")
+        .remove(filepath)
+
+    if (bucketError) {
+        console.log("Bucket deletion error: ", bucketError);
+        return;
+    }
+
+    console.log("Successful deletion")
+    return
+}
