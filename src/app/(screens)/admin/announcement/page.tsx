@@ -154,8 +154,8 @@ export default function Announcement() {
             <div className="flex flex-row gap-0.5 my-3 justify-center text-center">
               <div
                 className={`${activeTab === "all"
-                    ? "bg-[#052659] text-white"
-                    : "bg-[#052659] opacity-60 text-gray-400"
+                  ? "bg-[#052659] text-white"
+                  : "bg-[#052659] opacity-60 text-gray-400"
                   } shadow-md text-xs lg:text-lg p-2 rounded-tl-2xl rounded-bl-2xl cursor-pointer`}
                 onClick={() => setActiveTab("all")}
               >
@@ -163,8 +163,8 @@ export default function Announcement() {
               </div>
               <div
                 className={`xl:hidden ${activeTab === "pinned"
-                    ? "bg-[#052659] text-white"
-                    : "bg-[#052659] opacity-60 text-gray-400"
+                  ? "bg-[#052659] text-white"
+                  : "bg-[#052659] opacity-60 text-gray-400"
                   } shadow-md text-xs lg:text-lg p-2 cursor-pointer`}
                 onClick={() => setActiveTab("pinned")}
               >
@@ -172,8 +172,8 @@ export default function Announcement() {
               </div>
               <div
                 className={`${activeTab === "mine"
-                    ? "bg-[#052659] text-white"
-                    : "bg-[#052659] opacity-60 text-gray-400"
+                  ? "bg-[#052659] text-white"
+                  : "bg-[#052659] opacity-60 text-gray-400"
                   } shadow-md text-xs lg:text-lg p-2 rounded-tr-2xl rounded-br-2xl cursor-pointer`}
                 onClick={() => setActiveTab("mine")}
               >
@@ -295,7 +295,10 @@ export default function Announcement() {
                     key={a.id}
                     header={a.header}
                     body={a.body}
-                    author={a.author_email}
+                    imgURL={a.photo}
+                    date={a.created_at}
+                    position={a.authorPosition}
+                    author={a.authorName}
                     announcementType={a.type}
                   />
                 ))}
