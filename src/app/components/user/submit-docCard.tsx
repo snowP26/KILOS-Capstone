@@ -17,7 +17,6 @@ import { projectFiles } from "../../lib/definitions";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import Swal from "sweetalert2";
-import { GoTrueAdminApi } from "@supabase/supabase-js";
 
 
 export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
@@ -134,16 +133,23 @@ export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
                                 className="bg-[#E6F1FF] flex h-10 w-full sm:w-115 items-center justify-between rounded-md pr-5 my-1"
                                 onClick={() => window.open(data.publicUrl, "_blank")}
                             >
-                                <div className="flex flex-row pl-1 justify-between sm:justify-start sm:space-x-5 sm:px-5 w-full sm:max-w-[95%] lg:max-w-[70%]">
+                                <div className="flex flex-row pl-1 justify-between w-full sm:justify-start sm:space-x-5 sm:px-5 sm:max-w-[95%] lg:max-w-[70%]">
                                     <CircleCheck className="flex-shrink-0" fill="green" size="15" />
 
                                     <FileText className="flex-shrink-0" size="15" />
 
-                                    {/* Filename */}
-                                    <div className="w-[90%] sm:w-[70%] lg:w-full">
-                                        <p className="italic text-sm truncate flex-grow w-40 sm:w-full sm:max-w-150 lg:max-w-[90%]">
-                                            {data.filename.split('_').slice(3).join('_')}
-                                        </p>
+                                    <div className="relative group sm:max-w-[95%] sm:px-1 lg:px-2 cursor-pointer">
+                                        <div className="absolute inset-0 w-full sm:w-[70%] lg:w-[90%] rounded-md bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                            <FileText className="w-5 h-5 text-white drop-shadow-md" />
+                                        </div>
+
+                                        {/* Filename */}
+                                        <div className="w-[90%] sm:w-[70%] lg:w-full">
+                                            <p className="italic text-sm truncate flex-grow w-40 sm:w-full sm:max-w-150 lg:max-w-[90%]">
+                                                {data.filename.split('_').slice(3).join('_')}
+                                            </p>
+                                        </div>
+
                                     </div>
                                 </div>
                                 <CircleX
