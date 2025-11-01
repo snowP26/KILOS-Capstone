@@ -219,7 +219,7 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
               {dayEvents.length > 0 && (
                 <div className="hidden mb-7 md:absolute md:left-2 md:right-2 md:top-8 md:flex md:flex-col md:gap-1 lg:top-10">
                   {dayEvents.slice(0, 1).map((ev) => (
-                    <div key={ev.id} className="lg:hidden xl:block truncate text-xs font-medium rounded px-1 py-0.5 bg-purple-500 text-white max-w-full">
+                    <div key={ev.id} className="lg:hidden xl:block truncate text-xs font-medium rounded px-1 py-0.5 bg-[#5483B3] text-white max-w-full">
                       {ev.header}
                     </div>
                   ))}
@@ -277,7 +277,7 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
   }, []);
 
   return (
-    <ScrollArea>
+    <ScrollArea className="shadow-[-4px_4px_4px_rgba(0,0,0,0.15),4px_0px_4px_rgba(0,0,0,0.15)] rounded-2xl">
       <div className="calendar-container w-full lg:min-w-full lg:max-w-130 xl:w-full 2xl:w-full max-h-150 lg:max-h-180 overflow-auto mr-3 rounded-2xl bg-white pb-10 text-gray-800 shadow-xl">
         <div className="sticky z-30 -top-px w-full rounded-t-2xl bg-white px-5 pt-7 sm:px-8 sm:pt-8">
           <div className="mb-4 flex w-full flex-wrap items-center justify-between gap-6">
@@ -290,7 +290,7 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({
               + Add Event
             </button> */}
             </div>
-            <div className="flex w-fit items-center justify-between">
+            <div className=" flex w-fit items-center justify-between">
               <button
                 onClick={handlePrevYear}
                 className="cursor-pointer rounded-full border border-gray-300 p-1 transition-colors hover:bg-gray-100 sm:p-2"

@@ -12,13 +12,14 @@ import { Search, SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import {
+
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
-import { set } from "date-fns";
+
 
 function chunkArray<T>(array: T[], chunkSize: number) {
   const result: T[][] = []; for (let i = 0; i < array.length; i += chunkSize) {
@@ -84,11 +85,11 @@ export default function Home() {
   }, [refresh, ordinanceLoc]);
 
   return (
-    <div>
+    <div className="">
       <ComNav />
-      <div className="min-h-screen">
+      <div className="bg-[#EEF2ED] min-h-screen max-h-full pb-20">
         <div className="flex flex-col items-center">
-          <div className="flex flex-col items-center pb-20 lg:pb-80">
+          <div className="flex flex-col items-center pb-20 md:pb-40 md:mx-2 lg:pb-80">
             <h1 className="text-center mt-15 text-[50px] m-5 sm:mt-20 sm:m-0 sm:text-[48px] font-bold">
               <strong className="text-[#0073FF]">K</strong>
               <a className="hidden sm:inline">abataan&apos;s </a>
@@ -123,28 +124,27 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center relative z-10 sm:w-[90%] sm:place-self-center sm:flex-row sm:justify-between sm:items-end">
-          <p className="text-2xl w-[80%] font-bold text-center mb-3 sm:mb-0 sm:text-start">Upcoming Events</p>
-          <div className="overflow-visible">
-            <LocationSelect onChange={setProjLoc} widthClass="sm:w-full" />
-          </div>
-
+        <div className="flex flex-col items-center sm:w-[80%] sm:place-self-center sm:flex-row">
+          <p className="text-2xl w-full font-bold text-center sm:mb-0 sm:text-start sm:self-center">Upcoming Events</p>
+          <Button onClick={() => router.push("/upcoming-events/")}
+            className=" text-xl my-3 self-center bg-transparent text-black hover:bg-[#052659] hover:text-white cursor-pointer underline lg:mr-15 lg:justify-self-end">
+            See All
+          </Button>
         </div>
 
-        <hr className="border-t border-black w-[90%] mx-auto my-3" />
         {projects && projects.length > 0 ? (
           <>
-            <div className="w-full mt-10 flex flex-wrap justify-center">
+            <div className="w-[90%] lg:w-[80%] xl:w-[70%] mt-3 flex flex-wrap justify-self-center">
               <Carousel opts={{ align: "start", }}
-                className="w-full min-w-auto sm:min-w-[70%] md:min-w-[80%] xl:min-w-[90%] max-w-sm"
+                className=" w-full max-w-auto"
               >
-                <CarouselContent className="-ml-4">
+                <CarouselContent className="-ml-5 gap-5 sm:gap-0">
                   {projects.map((data) => (
                     <CarouselItem
-                      className="basis-1/1 md:basis-2/3 lg:basis-2/4 xl:basis-1/3 2xl:basis-3/13"
+                      className="basis-1/1 sm:basis-1/2 md:basis-1/2 lg:basis-1/3"
                       key={data.id}
                     >
-                      <div className="cursor-pointer">
+                      <div className="flex justify-center">
                         <UpcomingEventCard
                           title={data.title}
                           imgURL={data.imageURL}
@@ -156,16 +156,12 @@ export default function Home() {
                   ))
                   }
                 </CarouselContent>
-                <CarouselPrevious className="cursor-pointer" />
-                <CarouselNext className="cursor-pointer" />
+                <CarouselPrevious className="cursor-pointer -left-4 lg:-left-16" />
+                <CarouselNext className="cursor-pointer -right-3 lg:-right-16" />
               </Carousel>
 
-
             </div>
-            <Button onClick={() => router.push("/upcoming-events/")}
-              className="bg-white text-black hover:bg-[#052659] hover:text-white cursor-pointer underline text-xl mb-25 my-5 flex justify-self-center sm:mx-40 lg:mr-15 lg:justify-self-end">
-              See All
-            </Button>
+
           </>
 
         ) : (
@@ -176,29 +172,26 @@ export default function Home() {
         )
 
         }
-
-
-        <div className="flex flex-col items-center mx-25 relative z-10 sm:flex-row sm:justify-between sm:items-end lg:mt-15">
-          <p className="text-2xl font-bold text-center mb-3 sm:mb-0 sm:text-start">Ordinances</p>
-          <div className="overflow-visible">
-            <LocationSelect onChange={setOrdinanceLoc} widthClass="sm:w-[100%]" />
-          </div>
+        <div className="mt-15 lg:mt-0 flex flex-col items-center sm:w-[80%] sm:place-self-center sm:flex-row">
+          <p className="text-2xl w-full font-bold text-center sm:mb-0 sm:text-start sm:self-center">Ordinances</p>
+          <Button onClick={() => router.push("/published-ordinances/")}
+            className=" text-xl my-3 self-center bg-transparent text-black hover:bg-[#052659] hover:text-white cursor-pointer underline lg:mr-15 lg:justify-self-end">
+            See All
+          </Button>
         </div>
-
-        <hr className="border-t border-black w-[90%] mx-auto my-3" />
 
         {ordinances && ordinances.length > 0 ? (
           <>
-            <div className="md:px-20">
+            <div className="md:px-20 lg:px-25 xl:px-50 2xl:px-60">
               <Carousel opts={{ align: "start", }}>
                 <CarouselContent className="-ml-4 pb-5">
                   {ordinanceChunks.map((group, index) => (
 
                     <CarouselItem key={index}
-                      className="gap-5 lg:grid lg:grid-cols-2 lg:grid-rows-2"
+                      className=" basis-1/1 sm:basis-1/2 md:basis-1/2 lg:basis-full lg:gap-2 lg:grid lg:grid-cols-2 lg:grid-rows-2"
                     > {group.map((data) => (
                       <div key={data.id} onClick={async () => await openOrdinancePDF(data.id)}
-                        className="cursor-pointer rounded-xl transition-all duration-200 hover:bg-white hover:shadow-lg hover:scale-[1.02]"
+                        className=""
                       >
                         <OrdinancesLandingCard id={data.id} title={data.title} description={data.description} author={data.author} />
                       </div>
@@ -206,14 +199,13 @@ export default function Home() {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="cursor-pointer" />
-                <CarouselNext className="cursor-pointer" />
+                <CarouselPrevious className="cursor-pointer left-1 md:-left-12" />
+                <CarouselNext className="cursor-pointer right-1 md:-right-15" />
               </Carousel>
+
+
             </div>
-            <Button onClick={() => router.push("/published-ordinances/")}
-              className="bg-white text-black hover:bg-[#052659] hover:text-white cursor-pointer underline text-xl lg:mr-15 sm:mx-40 mb-25 my-5 flex justify-self-center lg:justify-self-end">
-              See All
-            </Button>
+            
           </>
         ) : (
           <div className="flex flex-col items-center justify-center h-64 text-gray-500">

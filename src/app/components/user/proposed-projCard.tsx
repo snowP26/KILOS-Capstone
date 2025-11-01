@@ -10,7 +10,7 @@ type ProposedProps = {
 export const ProposedProjCard = ({ Title, Description, Status, PhotoURL }: ProposedProps) => {
     return (
 
-        <div className="flex bg-[#E6F1FF] h-full w-[90%] justify-self-center cursor-pointer rounded-2xl px-3 py-3 shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
+        <div className="flex bg-[#E6F1FF] h-full w-[90%] justify-self-center cursor-pointer border border-gray-300 rounded-2xl px-3 py-3 shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
             <div className="flex flex-row space-x-2">
                 {PhotoURL ? (
                     <img src={PhotoURL} className="bg-black w-20 min-w-15 h-25 rounded-[8px] object-cover" />

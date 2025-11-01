@@ -80,7 +80,7 @@ export default function Ordinances() {
   );
 
   const OrdinanceList = () => (
-    <>
+    <div className="flex flex-wrap justify-center lg:flex-col mx-5 sm:mx-20 xl:mx-50 my-10 gap-5">
       {ordinances.map((data) => (
         <div
           key={data.id}
@@ -100,12 +100,12 @@ export default function Ordinances() {
           />
         </div>
       ))}
-    </>
+    </div>
   );
 
   if (normalizedRole === "legislative") {
     return (
-      <div className="bg-[#E6F1FF] min-h-screen max-h-fit">
+      <div className="bg-[#E6F1FF] min-h-screen max-h-full">
         <div className="flex flex-col sm:flex-row justify-between mt-15 mx-3 lg:mx-40">
           <p className="font-bold text-2xl sm:text-3xl">Ordinances & Resolutions</p>
 

@@ -64,18 +64,24 @@ export const FeedbackCard = ({
 
   return (
     <Dialog>
-      <DialogTrigger className="m-10">
+      <DialogTrigger className="m-5 xl:m-10">
         <div
-          className={`cursor-pointer p-5 h-100 w-100 ${bgColor} rounded-md shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl`}
+          className={`flex flex-col cursor-pointer w-60 h-60 lg:py-10 lg:px-10 lg:h-100 lg:w-100 p-8 rounded-md shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${bgColor}`}
         >
-          <Quote fill="black" />
-          <p className="m-5 font-semibold text-4xl">{header}</p>
 
-          <p className="m-5 text-gray-500 text-sm">{body}</p>
-
-          <div className="flex flex-row justify-end">
-            <p className="font-thin text-xs mr-5 content-center">{date}</p>
+          <div className="justify-around flex flex-col h-full">
             <Quote fill="black" />
+
+            <>
+              <p className="lg:m-5 font-semibold text-4xl truncate sm:whitespace-normal sm:line-clamp-2">{header}</p>
+
+              <p className="m-5 text-gray-500 text-sm truncate sm:whitespace-normal sm:line-clamp-3">{body}</p>
+            </>
+
+            <div className="flex flex-row place-self-end ">
+              <p className="font-thin text-xs mr-5 content-center">{date}</p>
+              <Quote fill="black" />
+            </div>
           </div>
         </div>
       </DialogTrigger>
@@ -105,7 +111,7 @@ export const FeedbackCard = ({
                 </div>
 
                 {/* Comment content */}
-                <div className="flex-1 bg-white rounded-xl p-3 text-black shadow">
+                <div className="flex-1 bg-white border border-gray-300 rounded-xl p-3 text-black shadow">
                   <div className="flex justify-between items-center mb-1">
                     <p className="text-sm font-semibold">{name}</p>
                     <p className="text-xs text-gray-400">

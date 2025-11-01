@@ -7,7 +7,8 @@ export const locIDtoName = async (id: number) => {
     .eq("id", id);
 
   if (error || data == null) {
-    return console.log("Data not found: ", error);
+    console.log("Data not found: ", error);
+    return ""
   }
 
   return data[0].name as string;

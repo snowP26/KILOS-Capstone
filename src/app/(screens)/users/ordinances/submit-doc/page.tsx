@@ -88,7 +88,7 @@ export default function SubmitDoc() {
                     <div className="lg:w-[70%]">
                         <p className="font-semibold">Ordinance Title</p>
                         <Input
-                            className="bg-[#E6F1FF] placeholder:italic"
+                            className="bg-[#E6F1FF] border border-gray-300 placeholder:italic"
                             placeholder="eg. An ordinance..."
                             name="description"
                         />
@@ -98,14 +98,14 @@ export default function SubmitDoc() {
                         <p className="font-semibold">Ordinance Year and Number</p>
                         <div className="flex flex-row space-x-2">
                             <Input
-                                className="bg-[#E6F1FF] placeholder:italic lg:w-[30%]"
+                                className="bg-[#E6F1FF] border border-gray-300 placeholder:italic lg:w-[30%]"
                                 placeholder="eg. 2000"
                                 name="title-year"
                                 maxLength={4}
                             />
                             <strong>-</strong>
                             <Input
-                                className="bg-[#E6F1FF] placeholder:italic lg:w-[25%]"
+                                className="bg-[#E6F1FF] border border-gray-300 placeholder:italic lg:w-[25%]"
                                 placeholder="eg. 001"
                                 name="title-number"
                                 maxLength={4}
@@ -177,7 +177,7 @@ export default function SubmitDoc() {
                     )}
 
                     <div className="place-self-end mt-5">
-                        <Button className="bg-[#A3C4A8] text-black font-bold hover:font-bold rounded-[16px] cursor-pointer hover:bg-accent hover:text-accent-foreground hover:border-[#a3c4a8] hover:border-1 transition-all">
+                        <Button className="bg-[#A3C4A8] text-black font-bold hover:font-bold rounded-[16px] cursor-pointer hover:bg-black hover:text-[#A3C4A8] transition-all">
                             Submit Ordinance/Resolution
                         </Button>
                     </div>

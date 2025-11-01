@@ -154,11 +154,11 @@ export default function ViewProposedProj() {
 
 
                 <div className="flex flex-col lg:flex-row gap-1 place-items-center min-h-fit max-h-screen">
-                    <div className="bg-white mt-10 w-[80%] h-full sm:h-150 lg:w-[35%] lg:h-155 justify-items-center place-content-center">
+                    <div className="bg-white mt-10 w-[90%] h-full sm:h-150 lg:w-[35%] lg:h-155 justify-items-center place-content-center">
                         {project?.imageURL ? (
-                            <img src={project.imageURL} className="bg-black mt-10 w-[70%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130" />
+                            <img src={project.imageURL} className="bg-black mt-10 w-[80%] object-cover h-120 sm:h-[80%] lg:w-[80%] lg:h-130" />
                         ) : (
-                            <div className="mt-10 flex items-center justify-center w-[70%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 rounded-[8px] bg-blue-100 text-blue-600 font-bold text-6xl shadow">
+                            <div className="mt-10 flex items-center justify-center w-[80%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 rounded-[8px] bg-blue-100 text-blue-600 font-bold text-6xl shadow">
                                 {project?.title?.charAt(0).toUpperCase()}
                             </div>
                         )
@@ -166,7 +166,7 @@ export default function ViewProposedProj() {
                         <p className="font-medium text-xl text-[#17A1FA] my-3 justify-self-start ml-15">Project Poster</p>
                     </div>
 
-                    <div className="bg-white mb-10 w-[80%] lg:w-[80%] lg:h-155 lg:mt-10 lg:mb-0">
+                    <div className="bg-white mb-10 w-[90%] lg:w-[80%] lg:h-155 lg:mt-10 lg:mb-0">
                         <AnimatePresence mode="wait">
                             {showDetails ? (
                                 <motion.div
@@ -194,7 +194,7 @@ export default function ViewProposedProj() {
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: 50 }}
                                     transition={{ duration: 0.3 }}
-                                    className="h-[80%] flex flex-col flex-1 mt-5 mb-5 mx-10"
+                                    className="h-[80%] flex flex-col flex-1 mt-5 mb-5 mx-5 lg:mx-10"
                                 >
                                     <div className="h-[10%]">
                                         <h1 className={`w-48 text-white font-medium rounded-lg px-3 py-2 shadow-md transition-all duration-200 ease-in-out focus:ring-2 focus:outline-none ${projectStatusColors[status]}`}>{status}</h1>

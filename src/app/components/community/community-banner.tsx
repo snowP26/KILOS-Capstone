@@ -24,18 +24,18 @@ export const CommunityBanner = ({ id, onButtonClick, isOpen }: CommunityBannerPr
 
   return (
     <div className="flex flex-col h-full mb-20 mx-5 sm:flex sm:flex-col sm:h-full sm:w-fit sm:mb-20 md:flex md:flex-col md:h-full md:mx-20 md:mb-20 lg:flex lg:flex-row lg:h-60">
-      <div className="h-50 w-full mb-5 rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)] relative mr-3 sm:w-full sm:h-[56.25%] lg:w-[70%] lg:h-full flex items-center justify-center">
+      <div className="h-50 w-full bg-white mb-5 rounded-md relative mr-3 sm:w-full sm:h-[56.25%] lg:w-[70%] lg:h-full flex items-center justify-center border">
         <img
           src={image}
           alt=""
-          className="object-contain object-center max-h-full max-w-full rounded-md"
+          className="object-contain object-center max-h-full max-w-full sm:w-50"
         />
         <p className="text-2xl font-medium ml-3 absolute bottom-0 left-0 pl-2 pb-2">
           {id}
         </p>
       </div>
 
-      <div className="h-fit rounded-md shadow-[-4px_4px_10px_rgba(0,0,0,0.4)] bg-blue-100 sm:w-full sm:h-full lg:w-[30%] lg:h-full">
+      <div className="h-fit rounded-md bg-white sm:w-full sm:h-full lg:w-[30%] lg:h-full border">
         <p className="m-3 mb-5 text-sm">
           <strong>{id} </strong>is Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad

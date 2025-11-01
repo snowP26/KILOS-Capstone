@@ -102,7 +102,7 @@ export default function CreateAnnouncement() {
                         <div className="w-full lg:w-[50%]">
                             <p className="font-semibold">Header</p>
                             <Input 
-                                className="bg-[#E6F1FF] placeholder:italic" 
+                                className="bg-[#E6F1FF] border border-gray-300 placeholder:italic" 
                                 placeholder="eg. The Announcement is about KILOS"
                                 name="title"
                             />
@@ -110,7 +110,7 @@ export default function CreateAnnouncement() {
                         <div className="flex flex-col mt-5 gap-0 lg:flex-row lg:items-center lg:gap-2">
                             <p className="font-semibold">Category:</p>
                             <Select name="type" required>
-                                <SelectTrigger className="w-[180px] bg-[#E6F1FF] cursor-pointer">
+                                <SelectTrigger className="w-[180px] bg-[#E6F1FF] border border-gray-300 cursor-pointer">
                                     <SelectValue className="placeholder:italic" placeholder="Select a Category" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-[#E6F1FF]">
@@ -130,7 +130,7 @@ export default function CreateAnnouncement() {
 
                     <p className="font-semibold pt-5">Body</p>
                     <Textarea 
-                        className="bg-[#E6F1FF] h-60 placeholder:italic" 
+                        className="bg-[#E6F1FF] border border-gray-300 h-60 placeholder:italic" 
                         placeholder="eg. The Announcement is about KILOS" 
                         name="body"
                     />

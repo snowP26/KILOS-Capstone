@@ -33,7 +33,7 @@ export default function ViewProject() {
     const [showDetails, setShowDetails] = useState(true);
 
     return (
-        <div>
+        <div className="bg-[#EEF2ED] min-h-screen max-h-full">
             <ComNav />
             <Breadcrumb className="ml-5 lg:mt-2 xl:ml-20">
                 <BreadcrumbList>
@@ -67,9 +67,13 @@ export default function ViewProject() {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
+
+            <h1 className="mt-10 mb-5 text-2xl font-bold text-center lg:text-start lg:mx-10 xl:mx-20">
+                HIBLA: Weaving Safety, Dignity, and Dialogue
+            </h1>
             <div className="flex flex-col px-5 mt-10 lg:flex-row lg:gap-5 xl:px-20">
-                <div className="h-full lg:w-[30%] lg:place-self-center">
-                    <div className="bg-black aspect-3/4 object-cover">
+                <div className="h-full lg:w-[30%] place-self-center">
+                    <div className=" bg-black aspect-3/4 object-cover">
                         {/* <img>
 
                         </img> */}
@@ -86,10 +90,7 @@ export default function ViewProject() {
                 </div>
 
                 <div className="lg:w-[70%]">
-                    <h1 className="mt-10 mb-5 text-2xl font-bold text-center">
-                        HIBLA: Weaving Safety, Dignity, and Dialogue
-                    </h1>
-                    <div className="bg-[#E6F1FF] w-full rounded-md p-5 mb-10 shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
+                    <div className="bg-white w-full rounded-md p-5 mb-10 shadow-[-4px_4px_10px_rgba(0,0,0,0.4)]">
 
                         {showDetails ?
                             <ScrollArea className="h-150 lg:h-90 xl:h-150 pr-5">

@@ -1,4 +1,4 @@
-import { StringOrTemplateHeader } from "@tanstack/react-table";
+
 import { UUID } from "crypto";
 
 type AnnouncementType =
@@ -92,9 +92,19 @@ export type ordinance_approvals = {
 }
 
 export type ordinanceFiles = {
+    id: number
     url: string;
     name: string;
     type: string;
+    uploaded: boolean;
+}
+
+export type projectFiles = {
+    id: number,
+    project_id: number,
+    filepath: string,
+    filename: string,
+    publicUrl: string
 }
 
 export type commFeedback = {
@@ -130,6 +140,7 @@ export type project = {
     status: string,
     imageURL: string,
     budget: number,
+    locName: string,
 }
 
 export type project_approvals = {

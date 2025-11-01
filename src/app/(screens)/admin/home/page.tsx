@@ -53,8 +53,8 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-[#E6F1FF] flex flex-col lg:flex lg:flex-row lg:h-full lg:mx-5">
-      <div className="mt-5 h-50 sm:h-70 lg:h-200 xl:h-185 lg:rounded-2xl lg:border-black lg:border-2 lg:w-[20%]">
+    <div className="bg-[#E6F1FF] flex flex-col lg:flex lg:flex-row lg:h-full lg:mx-5 xl:pb-3">
+      <div className="mt-2 h-60 shadow-[-4px_4px_4px_rgba(0,0,0,0.15),4px_4px_4px_rgba(0,0,0,0.15)] mx-5 lg:mx-0 sm:h-70 lg:h-209 rounded-2xl lg:shadow-[-4px_4px_4px_rgba(0,0,0,0.15)] bg-white lg:w-[22%] xl:w-[15%]">
         <p className="font-bold text-3xl lg:text-xl xl:text-3xl text-center mt-5 mb-3">Recent Feedback</p>
         <ScrollArea className="h-[85%]">
           <div className="max-h-[350px] sm:h-auto lg:max-h-[570px]">
@@ -62,14 +62,14 @@ export default function Home() {
               {feedback.map((data) => (
                 <Dialog key={data.id}>
                   <DialogTrigger onClick={() => loadComments(data.id)} className="my-3 flex justify-center self-center md:w-[40%] lg:w-full">
-                      <DbRecentFeedbackCard
-                        header={data.header}
-                        date={new Date(data.created_at).toLocaleDateString("en-US", {
-                          month: "long",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                      />
+                    <DbRecentFeedbackCard
+                      header={data.header}
+                      date={new Date(data.created_at).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    />
                   </DialogTrigger>
                   <DialogContent className="bg-[#E6F1FF]">
                     <DialogHeader>
@@ -108,37 +108,6 @@ export default function Home() {
                             </div>
                           );
                         })}
-
-                      {/* Add Comment Form */}
-                      <form
-                        className="mt-5 flex flex-col gap-3"
-                        ref={formRef}
-                        onSubmit={async (e) => {
-                          e.preventDefault();
-                          if (!activeFeedbackId) return;
-                          await postComment(e, formRef, activeFeedbackId);
-                          await loadComments(activeFeedbackId);
-                          formRef.current?.reset();
-                        }}
-                      >
-                        <label htmlFor="comment" className="text-lg font-semibold">
-                          Add a Comment
-                        </label>
-                        <textarea
-                          id="comment"
-                          name="comment"
-                          placeholder="Write your comment..."
-                          rows={3}
-                          className="w-full rounded-lg border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
-                          required
-                        />
-                        <button
-                          type="submit"
-                          className="self-end bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow transition-colors cursor-pointer"
-                        >
-                          Post
-                        </button>
-                      </form>
                     </DialogHeader>
                   </DialogContent>
                 </Dialog>
@@ -149,7 +118,7 @@ export default function Home() {
 
       </div>
 
-      <div className="mt-10 w-[90%] self-center lg:w-[80%] lg:mt-0 lg:self-start">
+      <div className="mt-2 w-[90%] self-center lg:w-[78%] xl:w-[85%] xl:h-209 lg:mt-0 lg:self-start">
         <DbCalendarCard />
       </div>
     </div>

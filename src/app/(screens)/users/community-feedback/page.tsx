@@ -34,7 +34,7 @@ export default function CommunityFeedback() {
 
       <div className="mx-25">
         <div className="flex flex-wrap justify-center">
-          { feedback.length > 0 ?
+          {feedback.length > 0 ?
             feedback.map((data) => (
               <FeedbackCard
                 key={data.id}
@@ -53,9 +53,9 @@ export default function CommunityFeedback() {
                 isWhite={true}
               />
             )) : (
-<p className="text-gray-500 italic text-center mt-10">
-            No feedback entries available yet.
-          </p>
+              <p className="text-gray-500 italic text-center mt-10">
+                No feedback entries available yet.
+              </p>
             )
           }
         </div>
