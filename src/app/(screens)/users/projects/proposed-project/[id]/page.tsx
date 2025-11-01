@@ -115,7 +115,7 @@ export default function ViewProposedProject() {
                     {/* LEFT SIDE POSTER */}
                     <div className="bg-white mt-10 w-[90%] h-full sm:h-150 lg:w-[35%] lg:h-155 justify-items-center place-content-center">
                         {project?.imageURL ? (
-                            <div className="relative w-[70%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 flex items-center justify-center">
+                            <div className="relative w-[80%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 flex items-center justify-center">
                                 <img
                                     src={`${project.imageURL}?t=${new Date().getTime()}`}
                                     alt="Project Poster"

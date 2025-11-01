@@ -64,9 +64,9 @@ export const FeedbackCard = ({
   return (
     <Dialog>
 
-      <DialogTrigger className="my-10 sm:m-10">
+      <DialogTrigger className="my-10 sm:m-5">
         <div
-          className={`cursor-pointer p-5 h-70 w-70 sm:h-100 sm:w-100 ${bgColor} rounded-md shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl`}
+          className={`cursor-pointer p-5 h-70 w-70 sm:h-100 sm:w-100 bg-white rounded-md border transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl`}
         >
           <div className="justify-around flex flex-col h-full">
             <Quote fill="black" />

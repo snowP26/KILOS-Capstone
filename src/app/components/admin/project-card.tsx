@@ -14,7 +14,7 @@ export const ProjectCard = ({ Title, Status, ImgURL }: ProjectCard) => {
           <img
             src={ImgURL}
             alt="Project"
-            className="aspect-3/4 object-contain rounded-md"
+            className="aspect-3/4 w-full object-cover rounded-md"
           />
         </div>
       ) : (

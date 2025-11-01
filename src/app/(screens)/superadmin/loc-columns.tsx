@@ -145,7 +145,7 @@ export const locColumns: ColumnDef<Users>[] = [
                         <DropdownMenuItem
                             onClick={() => navigator.clipboard.writeText(payment.youth_official_id)}
                         >
-                            Copy payment ID
+                            Copy Registration Code
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>Edit</DropdownMenuItem>

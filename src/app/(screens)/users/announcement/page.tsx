@@ -129,7 +129,7 @@ export default function Announcement() {
   );
 
   return (
-    <div className="min-h-screen max-h-fit xl:mx-20 bg-[#E6F1FF]">
+    <div className="min-h-screen max-h-full xl:mx-20 bg-[#E6F1FF]">
       {/* Title */}
       <p className="font-bold text-2xl mt-10 mx-10 sm:text-3xl">
         Announcements

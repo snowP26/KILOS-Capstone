@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Menu } from "lucide-react";
-import { TextIcon } from "../text-logo";
+import { TextIcon } from "./text-logoAdmin";
 import { logoutUser } from "../../actions/auth";
 
 export const AdminNav = () => {
