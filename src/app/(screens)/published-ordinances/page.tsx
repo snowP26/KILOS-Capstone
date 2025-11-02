@@ -116,6 +116,7 @@ export default function ViewPublishedOrdinances() {
                 <PublishedOrdinanceCard/>
 
                 <PublishedOrdinanceCard/>
+
             </div>
 
         </div>

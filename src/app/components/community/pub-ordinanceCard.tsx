@@ -20,7 +20,7 @@ export const PublishedOrdinanceCard = () => {
                 </Avatar>
             </div>
 
-            <div className="w-70 lg:h-fit lg:w-[70%] bg-white rounded-b-2xl lg:rounded-2xl p-5 lg:border-[0.2px] lg:border-gray-300 lg:transform lg:transition-all lg:duration-300 lg:hover:-translate-y-2 lg:hover:shadow-[-4px_4px_4px_rgba(0,0,0,0.15)] lg:cursor-pointer relative group">
+            <div className="w-70 h-full lg:h-fit lg:w-[70%] bg-white rounded-b-2xl lg:rounded-2xl p-5 lg:border-[0.2px] lg:border-gray-300 lg:transform lg:transition-all lg:duration-300 lg:hover:-translate-y-2 lg:hover:shadow-[-4px_4px_4px_rgba(0,0,0,0.15)] lg:cursor-pointer relative group">
 
                 {/* Hover overlay */}
                 <div className="absolute z-1 inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300  items-center justify-center hidden lg:flex">
@@ -29,7 +29,7 @@ export const PublishedOrdinanceCard = () => {
                 <h1 className="font-bold text-2xl truncate">
                     Ordinance 2001-001
                 </h1>
-                <p className="text-black font-semibold mt-3 mb-10 lg:mb-4 line-clamp-3">
+                <p className="text-black min-h-19 font-semibold mt-3 mb-10 lg:mb-4 line-clamp-3">
                     An Ordinance Makiiba samuya sa paghabi kan sarong ciudad nin Naga na mas bukas sa pakikipag diyalogo, mas ligtas, asin mas inklusibong ciudad para sa satuyang mga tugang na miyembro kan komunidad kan LGBTQIA+.
                     Mag-iribahan kita ngunyan na Sabado, Hunyo 21, 2025 sa Museo ni Jesse Robredo para sa &quot;HIBLA: Weaving Safety, Dignity, and Dialogue&quot; kun sain gaganapon an mga minasunod:
                 </p>

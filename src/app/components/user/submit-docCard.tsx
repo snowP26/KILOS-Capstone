@@ -120,24 +120,29 @@ export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
                         }
 
                         {files.map((data) => (
-                            <div
-                                key={data.id}
-                                className="bg-[#E6F1FF] flex h-10 w-full sm:w-115 items-center justify-between rounded-md pr-5 my-1"
-                                onClick={() => window.open(data.publicUrl, "_blank")}
-                            >
-                                <div className="flex flex-row pl-1 justify-between sm:justify-start sm:space-x-5 sm:px-5 w-full sm:max-w-[95%] lg:max-w-[70%]">
-                                    <CircleCheck className="flex-shrink-0" fill="green" size="15" />
-
-                                    <FileText className="flex-shrink-0" size="15" />
-
-                                    {/* Filename */}
-                                    <div className="w-[90%] sm:w-[70%] lg:w-full">
-                                        <p className="italic text-sm truncate flex-grow w-40 sm:w-full sm:max-w-150 lg:max-w-[90%]">
-                                            {data.filename.split('_').slice(3).join('_')}
-                                        </p>
-                                    </div>
+                            <div key={data.id} className="relative group sm:max-w-[96%] cursor-pointer">
+                                {/* hover overlay */}
+                                <div onClick={() => window.open(data.publicUrl, "_blank")} className="z-0 absolute inset-0 w-full rounded-md bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                    <FileText className="w-5 h-5 text-white drop-shadow-md" />
                                 </div>
-                                <CircleX className="flex-shrink-0 cursor-pointer" size="15" />
+
+                                <div
+                                    className=" bg-[#E6F1FF] flex h-10 w-full sm:w-115 items-center justify-between rounded-md pr-5 my-1"
+                                >
+                                    <div className="flex flex-row pl-1 justify-between w-full sm:justify-start sm:space-x-5 sm:px-5 sm:max-w-[95%] lg:max-w-[70%]">
+                                        <CircleCheck className="flex-shrink-0" fill="green" size="15" />
+
+                                        <FileText className="flex-shrink-0" size="15" />
+
+                                        {/* Filename */}
+                                        <div className="w-[90%] sm:w-[70%] lg:w-full">
+                                            <p className="italic text-sm truncate flex-grow w-40 sm:w-full sm:max-w-150 lg:max-w-[90%]">
+                                                {data.filename.split('_').slice(3).join('_')}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <CircleX className="z-50 flex-shrink-0 cursor-pointer" size="15" onClick={ () => console.log("hello")}/>
+                                </div>
                             </div>
                         ))
 
