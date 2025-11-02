@@ -173,7 +173,7 @@ export default function ViewProject() {
                                     </TableHeader>
                                     <TableBody>
                                         {budget?.map((data, i) => (
-                                            <TableRow>
+                                            <TableRow key={data.id}>
                                                 <TableCell className="font-medium text-center">{i}</TableCell>
                                                 <TableCell className="text-center">{data.item_name}</TableCell>
                                                 <TableCell className="text-center">{data.amt}</TableCell>
