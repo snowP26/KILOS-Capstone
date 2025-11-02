@@ -11,6 +11,7 @@ type OrdinanceCardProps = {
   author: number;
   submit_date: string;
   id: number
+  className?: string
 };
 
 export const OrdinancesCard = ({
@@ -19,6 +20,7 @@ export const OrdinancesCard = ({
   author,
   submit_date,
   id,
+  className
 }: OrdinanceCardProps) => {
   const [authorName, setAuthorName] = useState<string>("");
   const [fileURL, setFileURL] = useState<string>("")
