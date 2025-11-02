@@ -319,9 +319,9 @@ export const getOrdinanceURL = async (ordinanceID: number) => {
 
   const { data: url } = await client.storage
     .from("ordinances")
-    .createSignedUrl(ordinancefile.file_path, 3600);
+    .getPublicUrl(ordinancefile.file_path)
 
-  return url?.signedUrl || "";
+  return url?.publicUrl || "";
 }
 
 export const openOrdinancePDF = async (ordinanceID: number) => {

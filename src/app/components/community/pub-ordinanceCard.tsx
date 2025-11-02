@@ -25,10 +25,10 @@ export const PublishedOrdinanceCard = ({ id, title, description, author, locatio
         const fetchData = async () => {
             const name = await authorIDtoName(author);
             const loc = await locIDtoName(locationID);
-            const fileURL = await getOrdinanceURL(id)
+            const file = await getOrdinanceURL(id)
             setAuthorName(name);
             setLocation(loc);
-            setFileURL(fileURL)
+            setFileURL(file)
         };
         fetchData();
     }, [author, locationID]);
@@ -50,7 +50,7 @@ export const PublishedOrdinanceCard = ({ id, title, description, author, locatio
             </div>
 
             <div
-                className={`w-70 lg:h-fit lg:w-[70%] bg-white rounded-b-2xl lg:rounded-2xl p-5 lg:border-[0.2px] lg:border-gray-300 lg:transform lg:transition-all lg:duration-300  ${fileURL ? "cursor-pointer lg:hover:-translate-y-2 lg:hover:shadow-[-4px_4px_4px_rgba(0,0,0,0.15)]" : "cursor-not-allowed"} relative group`}
+                className={`w-70 h-full lg:h-fit lg:w-[70%] bg-white rounded-b-2xl lg:rounded-2xl p-5 lg:border-[0.2px] lg:border-gray-300 lg:transform lg:transition-all lg:duration-300  ${fileURL ? "cursor-pointer lg:hover:-translate-y-2 lg:hover:shadow-[-4px_4px_4px_rgba(0,0,0,0.15)]" : "cursor-not-allowed"} relative group`}
                 onClick={async () => {
                     if (fileURL) {
                         window.open(fileURL, "_blank")
@@ -75,7 +75,7 @@ export const PublishedOrdinanceCard = ({ id, title, description, author, locatio
                 <h1 className="font-bold text-2xl truncate">
                     Ordinance {title}
                 </h1>
-                <p className="text-black font-semibold mt-3 mb-10 lg:mb-4 line-clamp-3">
+                <p className="text-black min-h-19 font-semibold mt-3 mb-10 lg:mb-4 line-clamp-3">
                     {description}
                 </p>
                 <p className="text-xl font-thin">

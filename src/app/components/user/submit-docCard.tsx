@@ -130,60 +130,64 @@ export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
                         {files.map((data) => (
                             <div
                                 key={data.id}
-                                className="bg-[#E6F1FF] flex h-10 w-full sm:w-115 items-center justify-between rounded-md pr-5 my-1"
-                                onClick={() => window.open(data.publicUrl, "_blank")}
+                                className="relative group sm:max-w-[96%] cursor-pointer"
                             >
-                                <div className="flex flex-row pl-1 justify-between w-full sm:justify-start sm:space-x-5 sm:px-5 sm:max-w-[95%] lg:max-w-[70%]">
-                                    <CircleCheck className="flex-shrink-0" fill="green" size="15" />
-
-                                    <FileText className="flex-shrink-0" size="15" />
-
-                                    <div className="relative group sm:max-w-[95%] sm:px-1 lg:px-2 cursor-pointer">
-                                        <div className="absolute inset-0 w-full sm:w-[70%] lg:w-[90%] rounded-md bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                            <FileText className="w-5 h-5 text-white drop-shadow-md" />
-                                        </div>
-
-                                        {/* Filename */}
-                                        <div className="w-[90%] sm:w-[70%] lg:w-full">
-                                            <p className="italic text-sm truncate flex-grow w-40 sm:w-full sm:max-w-150 lg:max-w-[90%]">
-                                                {data.filename.split('_').slice(3).join('_')}
-                                            </p>
-                                        </div>
-
-                                    </div>
+                                <div
+                                    onClick={() => window.open(data.publicUrl, "_blank")}
+                                    className="z-10 absolute inset-0 w-full rounded-md bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                                >
+                                    <FileText className="w-5 h-5 text-white drop-shadow-md" />
                                 </div>
-                                <CircleX
-                                    className="flex-shrink-0 cursor-pointer text-gray-600 hover:text-red-500 transition-colors duration-200"
-                                    size="15"
-                                    onClick={async (e) => {
-                                        e.stopPropagation();
+                                <div
+                                    className=" bg-[#E6F1FF] flex h-10 w-full sm:w-115 items-center justify-between rounded-md pr-5 my-1"
+                                >
+                                    <div className="flex flex-row pl-1 justify-between w-full sm:justify-start sm:space-x-5 sm:px-5 sm:max-w-[95%] lg:max-w-[70%]">
+                                        <CircleCheck className="flex-shrink-0" fill="green" size="15" />
+                                        <FileText className="flex-shrink-0" size="15" />
+                                        <div className="relative group sm:max-w-[95%] sm:px-1 lg:px-2 cursor-pointer">
+                                            {/* Filename */}
+                                            <div className="w-[90%] sm:w-[70%] lg:w-full">
+                                                <p className="italic text-sm truncate flex-grow w-40 sm:w-full sm:max-w-150 lg:max-w-[90%]">
+                                                    {data.filename.split('_').slice(3).join('_')}
+                                                </p>
+                                            </div>
 
-                                        const result = await Swal.fire({
-                                            title: "Delete this file?",
-                                            text: "This action cannot be undone.",
-                                            icon: "warning",
-                                            showCancelButton: true,
-                                            confirmButtonColor: "#d33",
-                                            cancelButtonColor: "#3085d6",
-                                            confirmButtonText: "Yes, delete it",
-                                            cancelButtonText: "Cancel",
-                                            reverseButtons: true,
-                                        });
+                                        </div>
+                                    </div>
+                                    <CircleX
+                                        className="z-50 flex-shrink-0 cursor-pointer text-gray-600 hover:text-red-500 transition-colors duration-200"
+                                        size="15"
+                                        onClick={async (e) => {
+                                            e.stopPropagation();
 
-                                        if (result.isConfirmed) {
-                                            await deleteFile(data.id)
-                                            console.log("delete")
-                                            setRefresh((prev) => prev + 1)
+                                            const result = await Swal.fire({
+                                                title: "Delete this file?",
+                                                text: "This action cannot be undone.",
+                                                icon: "warning",
+                                                showCancelButton: true,
+                                                confirmButtonColor: "#d33",
+                                                cancelButtonColor: "#3085d6",
+                                                confirmButtonText: "Yes, delete it",
+                                                cancelButtonText: "Cancel",
+                                                reverseButtons: true,
+                                            });
 
-                                            await Swal.fire({
-                                                title: "Delete Successful!",
-                                                text: "Your file has been deleted.",
-                                                icon: "success",
-                                                timer: 750,
-                                            })
-                                        }
-                                    }}
-                                />
+                                            if (result.isConfirmed) {
+                                                await deleteFile(data.id)
+                                                console.log("delete")
+                                                setRefresh((prev) => prev + 1)
+
+                                                await Swal.fire({
+                                                    title: "Delete Successful!",
+                                                    text: "Your file has been deleted.",
+                                                    icon: "success",
+                                                    timer: 750,
+                                                })
+                                            }
+                                        }}
+                                    />
+
+                                </div>
                             </div>
                         ))}
                     </ScrollArea>
@@ -192,4 +196,3 @@ export const SubmitDocCard = ({ projectID }: { projectID?: number }) => {
         </Dialog>
     );
 };
-            
