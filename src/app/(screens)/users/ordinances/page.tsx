@@ -89,6 +89,7 @@ export default function Ordinances() {
         >
           <OrdinancesCard
             className="transition-transform duration-300 hover:-translate-y-1 rounded-xl"
+            id={data.id}
             title={data.title}
             description={data.description}
             author={data.author}
