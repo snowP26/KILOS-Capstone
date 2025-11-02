@@ -146,6 +146,7 @@ export default function Home() {
                     >
                       <div className="flex justify-center">
                         <UpcomingEventCard
+                          id={data.id}
                           title={data.title}
                           imgURL={data.imageURL}
                           loc={data.location}
