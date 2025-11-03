@@ -14,6 +14,7 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import Image from 'next/image';
 
 export default function SubmitOrdinances() {
     const formRef = useRef<HTMLFormElement>(null) as React.RefObject<HTMLFormElement>;
@@ -135,7 +136,7 @@ export default function SubmitOrdinances() {
                     {/* Preview area */}
                     {selectedFile && (
                         <div className="mt-4 flex items-center gap-4">
-                            <img
+                            <Image
                                 src={previewUrl || ""}
                                 alt="Preview"
                                 className="h-24 w-24 object-cover rounded-md border"

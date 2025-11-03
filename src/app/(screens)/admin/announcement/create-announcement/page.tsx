@@ -95,7 +95,7 @@ export default function CreateAnnouncement() {
 
             <form className="justify-items-center mt-10 mb-10 lg:mb-0" ref={formRef} onSubmit={async (e) => {
                 await postAnnouncements(e, formRef);
-                router.push("/users/announcement");
+                router.push("/admin/announcement");
             }}>
                 <div className="bg-white w-[90%] lg:w-[70%] px-5 lg:px-20 rounded-[16px] py-10 shadow-lg/30">
                     <div className="flex flex-col lg:flex-row lg:justify-between">

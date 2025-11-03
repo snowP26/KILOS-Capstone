@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, SquarePen, Trash2, CirclePlus } from 'lucide-react';
+import { ArrowLeft, SquarePen, Trash2, CirclePlus, Clock, Loader2, XCircle, CheckCircle, HelpCircle } from 'lucide-react';
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
@@ -30,12 +30,13 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { useParams, useRouter } from 'next/navigation';
-import { getProjectByID } from '@/src/app/actions/projects';
+import { getProjectByID, updateApproval } from '@/src/app/actions/projects';
 import { project, project_approvals } from '@/src/app/lib/definitions';
 import { motion, AnimatePresence } from 'framer-motion';
 import { addProjectApproval, deleteProjectApproval, getProjectApprovals, updateProjectApproval, updateProjectStatus } from '@/src/app/actions/admin_projects';
 import Swal from 'sweetalert2';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@radix-ui/react-hover-card';
+
 
 const checkStatuses = async (approval: project_approvals[] | null, id: number) => {
     if (!id || !approval) {
@@ -80,6 +81,8 @@ export default function ViewProposedProj() {
     const raw = Array.isArray(params.id) ? decodeURIComponent(params.id[0] ?? "") : decodeURIComponent(params.id ?? "");
     const projectID = Number(raw.split("-").pop());
     const [showDetails, setShowDetails] = useState(false);
+    const [statusColor, setStatusColor] = useState("bg-gray-500");
+    const [statusIcon, setStatusIcon] = useState(<HelpCircle />);
     const [project, setProject] = useState<project | null>(null);
     const [approvals, setApprovals] = useState<project_approvals[] | null>(null);
     const [refresh, setRefresh] = useState(0);
@@ -105,6 +108,31 @@ export default function ViewProposedProj() {
         };
         fetchProject();
     }, [projectID, refresh]);
+
+
+    const statusUI = (status: string) => {
+        switch (status.toLowerCase().trim()) {
+            case "pending":
+                setStatusColor("bg-yellow-500");
+                setStatusIcon(<Clock />);
+                break;
+            case "under review":
+                setStatusColor("bg-blue-500");
+                setStatusIcon(<Loader2 className="animate-spin" />);
+                break;
+            case "declined":
+                setStatusColor("bg-red-500");
+                setStatusIcon(<XCircle />);
+                break;
+            case "for approval":
+                setStatusColor("bg-green-600");
+                setStatusIcon(<CheckCircle />);
+                break;
+        }
+
+    }
+
+
 
 
     const statusColors: Record<string, string> = {
@@ -196,9 +224,26 @@ export default function ViewProposedProj() {
                                     transition={{ duration: 0.3 }}
                                     className="h-[80%] flex flex-col flex-1 mt-5 mb-5 mx-5 lg:mx-10"
                                 >
-                                    <div className="h-[10%]">
-                                        <h1 className={`w-48 text-white font-medium rounded-lg px-3 py-2 shadow-md transition-all duration-200 ease-in-out focus:ring-2 focus:outline-none ${projectStatusColors[status]}`}>{status}</h1>
+                                    <div className="place-self-center md:mx-10 mt-5 flex flex-col md:flex-row justify-between items-center px-4 py-2 rounded-lg border border-gray-200 shadow-sm bg-gray-50 w-[90%]">
+                                        <div className={`flex items-center gap-2 font-medium ${statusColor} text-white px-2 py-1 rounded-md`}>
+                                            <div className="self-center">{statusIcon}</div>
+                                            <p className="capitalize">{project?.status}</p>
+                                        </div>
+                                        <div className="flex flex-col items-end text-gray-700">
+                                            <span className="text-xs uppercase tracking-wide text-gray-500">
+                                                Target Implementation Date
+                                            </span>
 
+                                            <div className="flex items-center gap-3">
+                                                <p className="text-sm font-medium">
+                                                    {project?.target_date ? new Date(project?.target_date).toLocaleDateString("en-GB", {
+                                                        day: "2-digit",
+                                                        month: "long",
+                                                        year: "numeric"
+                                                    }) : "No target date set"}
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div className="flex-1 overflow-y-auto my-5 lg:mb-5">
@@ -422,8 +467,9 @@ export default function ViewProposedProj() {
                                                 cancelButtonText: "Cancel",
                                                 confirmButtonColor: "#3085d6",
                                                 cancelButtonColor: "#d33",
-                                            }).then((result) => {
+                                            }).then(async (result) => {
                                                 if (result.isConfirmed) {
+                                                    await updateApproval(Number(project?.id))
                                                     Swal.fire({
                                                         icon: "success",
                                                         title: "Approved!",

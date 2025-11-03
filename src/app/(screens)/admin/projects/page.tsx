@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ProjectCard } from "@/src/app/components/admin/project-card";
 import { project } from "@/src/app/lib/definitions";
 import { getPendingProjects } from "@/src/app/actions/admin_projects";
+import { getProjects } from "@/src/app/actions/projects";
 
 export default function Projects() {
   const router = useRouter();
@@ -14,7 +15,8 @@ export default function Projects() {
 
   useEffect(() => {
     const getData = async () => {
-      const data = await getPendingProjects();
+      const data = await getProjects();
+      console.log(data)
       setProjects(data ?? []);
     };
 

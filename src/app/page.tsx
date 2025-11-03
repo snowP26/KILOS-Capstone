@@ -8,7 +8,7 @@ import { UpcomingEventCard } from "./components/community/upcoming-eventCard";
 import { ordinance, project } from "./lib/definitions";
 import { getAllOrdinances, getAllProjects } from "./actions/landingpage";
 import { openOrdinancePDF } from "./actions/ordinances";
-import { Search, SearchIcon } from "lucide-react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import {
@@ -146,6 +146,7 @@ export default function Home() {
                     >
                       <div className="flex justify-center">
                         <UpcomingEventCard
+                          id={data.id}
                           title={data.title}
                           imgURL={data.imageURL}
                           loc={data.location}

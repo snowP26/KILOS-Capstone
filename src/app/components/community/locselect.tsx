@@ -28,7 +28,6 @@ export default function LocationSelect({
     onChange(location.value);
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -39,7 +38,6 @@ export default function LocationSelect({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const [condition, setCondition] = useState('A');
 
   return (
     <div ref={dropdownRef} className={`z-10 relative w-48 ${widthClass}`}>

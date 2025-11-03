@@ -1,40 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ComNav } from "../../components/community/nav";
 import LocationSelect from "../../components/community/locselect";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowLeft, Search, FileText } from "lucide-react";
+import { ArrowLeft, Search } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableFooter,
-    TableRow,
-} from "@/components/ui/table";
 
 import {
     Breadcrumb,
     BreadcrumbItem,
-    BreadcrumbLink,
     BreadcrumbList,
     BreadcrumbPage,
-    BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { PublishedOrdinanceCard } from "../../components/community/pub-ordinanceCard";
+import { getAllOrdinancesByLocation } from "../../actions/landingpage";
+import { ordinance } from "../../lib/definitions";
 
 export default function ViewPublishedOrdinances() {
     const router = useRouter();
-    const [showDetails, setShowDetails] = useState(false);
-
+    const [ordinances, setOrdinances] = useState<ordinance[]>([])
     const [searchQuery, setSearchQuery] = useState("");
     const [searchLoc, setSearchLoc] = useState<string | null>(null);
 
@@ -47,6 +33,15 @@ export default function ViewPublishedOrdinances() {
 
         router.push(`/search/?${queryParams.toString()}`);
     };
+
+    useEffect(() => {
+        const setData = async () => {
+            const data = await getAllOrdinancesByLocation(Number(searchLoc))
+            setOrdinances(data)
+        }
+
+        setData()
+    }, [searchLoc])
 
     return (
         <div className="bg-[#EEF2ED] min-h-screen max-h-full pb-10">
@@ -89,7 +84,10 @@ export default function ViewPublishedOrdinances() {
                         <a className="hidden sm:inline">ystem</a>
                     </h1>
                     <form className="flex flex-col w-screen gap-2 items-center md:w-[70%] justify-center md:flex-row" onSubmit={handleSearch}>
-                        <LocationSelect onChange={setSearchLoc} widthClass="sm:w-[20%]" />
+                        <LocationSelect onChange={(value) => {
+                            setSearchLoc(value);
+                        }}
+                            widthClass="sm:w-[20%]" />
                         <div className="relative w-[80%] md:w-[70%] sm:max-w-[400px] md:max-w-[683px]">
                             <div className="absolute inset-y-0 left-1 pl-3 flex items-center pointer-events-none">
                                 <Search />
@@ -111,11 +109,19 @@ export default function ViewPublishedOrdinances() {
             </div>
 
             <div className="flex flex-wrap justify-center lg:flex-col mx-5 sm:mx-20 xl:mx-50 my-10 gap-5">
-                <PublishedOrdinanceCard/>
+                {ordinances.map((data) => (
+                    <PublishedOrdinanceCard
+                        key={data.id}
+                        id={data.id}
+                        title={data.title}
+                        description={data.description}
+                        author={data.author}
+                        locationID={Number(data.location)}
+                    />
+                ))
 
-                <PublishedOrdinanceCard/>
+                }
 
-                <PublishedOrdinanceCard/>
             </div>
 
         </div>
