@@ -85,10 +85,12 @@ export const updateAttendees = async (emails: string[], meetingID: number) => {
 export const getMeeting = async () => {
     const authUser = await getUserID();
 
+
     const { data: participantsData, error: participantsError } = await client
         .from("meeting_participants")
         .select("*")
-        .eq("official_id", authUser);
+        .eq("official_id", authUser)
+
 
     if (participantsError) {
         await Swal.fire({
@@ -106,7 +108,8 @@ export const getMeeting = async () => {
             .from("meetings")
             .select("*, users:host_id (firstname, lastname)")
             .eq("id", data.meeting_id)
-            .single();
+            .single()
+
 
         if (conversionError) {
             await Swal.fire({
@@ -118,6 +121,27 @@ export const getMeeting = async () => {
         }
 
         if (!conversionData) return null;
+        const now = new Date();
+
+        if (conversionData.date < now) {
+            console.log("Deleting past meeting:", conversionData.id);
+
+            const { error: deleteError } = await client
+                .from("meetings")
+                .delete()
+                .eq("id", conversionData.id);
+
+            if (deleteError) {
+                await Swal.fire({
+                    icon: "error",
+                    title: "Failed to Delete Past Meeting",
+                    text: deleteError.message || `Could not delete meeting ${conversionData.id}.`,
+                });
+                return null;
+            }
+
+            return null;
+        }
 
         return conversionData;
     });

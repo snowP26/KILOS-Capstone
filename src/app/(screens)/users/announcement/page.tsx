@@ -295,6 +295,9 @@ export default function Announcement() {
                     key={a.id}
                     header={a.header}
                     body={a.body}
+                    imgURL={a.photo}
+                    date={a.created_at}
+                    position={a.authorPosition}
                     author={a.authorName}
                     announcementType={a.type}
                   />

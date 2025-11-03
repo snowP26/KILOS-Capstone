@@ -8,7 +8,7 @@ import { UpcomingEventCard } from "./components/community/upcoming-eventCard";
 import { ordinance, project } from "./lib/definitions";
 import { getAllOrdinances, getAllProjects } from "./actions/landingpage";
 import { openOrdinancePDF } from "./actions/ordinances";
-import { Search, SearchIcon } from "lucide-react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import {
@@ -19,7 +19,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
-import { set } from "date-fns";
+
 
 function chunkArray<T>(array: T[], chunkSize: number) {
   const result: T[][] = []; for (let i = 0; i < array.length; i += chunkSize) {
@@ -146,6 +146,7 @@ export default function Home() {
                     >
                       <div className="flex justify-center">
                         <UpcomingEventCard
+                          id={data.id}
                           title={data.title}
                           imgURL={data.imageURL}
                           loc={data.location}

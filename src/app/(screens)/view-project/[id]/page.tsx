@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { notFound, useParams, useRouter } from "next/navigation";
 import { ComNav } from "../../../components/community/nav";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -27,10 +27,46 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { project, project_budget } from "@/src/app/lib/definitions";
+import { getProjectBudgetById, getProjectByID } from "@/src/app/actions/projects";
+import { locIDtoName } from "@/src/app/actions/convert";
 
 export default function ViewProject() {
     const router = useRouter();
     const [showDetails, setShowDetails] = useState(true);
+    const [project, setProject] = useState<project | null>(null);
+    const [budget, setBudget] = useState<project_budget[] | null>(null);
+    const [location, setLocation] = useState<string | null>(null)
+    const params = useParams();
+    const totalSpent = budget?.reduce(
+        (sum, item) => sum + item.price * item.amt,
+        0
+    );
+
+    useEffect(() => {
+        const setData = async () => {
+            if (params?.id) {
+                const projectID = Number(params.id)
+                const projectData = await getProjectByID(projectID)
+                setLocation(await locIDtoName(projectData.location))
+                if (projectData === null) {
+                    return notFound()
+                }
+                const budgetData = await getProjectBudgetById(projectID)
+
+                setProject(projectData)
+                setBudget(budgetData)
+            }
+
+        }
+
+        setData()
+    }, [params?.id])
+
+    if (!project) {
+        return
+    }
+
 
     return (
         <div className="bg-[#EEF2ED] min-h-screen max-h-full">
@@ -69,22 +105,29 @@ export default function ViewProject() {
             </Breadcrumb>
 
             <h1 className="mt-10 mb-5 text-2xl font-bold text-center lg:text-start lg:mx-10 xl:mx-20">
-                HIBLA: Weaving Safety, Dignity, and Dialogue
+                {project?.title}
             </h1>
             <div className="flex flex-col px-5 mt-10 lg:flex-row lg:gap-5 xl:px-20">
                 <div className="h-full lg:w-[30%] place-self-center">
-                    <div className=" bg-black aspect-3/4 object-cover">
-                        {/* <img>
+                    {project.imageURL ? (
+                        <img src={project?.imageURL} className=" bg-black aspect-3/4 object-cover" />
+                    ) :
+                        <div className="flex bg-blue-100 aspect-3/4 object-contain rounded-md items-center justify-center font-bold text-blue-600">
+                            {project.title.charAt(0).toUpperCase()}
+                        </div>
+                    }
 
-                        </img> */}
-                    </div>
 
                     <div className="flex flex-row gap-2 justify-center my-5">
                         <div className="bg-amber-200 px-3 py-2 font-semibold rounded-md">
-                            Naga City
+                            {location}
                         </div>
                         <div className="bg-amber-200 px-3 py-2 font-semibold rounded-md">
-                            June 21, 2025
+                            {new Date(project?.target_date || Date.now()).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                            })}
                         </div>
                     </div>
                 </div>
@@ -95,25 +138,7 @@ export default function ViewProject() {
                         {showDetails ?
                             <ScrollArea className="h-150 lg:h-90 xl:h-150 pr-5">
                                 <p>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-                                    Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Aliquam erat volutpat. Integer aliquam purus sit amet luctus venenatis lectus magna fringilla urna. Urna id volutpat lacus laoreet non curabitur gravida arcu ac.
-
-                                    Enim eu turpis egestas pretium aenean pharetra magna. Faucibus scelerisque eleifend donec pretium vulputate sapien. Laoreet sit amet cursus sit amet dictum sit amet justo. Ultrices dui sapien eget mi proin sed libero enim sed. Sollicitudin tempor id eu nisl nunc mi. Tempus quam pellentesque nec nam aliquam sem et tortor. Urna id volutpat lacus laoreet non curabitur gravida arcu ac. Magna sit amet purus gravida quis blandit. Sed libero enim sed faucibus turpis in.
-
-                                    Adipiscing tristique risus nec feugiat in fermentum posuere. Pharetra convallis posuere morbi leo urna. Aenean et tortor at risus viverra adipiscing at in. Dolor purus non enim praesent elementum facilisis leo. At elementum eu facilisis sed. Eget nunc scelerisque viverra mauris in aliquam. Ut tristique et egestas quis. Lectus proin nibh nisl condimentum id venenatis. Lacinia quis vel eros donec ac odio tempor. Ultrices dui sapien eget mi proin sed libero enim sed.
-
-                                    Pellentesque sit amet porttitor eget dolor morbi non arcu risus. Ac turpis egestas integer eget aliquet. Integer feugiat scelerisque varius morbi enim nunc. Dui ut ornare lectus sit amet est placerat. Viverra mauris in aliquam sem fringilla ut morbi. Mauris a diam maecenas sed enim ut. Cras semper auctor neque vitae tempus quam pellentesque. Urna id volutpat lacus laoreet non curabitur gravida arcu ac. Aliquet lectus proin nibh nisl condimentum id venenatis.
-
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-                                    Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Aliquam erat volutpat. Integer aliquam purus sit amet luctus venenatis lectus magna fringilla urna. Urna id volutpat lacus laoreet non curabitur gravida arcu ac.
-
-                                    Enim eu turpis egestas pretium aenean pharetra magna. Faucibus scelerisque eleifend donec pretium vulputate sapien. Laoreet sit amet cursus sit amet dictum sit amet justo. Ultrices dui sapien eget mi proin sed libero enim sed. Sollicitudin tempor id eu nisl nunc mi. Tempus quam pellentesque nec nam aliquam sem et tortor. Urna id volutpat lacus laoreet non curabitur gravida arcu ac. Magna sit amet purus gravida quis blandit. Sed libero enim sed faucibus turpis in.
-
-                                    Adipiscing tristique risus nec feugiat in fermentum posuere. Pharetra convallis posuere morbi leo urna. Aenean et tortor at risus viverra adipiscing at in. Dolor purus non enim praesent elementum facilisis leo. At elementum eu facilisis sed. Eget nunc scelerisque viverra mauris in aliquam. Ut tristique et egestas quis. Lectus proin nibh nisl condimentum id venenatis. Lacinia quis vel eros donec ac odio tempor. Ultrices dui sapien eget mi proin sed libero enim sed.
-
-                                    Pellentesque sit amet porttitor eget dolor morbi non arcu risus. Ac turpis egestas integer eget aliquet. Integer feugiat scelerisque varius morbi enim nunc. Dui ut ornare lectus sit amet est placerat. Viverra mauris in aliquam sem fringilla ut morbi. Mauris a diam maecenas sed enim ut. Cras semper auctor neque vitae tempus quam pellentesque. Urna id volutpat lacus laoreet non curabitur gravida arcu ac. Aliquet lectus proin nibh nisl condimentum id venenatis.
+                                    {project?.description}
                                 </p>
                             </ScrollArea>
                             :
@@ -123,11 +148,18 @@ export default function ViewProject() {
 
                                 {/* Scrollable text area */}
                                 <ScrollArea className="h-50 max-h-100 lg:h-45 my-2 p-5 xl:p-0">
-                                    <div className="flex-1">
-                                        <p className=" leading-relaxed pr-4">
-                                            Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+                                    <div className="flex-1 bg-gray-50 border border-gray-200 rounded-xl p-6 shadow-sm">
+                                        <p className="text-justify text-gray-700 leading-relaxed tracking-wide text-sm md:text-base space-y-4">
+                                            This budget breakdown has been carefully reviewed, verified, and officially approved by the <span className="font-semibold">Local Government Officials</span> in coordination with the project’s research and development committee to ensure its accuracy, transparency, and alignment with the goals and objectives of the program.
+                                            <br />
+                                            <br />
+                                            All listed items, quantities, and computations have undergone thorough evaluation and validation to confirm that they accurately reflect the project’s intended financial allocations and expenditures. The figures presented herein are deemed final, certified, and officially recognized for documentation and presentation purposes.
+                                            <br />
+                                            <br />
+                                            Any adjustments, reallocations, or updates to this budget—if necessary—will be properly communicated, reviewed, and documented in accordance with standard government protocols and financial reporting procedures to maintain accountability and transparency.
                                         </p>
                                     </div>
+
                                 </ScrollArea>
                                 <Table className="bg-white w-full">
                                     <TableHeader>
@@ -140,18 +172,73 @@ export default function ViewProject() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        <TableRow>
-                                            <TableCell className="font-medium text-center">001</TableCell>
-                                            <TableCell className="text-center">Item #1</TableCell>
-                                            <TableCell className="text-center">1</TableCell>
-                                            <TableCell className="text-center">$250.00</TableCell>
-                                            <TableCell className="text-center">$250.00</TableCell>
-                                        </TableRow>
+                                        {budget?.map((data, i) => (
+                                            <TableRow key={data.id}>
+                                                <TableCell className="font-medium text-center">{i}</TableCell>
+                                                <TableCell className="text-center">{data.item_name}</TableCell>
+                                                <TableCell className="text-center">{data.amt}</TableCell>
+                                                <TableCell className="text-center">{data.price}</TableCell>
+                                                <TableCell className="text-center">{data.amt * data.price}</TableCell>
+                                            </TableRow>
+                                        ))
+
+                                        }
+
                                     </TableBody>
-                                    <TableFooter className="bg-gray-200">
+                                    <TableFooter className="bg-gray-100 font-semibold">
                                         <TableRow>
-                                            <TableCell colSpan={4} className="text-right font-bold">TOTAL:</TableCell>
-                                            <TableCell className="text-center">$2,500.00</TableCell>
+                                            <TableCell
+                                                colSpan={4}
+                                                className="text-right pr-4 py-3 text-gray-700 border-t border-gray-300"
+                                            >
+                                                Total Spent:
+                                            </TableCell>
+                                            <TableCell
+                                                className="text-center py-3 border-t border-gray-300 text-blue-700"
+                                            >
+                                                {new Intl.NumberFormat("en-PH", {
+                                                    style: "currency",
+                                                    currency: "PHP",
+                                                    minimumFractionDigits: 2,
+                                                }).format(Number(totalSpent))}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell
+                                                colSpan={4}
+                                                className="text-right pr-4 py-3 text-gray-700 border-t border-gray-300"
+                                            >
+                                                Budget Allotted:
+                                            </TableCell>
+                                            <TableCell
+                                                className="text-center py-3 border-t border-gray-300 text-green-700"
+                                            >
+                                                {new Intl.NumberFormat("en-PH", {
+                                                    style: "currency",
+                                                    currency: "PHP",
+                                                    minimumFractionDigits: 2,
+                                                }).format(project?.budget ?? 0)}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell
+                                                colSpan={4}
+                                                className="text-right pr-4 py-3 text-gray-700 border-t border-gray-300"
+                                            >
+                                                Remaining Budget:
+                                            </TableCell>
+                                            <TableCell
+                                                className={`text-center py-3 border-t border-gray-300 font-bold ${Number(project?.budget ?? 0) - Number(totalSpent) < 0
+                                                    ? "text-red-600"
+                                                    : "text-emerald-700"
+                                                    }`}
+                                            >
+                                                {new Intl.NumberFormat("en-PH", {
+                                                    style: "currency",
+                                                    currency: "PHP",
+                                                    minimumFractionDigits: 2,
+                                                }).format((project?.budget ?? 0) - Number(totalSpent))}
+                                            </TableCell>
                                         </TableRow>
                                     </TableFooter>
                                 </Table>

@@ -15,11 +15,14 @@ interface PinnedAnnouncementCardProps {
   header: string;
   body: string;
   author: string;
+  imgURL: string;
+  date: Date;
+  position: string;
   announcementType: string;
 }
 
 
-export const PinnedAnnouncementCard: React.FC<PinnedAnnouncementCardProps> = ({ header, body, author, announcementType }) => {
+export const PinnedAnnouncementCard = ({ header, body, author, imgURL, date, position,  announcementType }: PinnedAnnouncementCardProps) => {
   return (
 
     <Dialog>
@@ -43,30 +46,32 @@ export const PinnedAnnouncementCard: React.FC<PinnedAnnouncementCardProps> = ({ 
           <div className="bg-white max-w-115 my-5 px-5 rounded-2xl shadow-[-4px_4px_4px_rgba(0,0,0,0.15),4px_4px_4px_rgba(0,0,0,0.15)] ">
             <div className="flex flex-row">
               <div className="flex flex-col">
-                <p className="font-semibold text-sm lg:text-xl mt-5">Author</p>
+                <p className="font-semibold text-sm lg:text-xl mt-5">{author}</p>
 
                 <div className="flex flex-row gap-5">
                   {/* apply author position/title in the db */}
-                  <p className="text-xs font-thin">Local Municipal Youth Developmental Officer</p>
-                  <p className="text-xs font-thin">September 1, 2000</p>
+                  <p className="text-xs font-thin">{position}</p>
+                  <p className="text-xs font-thin">{new Date(date).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric"
+                  })}</p>
                 </div>
 
               </div>
             </div>
             <div className="mt-7 mb-5 flex flex-col">
               <div className="flex flex-col">
-                <p className="font-semibold text-xl">Header</p>
+                <p className="font-semibold text-xl">{header}</p>
                 <p className="mb-3 text-white bg-[#58AEFF] rounded-2xl text-center min-w-15 max-w-fit px-2 text-xs">
-                  Hello
+                  {announcementType.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
                 </p>
                 <p className="pb-3 lg:pb-10 lg:w-100">
-                  Body Body Body Bod Body Bod y Body Body Body Body Body Body Body Body Body Body Body
+                  {body}
                 </p>
               </div>
               <div className="self-center">
-                <div className="bg-black aspect-3/4 object-cover h-70 w-50">
-                  <p className="text-white">Image Placeholder</p>
-                </div>
+                <img src={imgURL} className="bg-black aspect-3/4 object-cover h-70 w-50" />
               </div>
 
 

@@ -3,33 +3,29 @@ import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 import { useRouter } from "next/navigation"
-import { ChangeEvent, FormEvent, useState } from "react"
-import client from "@/src/api/client"
+import { ChangeEvent,  useState } from "react"
 import { handleLogin } from "../../actions/auth"
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"form">) {
+export function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
   function updatePassword() {
     return (e: ChangeEvent<HTMLInputElement>) => { setPassword(e.target.value) }
-  } 
+  }
   function updateEmail() {
-    return ((e: ChangeEvent<HTMLInputElement>) => { 
+    return ((e: ChangeEvent<HTMLInputElement>) => {
       const email = e.target.value;
       const emailRegex = /^\S+@\S+\.\S+$/;
 
-      if(emailRegex.test(email)){
+      if (emailRegex.test(email)) {
         setEmail(e.target.value)
-        return console.log("Valid Email address"); 
+        return console.log("Valid Email address");
       }
       return console.log("Invalid Email address.");
     })
-  } 
+  }
   return (
     <form className={cn("flex flex-col gap-6", className)} {...props} onSubmit={async (e) => handleLogin(e, router)}>
       <div className="flex flex-col items-center gap-2 text-center">
@@ -41,11 +37,11 @@ export function LoginForm({
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="email">Email</Label>
-          <Input 
-            name="email" 
-            type="email" 
-            placeholder="m@example.com" 
-            required 
+          <Input
+            name="email"
+            type="email"
+            placeholder="m@example.com"
+            required
             onChange={updateEmail()}
           />
         </div>
@@ -56,12 +52,25 @@ export function LoginForm({
               Forgot your password?
             </a>
           </div>
-          <Input 
-            type="password" 
+          <Input
+            type="password"
             name="password"
-            required 
+            required
             onChange={updatePassword()}
           />
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="remember"
+              name="remember"
+              className="h-4 w-4 accent-black"
+            />
+            <Label htmlFor="remember" className="text-sm">
+              Stay logged in
+            </Label>
+          </div>
         </div>
         <Button type="submit" className="w-full bg-white text-black cursor-pointer hover:text-white">
           Login

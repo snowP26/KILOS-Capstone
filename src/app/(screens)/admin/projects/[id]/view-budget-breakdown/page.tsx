@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, SquarePen, Image, Save } from "lucide-react";
+import { ArrowLeft, SquarePen, Image, Save, Loader2 } from "lucide-react";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -30,7 +30,11 @@ import {
 } from "@/components/ui/table";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
@@ -40,8 +44,10 @@ import { project, project_budget } from "@/src/app/lib/definitions";
 import {
     getProjectBudgetById,
     getProjectByID,
+    updateBudget,
     updateBudgetStatus,
 } from "@/src/app/actions/projects";
+import { Label } from "@/components/ui/label";
 
 export default function ViewProjectBudget() {
     const router = useRouter();
@@ -57,8 +63,11 @@ export default function ViewProjectBudget() {
         Record<number, { status: string; comment?: string }>
     >({});
     const [editingRowId, setEditingRowId] = useState<number | null>(null);
+    const [newBudget, setNewBudget] = useState<number>(0);
+    const [refresh, setRefresh] = useState(0)
 
     useEffect(() => {
+        setNewBudget(0)
         const getData = async () => {
             const projectData = await getProjectByID(projectID);
             const projectBudgetData = await getProjectBudgetById(projectID);
@@ -68,7 +77,7 @@ export default function ViewProjectBudget() {
         };
 
         getData();
-    }, [projectID]);
+    }, [projectID, refresh]);
 
     const handleStatusChange = (id: number, newStatus: string) => {
         setEditedRows((prev) => ({
@@ -86,7 +95,6 @@ export default function ViewProjectBudget() {
 
     const handleEdit = (id: number) => {
         setEditingRowId(id);
-        // preload the current values into editedRows
         const row = projectBudget.find((item) => item.id === id);
         if (row) {
             setEditedRows((prev) => ({
@@ -113,9 +121,18 @@ export default function ViewProjectBudget() {
                 const { [id]: _, ...rest } = prev;
                 return rest;
             });
-            setEditingRowId(null); // exit edit mode
+            setEditingRowId(null);
         }
     };
+
+    if (project == undefined) {
+        return (
+            <div className="flex flex-col items-center justify-center py-10">
+                <Loader2 className="w-6 h-6 animate-spin text-gray-500" />
+                <p className="text-gray-500 text-sm mt-2">Loading project details...</p>
+            </div>
+        )
+    }
 
     return (
         <div className="bg-[#E6F1FF] min-h-screen max-h-full py-10">
@@ -144,7 +161,7 @@ export default function ViewProjectBudget() {
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
                             <BreadcrumbLink
-                                href={`/admin/projects/${project?.title}-${project?.id}`}
+                                href={`/admin/projects/${project.title}-${project.id}`}
                             >
                                 View Proposed Project
                             </BreadcrumbLink>
@@ -163,18 +180,72 @@ export default function ViewProjectBudget() {
                 {/* Title + Budget Section */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                     <h1 className="font-bold text-2xl md:text-3xl xl:text-3xl mt-8 mb-2 xl:mb-6">
-                        {project?.title}
+                        {project.title}
                     </h1>
 
                     <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-lg shadow-sm">
                         <p className="text-gray-700 text-xs md:text-base font-medium">Set Budget:</p>
                         <p className="text-[#28A745] text-lg md:text-xl font-bold">
-                            ₱999,999,999.00
+                            {new Intl.NumberFormat("en-PH", {
+                                style: "currency",
+                                currency: "PHP",
+                                minimumFractionDigits: 2,
+                            }).format(project.budget ?? 0)}
                         </p>
-                        <SquarePen
-                            size="18px"
-                            className="cursor-pointer text-gray-600 hover:text-black"
-                        />
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <SquarePen
+                                    size="18px"
+                                    className="cursor-pointer text-gray-600 hover:text-black"
+                                />
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-md">
+                                <DialogTitle className="text-lg font-semibold">Adjust Budget Allocation</DialogTitle>
+                                <DialogDescription className="text-sm text-gray-500 mb-4">
+                                    Modify the budget allocation for this project. Please ensure that adjustments are justified and documented properly.
+                                </DialogDescription>
+
+                                <div className="space-y-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="budget">New Budget Amount (₱)</Label>
+                                        <Input
+                                            id="budget"
+                                            type="number"
+                                            placeholder={`${new Intl.NumberFormat("en-PH", {
+                                                style: "currency",
+                                                currency: "PHP",
+                                                minimumFractionDigits: 2,
+                                            }).format(project.budget ?? 0)}`}
+                                            onChange={(e) => setNewBudget(Number(e.target.value))}
+                                            className="text-right"
+                                        />
+
+                                    </div>
+                                </div>
+
+                                <DialogFooter className="mt-5">
+                                    <DialogClose asChild>
+                                        <Button
+                                            variant="outline"
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </DialogClose>
+                                    <DialogClose asChild>
+                                        <Button
+                                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                                            onClick={async () => {
+                                                await updateBudget(project.id, newBudget)
+                                                setRefresh((prev) => prev+1)
+                                            }
+                                            }
+                                        >
+                                            Save Changes
+                                        </Button>
+                                    </DialogClose>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </div>
 
@@ -254,14 +325,14 @@ export default function ViewProjectBudget() {
                                         {/* Other row data */}
                                         <TableCell className="text-center">{data.item_name}</TableCell>
                                         <TableCell className="text-center">
-                                            {project?.budget !== undefined
-                                            ? new Intl.NumberFormat("en-PH", {
-                                                style: "currency",
-                                                currency: "PHP",
-                                                minimumFractionDigits: 2,
-                                            }).format(project.budget)
-                                            : "₱0.00"}
-                                            </TableCell>
+                                            {project.budget !== undefined
+                                                ? new Intl.NumberFormat("en-PH", {
+                                                    style: "currency",
+                                                    currency: "PHP",
+                                                    minimumFractionDigits: 2,
+                                                }).format(project.budget)
+                                                : "₱0.00"}
+                                        </TableCell>
                                         <TableCell className="text-center">{data.amt}</TableCell>
 
                                         {/* Receipt */}
@@ -319,14 +390,14 @@ export default function ViewProjectBudget() {
                                         {/* Comments */}
                                         <TableCell className="text-center">
                                             {isEditing ? (
-                                                    <Input
-                                                        placeholder="Add comment..."
-                                                        className="mt-2 "
-                                                        value={edited?.comment || ""}
-                                                        onChange={(e) =>
-                                                            handleCommentChange(data.id, e.target.value)
-                                                        }
-                                                    />
+                                                <Input
+                                                    placeholder="Add comment..."
+                                                    className="mt-2 "
+                                                    value={edited?.comment || ""}
+                                                    onChange={(e) =>
+                                                        handleCommentChange(data.id, e.target.value)
+                                                    }
+                                                />
                                             ) : (
                                                 <span className="text-sm text-gray-600">
                                                     {data.comment || "—"}

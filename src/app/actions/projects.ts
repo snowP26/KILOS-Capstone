@@ -1,6 +1,7 @@
 import client from "@/src/api/client";
 import { getLocFromAuth, getUserID, locIDtoName } from "./convert";
 import { FormEvent, RefObject } from "react";
+import Swal from "sweetalert2";
 
 export const getProjects = async () => {
     const loc = await getLocFromAuth();
@@ -564,4 +565,81 @@ export const getFiles = async (projectID: number) => {
     });
 
     return filesWithUrls;
+}
+
+export const deleteFile = async (fileID: number) => {
+    const { data, error: fileError } = await client
+        .from("project_files")
+        .delete()
+        .eq("id", fileID)
+        .select("filepath")
+
+
+    if (fileError) {
+        console.log("Database deletion error: ", fileError)
+        return
+    }
+
+    const filepath = data?.[0]?.filepath;
+
+    console.log(filepath.split("/").slice(2))
+
+    const { error: bucketError } = await client
+        .storage
+        .from("projects")
+        .remove(filepath)
+
+    if (bucketError) {
+        console.log("Bucket deletion error: ", bucketError);
+        return;
+    }
+
+    console.log("Successful deletion")
+    return
+}
+
+export const updateBudget = async (projectID: number, newBudget: number) => {
+    if (!newBudget || !projectID) return
+
+    try {
+        const { error } = await client
+            .from("projects")
+            .update({ budget: newBudget })
+            .eq("id", projectID)
+
+        if (error) {
+            throw new Error(error.message)
+        }
+
+        Swal.fire({
+            title: "Update Successful!",
+            text: `You have successfully updated the project's budget to ${newBudget.toLocaleString("en-PH", {
+                style: "currency",
+                currency: "PHP",
+                minimumFractionDigits: 2
+            })}`,
+            icon: "success",
+            timer: 1250
+        })
+    } catch (error) {
+        Swal.fire({
+            title: "Error Updating Budget",
+            text: `Error editing the project's budget try again later. Error: ${error}`,
+            icon: "error",
+            timer: 1250
+        })
+    }
+}
+
+export const updateApproval = async (projectID: number) => {
+    try {
+        const { error } = await client
+            .from("projects")
+            .update({ status: "Approved" })
+            .eq("id", projectID)
+
+        if(error) throw new Error
+    } catch (error) {
+        console.warn(error)
+    }
 }
