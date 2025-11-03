@@ -23,7 +23,7 @@ export const OrdinancesCard = ({
   className
 }: OrdinanceCardProps) => {
   const [authorName, setAuthorName] = useState<string>("");
-  const [fileURL, setFileURL] = useState<string>("")
+  const [fileURL, setFileURL] = useState<string | null>(null)
 
   useEffect(() => {
     let isMounted = true;
@@ -31,9 +31,11 @@ export const OrdinancesCard = ({
     const fetchAuthor = async () => {
       try {
         const name = await authorIDtoName(author);
-        const file = await getOrdinanceURL(id)
-        setFileURL(file)
-        if (isMounted) setAuthorName(name || "Unknown Author");
+        const file = await getOrdinanceURL(id);
+        if (isMounted) {
+          if (file) setFileURL(file);
+          setAuthorName(name || "Unknown Author");
+        }
       } catch (err) {
         console.error("Failed to fetch author:", err);
         if (isMounted) setAuthorName("Unknown Author");
@@ -52,9 +54,12 @@ export const OrdinancesCard = ({
       className="flex flex-col items-center lg:flex-row lg:gap-2 cursor-pointer rounded-2xl border-[0.2px] border-gray-300 transform transition-all duration-300 hover:-translate-y-2  hover:shadow-[-4px_4px_4px_rgba(0,0,0,0.15)] lg:border-none lg:hover:shadow-none lg:hover:-translate-y-0 lg:cursor-default relative group"
     >
       {/* Hover overlay */}
-      <div className="absolute z-1 inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center lg:hidden">
-        <FileText className="w-10 h-10 text-white drop-shadow-md" />
-      </div>
+      {fileURL && (
+        <div className="absolute z-10 inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center lg:hidden">
+          <FileText className="w-10 h-10 text-white drop-shadow-md" />
+        </div>
+      )}
+
 
       <div className="w-70 bg-white lg:bg-transparent py-2 rounded-t-2xl lg:w-[20%]">
         <Avatar className="object-cover w-35 h-35 place-self-center lg:place-self-end lg:w-50 lg:h-50">
@@ -66,6 +71,8 @@ export const OrdinancesCard = ({
       <div
         className={`w-70 h-full lg:h-fit lg:w-[70%] bg-white rounded-b-2xl lg:rounded-2xl p-5 lg:border-[0.2px] lg:border-gray-300 lg:transform lg:transition-all lg:duration-300  ${fileURL ? "cursor-pointer lg:hover:-translate-y-2 lg:hover:shadow-[-4px_4px_4px_rgba(0,0,0,0.15)]" : "cursor-not-allowed"} relative group`}
         onClick={async () => {
+
+          console.log(fileURL)
           if (fileURL) {
             window.open(fileURL, "_blank")
           }

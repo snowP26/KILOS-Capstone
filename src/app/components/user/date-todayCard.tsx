@@ -15,7 +15,7 @@ export const DateTodayCard = () => {
     const getUser = async () => {
       const userID = await getUserID()
       const userName = await authorIDtoName(Number(userID))
-      setUser(userName?.split(" ")[1] ?? "")
+      setUser(userName?.split(" ")[0] ?? "")
     }
 
     getUser()

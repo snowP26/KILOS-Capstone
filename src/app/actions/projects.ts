@@ -630,3 +630,16 @@ export const updateBudget = async (projectID: number, newBudget: number) => {
         })
     }
 }
+
+export const updateApproval = async (projectID: number) => {
+    try {
+        const { error } = await client
+            .from("projects")
+            .update({ status: "Approved" })
+            .eq("id", projectID)
+
+        if(error) throw new Error
+    } catch (error) {
+        console.warn(error)
+    }
+}

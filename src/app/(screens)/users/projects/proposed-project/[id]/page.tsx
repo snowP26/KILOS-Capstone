@@ -302,7 +302,7 @@ export default function ViewProposedProject() {
                             <hr className="border-t mt-3 border-gray-200 w-full" />
 
                             <div className="min-h-fit max-h-105 xl:mb-0 w-full">
-                                {showDetails ? <ProjectDetails /> : <ProjectTable id={project?.id} />}
+                                {showDetails ? <ProjectDetails details={project?.description || ""} /> : <ProjectTable id={project?.id} />}
                             </div>
                         </div>
 
