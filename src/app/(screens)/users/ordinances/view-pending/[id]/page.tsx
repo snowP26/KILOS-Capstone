@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, X, Eye } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -35,6 +36,8 @@ import Swal from "sweetalert2";
 import { getDisplayName } from "@/src/app/actions/convert";
 
 export default function ViewOrdinance() {
+  const router = useRouter();
+
   const params = useParams();
   const id = params?.id as string;
   const [ordinance, setOrdinance] = useState<ordinance[]>([]);
@@ -134,7 +137,7 @@ export default function ViewOrdinance() {
         <BreadcrumbList>
           <Button
             className="group gap-0 relative bg-[#E6F1FF] cursor-pointer"
-            variant="link"
+            variant="link" onClick={() => router.back()}
           >
             <ArrowLeft color="black" />
             <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
@@ -185,7 +188,7 @@ export default function ViewOrdinance() {
           <TableHeader>
             <TableRow>
               <TableHead className="max-w-[150px] text-center">-</TableHead>
-              <TableHead className="text-center">Status</TableHead>
+              <TableHead className="min-w-40 text-center">Status</TableHead>
               <TableHead className="text-center">Date Started</TableHead>
               <TableHead className="text-center">Date Completed</TableHead>
               <TableHead className="text-center">Responsible Office</TableHead>
@@ -389,7 +392,7 @@ export default function ViewOrdinance() {
                           }}
                         >
                           <div className="flex flex-col">
-                            <span className="font-medium text-gray-800">
+                            <span className="font-medium text-gray-800 max-w-90 truncate">
                               {getDisplayName(data.name)}
                             </span>
                             <span className="text-sm text-gray-500">{data.type.toUpperCase()}</span>
@@ -398,7 +401,7 @@ export default function ViewOrdinance() {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="flex items-center gap-1"
+                              className="cursor-pointer flex items-center gap-1"
                               onClick={() => window.open(data.url, "_blank")}
                             >
                               <Eye className="h-4 w-4" />

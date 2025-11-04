@@ -35,7 +35,7 @@ export const DateTodayCard = () => {
       </div>
 
       <div className="flex flex-row text-3xl lg:text-md">
-        <div className="flex flex-row gap-2 text-3xl lg:text-md">
+        <div className="flex flex-row gap-1 text-2xl sm:text-3xl lg:gap-2 lg:text-3xl lg:text-md">
           <p className="text-white font-medium">Good Day, </p>
           <p className="text-[#C1E8FF] font-bold">
             {user}

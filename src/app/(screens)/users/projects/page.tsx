@@ -23,8 +23,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Projects() {
     const router = useRouter();
+
     const [projects, setProjects] = useState<project[]>([]);
     const [proposedProjects, setProposedProjects] = useState<project[]>([]);
+    const [activeTab, setActiveTab] = useState<"current" | "proposed">("current");
     const [currentProjectsPage, setCurrentProjectsPage] = useState(1);
     const [currentProposedPage, setCurrentProposedPage] = useState(1);
     const pageSize = 4;
@@ -161,9 +163,62 @@ export default function Projects() {
             <div className="flex flex-col lg:flex-row bg-[#E6F1FF] min-h-screen max-h-full">
                 {/* Projects Section */}
                 <div className="w-full lg:w-[70%] xl:w-[80%] flex flex-col items-center lg:items-start">
-                    <p className="font-bold text-3xl m-10">Current Projects</p>
+                    <p className="lg:hidden font-bold text-3xl text-center my-5">Projects</p>
+                    <p className="hidden lg:block font-bold text-3xl m-10">Current Projects</p>
 
-                    <div className="flex flex-wrap justify-center gap-5 w-full px-4">
+                    {/* Tabs */}
+                    <div className="flex flex-row w-[70%] gap-0.5 mt-5 self-center text-center lg:hidden">
+                        <div className={`${activeTab === "current"
+                            ? "bg-[#052659] text-white"
+                            : "bg-[#052659] opacity-60 text-gray-400"
+                            } w-[100%] shadow-md shadow-gray-400 text-xs lg:text-lg p-2 rounded-tl-2xl rounded-bl-2xl cursor-pointer`}
+                            onClick={() => setActiveTab("current")}
+                        >
+                            <p>Current</p>
+                        </div>
+                        <div className={`${activeTab === "proposed"
+                            ? "bg-[#052659] text-white"
+                            : "bg-[#052659] opacity-60 text-gray-400"
+                            } w-[100%] shadow-md shadow-gray-400 text-xs lg:text-lg p-2 rounded-tr-2xl rounded-br-2xl cursor-pointer`}
+                            onClick={() => setActiveTab("proposed")}
+                        >
+                            <p>Proposed</p>
+                        </div>
+                    </div>
+
+                    {/* start of fb post card */}
+
+
+                    <div className={`${activeTab === "current" ? "flex" : "hidden"} lg:hidden mt-5 flex-wrap justify-center gap-5 w-full px-4`}>
+                        {projects.length > 0 ? (
+                            paginatedProjects.map((data) => (
+                                <div
+                                    onClick={() =>
+                                        router.push(`/users/projects/${data.title}-${data.id}`)
+                                    }
+                                    key={data.id}
+                                >
+                                    <ProjectCard
+                                        title={data.title}
+                                        status={data.status}
+                                        date={data.target_date}
+                                        imgURL={data.imageURL}
+                                    />
+                                </div>
+                            ))
+                        ) : (
+                            <div className="flex flex-col items-center justify-center w-full h-[60vh] text-center text-gray-600">
+                                <p className="text-lg sm:text-xl font-semibold italic text-[#052659]">
+                                    No approved projects yet
+                                </p>
+                                <p className="text-sm sm:text-base text-gray-500 mt-2 max-w-md">
+                                    Once projects are approved, they’ll appear here automatically.
+                                </p>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="hidden lg:flex flex-wrap justify-center gap-5 w-full px-4">
                         {projects.length > 0 ? (
                             paginatedProjects.map((data) => (
                                 <div
@@ -194,7 +249,7 @@ export default function Projects() {
                 </div>
 
                 {/* Sidebar for Proposed Projects */}
-                <div className="hidden lg:flex lg:flex-col lg:w-[30%] w-[20%] mr-5 mb-10">
+                <div className={`${activeTab === "proposed" ? "block" : "hidden"} w-[95%] sm:w-[80%] md:w-[70%] mx-auto lg:flex lg:flex-col lg:w-[30%] lg:mr-5 mb-10`}>
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
                             <Button className="w-full my-2 bg-[#93C2FF] text-black cursor-pointer rounded-md font-semibold py-1 hover:bg-black hover:text-[#93C2FF]">
@@ -361,9 +416,9 @@ export default function Projects() {
                     </div>
 
                     {totalProposedPages > 1 && (
-                        <div className="flex justify-center items-center gap-2 mt-5 mb-10">
+                        <div className="flex flex-col lg:flex-row justify-center items-center gap-2 mt-5 mb-10">
                             <button
-                                className="px-4 py-2 cursor-pointer rounded-md border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="hidden lg:block px-4 py-2 cursor-pointer rounded-md border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                                 onClick={() =>
                                     setCurrentProposedPage((p) => Math.max(p - 1, 1))
                                 }
@@ -371,22 +426,26 @@ export default function Projects() {
                             >
                                 Previous
                             </button>
+                            <div className="space-x-2 lg:space-x-0 lg:flex">
+                                {[...Array(totalProposedPages)].map((_, i) => (
 
-                            {[...Array(totalProposedPages)].map((_, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => setCurrentProposedPage(i + 1)}
-                                    className={`px-3 py-1.5 rounded-md text-sm font-semibold ${currentProposedPage === i + 1
-                                        ? "bg-[#052659] text-white border border-[#052659]"
-                                        : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 cursor-pointer"
-                                        }`}
-                                >
-                                    {i + 1}
-                                </button>
-                            ))}
+                                    <button
+                                        key={i}
+                                        onClick={() => setCurrentProposedPage(i + 1)}
+                                        className={`px-3 py-1.5 rounded-md text-sm font-semibold ${currentProposedPage === i + 1
+                                            ? "bg-[#052659] text-white border border-[#052659]"
+                                            : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 cursor-pointer"
+                                            }`}
+                                    >
+                                        {i + 1}
+                                    </button>
+
+
+                                ))}
+                            </div>
 
                             <button
-                                className="px-4 py-2 cursor-pointer rounded-md border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="hidden lg:block px-4 py-2 cursor-pointer rounded-md border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                                 onClick={() =>
                                     setCurrentProposedPage((p) =>
                                         Math.min(p + 1, totalProposedPages)
@@ -396,6 +455,30 @@ export default function Projects() {
                             >
                                 Next
                             </button>
+
+                            <div className="lg:hidden w-[90%] flex flex-row justify-between">
+                                <button
+                                    className="px-4 py-2 cursor-pointer rounded-md border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    onClick={() =>
+                                        setCurrentProposedPage((p) => Math.max(p - 1, 1))
+                                    }
+                                    disabled={currentProposedPage === 1}
+                                >
+                                    Previous
+                                </button>
+                                <button
+                                    className="px-4 py-2 cursor-pointer rounded-md border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    onClick={() =>
+                                        setCurrentProposedPage((p) =>
+                                            Math.min(p + 1, totalProposedPages)
+                                        )
+                                    }
+                                    disabled={currentProposedPage === totalProposedPages}
+                                >
+                                    Next
+                                </button>
+                            </div>
+
                         </div>
                     )}
                 </div>
