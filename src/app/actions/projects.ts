@@ -6,23 +6,17 @@ import Swal from "sweetalert2";
 export const getProjects = async () => {
     const loc = await getLocFromAuth();
 
-    const { data: approvedData } = await client
+    const { data: projectsData } = await client
         .from("projects")
         .select("*")
         .eq("location", Number(loc))
 
-    if (!approvedData || approvedData.length === 0) {
+    if (!projectsData || projectsData.length === 0) {
         console.log("Loc Data Error")
         return []
     }
 
-    const approvedProjects = approvedData.filter(
-        (proj) => proj.status == "Approved"
-    );
-
-    console.log("Approved projects:", approvedProjects);
-
-    return approvedProjects;
+    return projectsData;
 };
 
 export const getProposedProjects = async () => {
