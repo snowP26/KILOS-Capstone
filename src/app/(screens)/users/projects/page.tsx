@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ProposedProjCard } from "@/src/app/components/user/proposed-projCard";
 import { useRouter } from "next/navigation";
 import { project } from "@/src/app/lib/definitions";
-import { getProjects, getProposedProjects, postProject } from "@/src/app/actions/projects";
+import { getApprovedProjects, getProjects, getProposedProjects, postProject } from "@/src/app/actions/projects";
 import { useUserRole } from "@/src/app/actions/role";
 import {
     Dialog,
@@ -49,7 +49,7 @@ export default function Projects() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = await getProjects();
+            const data = await getApprovedProjects();
             const proposed = await getProposedProjects();
             setProjects(data ?? []);
             setProposedProjects(proposed ?? []);

@@ -19,6 +19,29 @@ export const getProjects = async () => {
     return projectsData;
 };
 
+
+export const getApprovedProjects = async () => {
+    const loc = await getLocFromAuth()
+
+    const {data, error} = await client
+        .from("projects")
+        .select("*")
+        .eq("location", Number(loc))
+        .eq("status", "Approved")
+
+    if(!data || data.length === 0) {
+        console.log("Data error: ")
+        return []
+    }
+
+    if(error){
+        console.log("Error retrieving data: ", error)
+        return []
+    }
+
+    return data
+}
+
 export const getProposedProjects = async () => {
     const loc = await getLocFromAuth();
 
