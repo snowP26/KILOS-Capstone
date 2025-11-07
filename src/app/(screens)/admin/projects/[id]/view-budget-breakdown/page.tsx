@@ -155,7 +155,7 @@ export default function ViewProjectBudget() {
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
                             <BreadcrumbLink href="/admin/projects">
-                                Proposed Projects
+                                View Projects
                             </BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
@@ -163,7 +163,7 @@ export default function ViewProjectBudget() {
                             <BreadcrumbLink
                                 href={`/admin/projects/${project.title}-${project.id}`}
                             >
-                                View Proposed Project
+                                {project.title}
                             </BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
