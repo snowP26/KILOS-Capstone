@@ -118,17 +118,17 @@ const ApprovedProjects = () => {
           <p className="text-black bg-white rounded-2xl px-5 font-medium content-center w-fit h-8 sm:h-10">
             {project?.target_date
               ? new Date(project.target_date).toLocaleString("en-GB", {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-                })
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })
               : ""}
           </p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-1 place-items-center min-h-fit max-h-screen">
           <div className="bg-white mt-10 w-[90%] h-full sm:h-150 lg:w-[35%] lg:h-155 justify-items-center place-content-center">
-            {project?.imageURL && (
+            {project?.imageURL ? (
               <div className="relative w-[70%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 flex items-center justify-center">
                 <Image
                   src={`${project.imageURL}?t=${new Date().getTime()}`}
@@ -137,7 +137,11 @@ const ApprovedProjects = () => {
                   onClick={() => console.log(project.imageURL)}
                 />
               </div>
-            ) 
+            ) : (
+              <div className="mt-10 flex items-center justify-center w-[80%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 rounded-[8px] bg-blue-100 text-blue-600 font-bold text-6xl shadow">
+                {project?.title?.charAt(0).toUpperCase()}
+              </div>
+            )
             }
 
 

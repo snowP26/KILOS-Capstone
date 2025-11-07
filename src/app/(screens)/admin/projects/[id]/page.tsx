@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, SquarePen, Trash2, CirclePlus, Clock, Loader2, XCircle, CheckCircle, HelpCircle } from 'lucide-react';
+import { ArrowLeft, SquarePen, Trash2, CirclePlus, HelpCircle } from 'lucide-react';
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
@@ -36,6 +36,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { addProjectApproval, deleteProjectApproval, getProjectApprovals, updateProjectApproval, updateProjectStatus } from '@/src/app/actions/admin_projects';
 import Swal from 'sweetalert2';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@radix-ui/react-hover-card';
+import Image from 'next/image';
 
 
 const checkStatuses = async (approval: project_approvals[] | null, id: number) => {
@@ -150,7 +151,7 @@ export default function ViewProposedProj() {
                 <div className="flex flex-col lg:flex-row gap-1 place-items-center min-h-fit max-h-screen">
                     <div className="bg-white mt-10 w-[90%] h-full sm:h-150 lg:w-[35%] lg:h-155 justify-items-center place-content-center">
                         {project?.imageURL ? (
-                            <img src={project.imageURL} className="bg-black mt-10 w-[80%] object-cover h-120 sm:h-[80%] lg:w-[80%] lg:h-130" />
+                            <Image alt="Poster" src={project.imageURL} className="bg-black mt-10 w-[80%] object-cover h-120 sm:h-[80%] lg:w-[80%] lg:h-130" />
                         ) : (
                             <div className="mt-10 flex items-center justify-center w-[80%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 rounded-[8px] bg-blue-100 text-blue-600 font-bold text-6xl shadow">
                                 {project?.title?.charAt(0).toUpperCase()}
@@ -415,37 +416,46 @@ export default function ViewProposedProj() {
                                     {showDetails ? "View Project Status" : "View Project Details"}
                                 </Button>
 
-                                    <Button
-                                        className={`bg-[#A3C4A8] w-fit border transition-all duration-200 ${approvals.length <= 0 || status === "Under Review" ? "bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed opacity-70 hover:bg-gray-200 hover:text-gray-500" : "hover:bg-green-100 hover:text-green-600 hover:border-green-600 text-black cursor-pointer"}`}
-                                        onClick={() => {
-                                            if(approvals.length <= 0) {
-                                                return 
-                                            }
+                                <Button
+                                    className={`bg-[#A3C4A8] w-fit border transition-all duration-200 ${approvals.length <= 0 || status === "Under Review" ? "bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed opacity-70 hover:bg-gray-200 hover:text-gray-500" : "hover:bg-green-100 hover:text-green-600 hover:border-green-600 text-black cursor-pointer"}`}
+                                    onClick={() => {
+                                        if (approvals.length <= 0 || status === "Under Review") {
                                             Swal.fire({
-                                                title: "Mark as Approved?",
-                                                text: "Are you sure you want to mark this as approved?",
-                                                icon: "question",
-                                                showCancelButton: true,
-                                                confirmButtonText: "Yes, approve it",
-                                                cancelButtonText: "Cancel",
-                                                confirmButtonColor: "#3085d6",
-                                                cancelButtonColor: "#d33",
-                                            }).then(async (result) => {
-                                                if (result.isConfirmed) {
-                                                    await updateApproval(Number(project?.id))
-                                                    Swal.fire({
-                                                        icon: "success",
-                                                        title: "Approved!",
-                                                        text: "The record has been marked as approved.",
-                                                        timer: 1500,
-                                                        showConfirmButton: false,
-                                                    });
-                                                }
+                                                icon: "warning",
+                                                title: "Unable to Approve Project",
+                                                text: approvals.length <= 0
+                                                        ? "Please make sure all recipients have approved this project before proceeding."
+                                                        : "This project is still under review and cannot be approved yet.",
+                                                showConfirmButton: false,
+                                                timer: 1000
                                             });
-                                        }}
-                                    >
-                                        Mark as Approved
-                                    </Button>
+                                            return; 
+                                        }
+                                        Swal.fire({
+                                            title: "Mark as Approved?",
+                                            text: "Are you sure you want to mark this as approved?",
+                                            icon: "question",
+                                            showCancelButton: true,
+                                            confirmButtonText: "Yes, approve it",
+                                            cancelButtonText: "Cancel",
+                                            confirmButtonColor: "#3085d6",
+                                            cancelButtonColor: "#d33",
+                                        }).then(async (result) => {
+                                            if (result.isConfirmed) {
+                                                await updateApproval(Number(project?.id))
+                                                Swal.fire({
+                                                    icon: "success",
+                                                    title: "Approved!",
+                                                    text: "The record has been marked as approved.",
+                                                    timer: 1500,
+                                                    showConfirmButton: false,
+                                                });
+                                            }
+                                        });
+                                    }}
+                                >
+                                    Mark as Approved
+                                </Button>
 
                             </div>
                         </div>

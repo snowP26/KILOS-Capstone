@@ -4,9 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ProjectCard, StatusType } from "@/src/app/components/admin/project-card";
 import { project } from "@/src/app/lib/definitions";
-import { getPendingProjects } from "@/src/app/actions/admin_projects";
 import { getProjects } from "@/src/app/actions/projects";
-import { RouteMatcher } from "next/dist/server/route-matchers/route-matcher";
 
 export default function Projects() {
   const router = useRouter();
