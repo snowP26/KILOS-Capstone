@@ -302,6 +302,28 @@ export const getPendingOrdinanceStatus = async (id: number) => {
   return data ?? [];
 };
 
+export const getOrdinanceURL = async (ordinanceID: number) => {
+  const { data: ordinancefile, error: ordinanceFileError } = await client
+    .from("ordinance_files")
+    .select("file_path")
+    .eq("ordinance_id", ordinanceID)
+    .eq("uploaded", true)
+    .single();
+
+  if (ordinanceFileError) {
+    console.log("error reading ordinance");
+    return null;
+  }
+
+  console.log("ordinance file url: ", ordinancefile.file_path);
+
+  const { data: url } = await client.storage
+    .from("ordinances")
+    .getPublicUrl(ordinancefile.file_path)
+
+  return url?.publicUrl || null;
+}
+
 export const openOrdinancePDF = async (ordinanceID: number) => {
   const { data: ordinancefile, error: ordinanceFileError } = await client
     .from("ordinance_files")
@@ -312,7 +334,7 @@ export const openOrdinancePDF = async (ordinanceID: number) => {
 
   if (ordinanceFileError) {
     console.log("error reading ordinance");
-    return;
+    return null;
   }
 
   console.log("ordinance file url: ", ordinancefile.file_path);
@@ -321,10 +343,10 @@ export const openOrdinancePDF = async (ordinanceID: number) => {
     .from("ordinances")
     .createSignedUrl(ordinancefile.file_path, 3600);
 
-  // Open in a new tab
+
   if (url?.signedUrl) {
     window.open(url.signedUrl, "_blank");
-    return;
+    return url?.signedUrl;
   }
 
   console.log("File does not exist.");

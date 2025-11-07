@@ -3,13 +3,14 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 
 type cardParams = {
+    id: number
     title: string
     imgURL: string
     loc: number
     date: string
 }
 
-export const UpcomingEventCard = ({ title, imgURL, loc, date }: cardParams) => {
+export const UpcomingEventCard = ({ id, title, imgURL, loc, date }: cardParams) => {
     const router = useRouter();
     const formattedDate = new Date(date).toLocaleDateString("en-US", {
         year: "numeric",
@@ -18,7 +19,7 @@ export const UpcomingEventCard = ({ title, imgURL, loc, date }: cardParams) => {
     })
 
     return (
-        <div onClick={ () => router.push("/view-project/[id]")} className="cursor-pointer mb-5 relative w-70 h-110 sm:h-110 sm:w-65 md:h-110 md:w-65 bg-white rounded-[45px] shadow-[-4px_4px_10px_rgba(0,0,0,0.4)] transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
+        <div onClick={ () => router.push(`/view-project/${id}`)} className="cursor-pointer mb-5 relative w-70 h-110 sm:h-110 sm:w-65 md:h-110 md:w-65 bg-white rounded-[45px] shadow-[-4px_4px_10px_rgba(0,0,0,0.4)] transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
             <div className="flex justify-center rounded-t-md">
                 {imgURL ? (
                     <img

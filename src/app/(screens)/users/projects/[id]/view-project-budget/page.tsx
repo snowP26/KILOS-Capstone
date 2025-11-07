@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CirclePlus, Trash2, Image } from "lucide-react";
@@ -34,17 +34,23 @@ import {
 import { project, project_budget } from "@/src/app/lib/definitions";
 import {
     addBudget,
+    csvType,
+    deleteBudget,
     deletePhoto,
     getProjectBudgetById,
     getProjectByID,
+    uploadCSVItems,
     uploadItemPhoto,
     uploadReceipt,
 } from "@/src/app/actions/projects";
 import { useUserRole } from "@/src/app/actions/role";
 import { Skeleton } from "@/components/ui/skeleton";
+import Papa from 'papaparse';
+
 
 
 export default function ViewProjectBudget() {
+
     const router = useRouter();
     const params = useParams();
     const blob = Array.isArray(params.id) ? params.id[0] : params.id;
@@ -55,7 +61,9 @@ export default function ViewProjectBudget() {
     const normalizedRole = role?.trim().toLowerCase();
     const formRef = useRef<HTMLFormElement>(null);
     const [refresh, setRefresh] = useState(0);
-    const [loading, setLoading] = useState(true)
+    const [budgetRefresh, setBudgetRefresh] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
     const totalSpent = budget.reduce(
         (sum, item) => sum + item.price * item.amt,
@@ -63,15 +71,34 @@ export default function ViewProjectBudget() {
     );
     const remainingBudget = (project?.budget ?? 0) - totalSpent;
 
+    const handleUploadCSV = (file: File) => {
+        if (!file) {
+            return;
+        }
+        
+        Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            complete: async (results) => {
+                await uploadCSVItems(projectID, results.data as csvType[])
+                setBudgetRefresh((prev) => prev + 1)
+            },
+            error: (error) => {
+                console.error("Error parsing CSV:", error);
+            },
+        });
+
+        // kulang pa ng swal
+    }
+
     useEffect(() => {
+
         const setData = async () => {
             setLoading(true);
             try {
                 if (projectID) {
                     const data = await getProjectByID(projectID);
                     setProject(data);
-                    const budget = await getProjectBudgetById(projectID);
-                    setBudget(budget);
                 }
             } finally {
                 setLoading(false);
@@ -80,6 +107,51 @@ export default function ViewProjectBudget() {
 
         setData()
     }, [projectID, refresh]);
+
+    useEffect(() => {
+        const getItems = async () => {
+            const budget = await getProjectBudgetById(projectID ?? 0);
+            const sorted = budget.sort((a, b) => {
+                if (a.status === "Approved" && b.status !== "Approved") return -1;
+                if (a.status !== "Approved" && b.status === "Approved") return 1;
+                return 0;
+            });
+
+            setBudget(sorted);
+        }
+
+        getItems()
+    }, [projectID, budgetRefresh])
+
+    const handleExport = () => {
+        const headers = ["item_name", "price", "amt"];
+        const items = budget.map((data) => [
+            data.item_name,
+            data.price,
+            data.amt
+        ])
+        const file = [headers.join(','),
+        ...items.map(i => i.join(","))].join("\n");
+        const fileBlob = new Blob([file], { type: "text/csv;charset=utf-8" })
+        const url = URL.createObjectURL(fileBlob);
+        const link = document.createElement("a");
+
+
+        link.href = url;
+        link.setAttribute("download", `${project?.title}_Budget.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    const handleDelete = async () => {
+        if (selectedRows.length === 0) return; 
+
+        // kulang pa ng Swal
+        await deleteBudget(selectedRows);
+        setBudgetRefresh((prev) => prev + 1); 
+        setSelectedRows([]); 
+    }
 
     if (loading) {
         return (
@@ -143,7 +215,29 @@ export default function ViewProjectBudget() {
 
     return (
         <div className="bg-[#E6F1FF] min-h-screen max-h-full py-10">
-            {/* Breadcrumb */}
+
+            <Button onClick={handleExport}>EXPORT</Button>
+            <Button onClick={handleDelete}>Delete</Button>
+            <input
+                id="csv-upload"
+                type="file"
+                accept=".csv"
+                className="hidden"
+                onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                        handleUploadCSV(file);
+                    }
+                }}
+            />
+            <Button
+                onClick={() => document.getElementById("csv-upload")?.click()}
+            >
+                Upload CSV
+            </Button>
+
+
+
             <Breadcrumb className="ml-5 lg:ml-20">
                 <BreadcrumbList>
                     <Button
@@ -229,7 +323,8 @@ export default function ViewProjectBudget() {
                         <TableCaption className="mt-2">Breakdown of project materials used in the project.</TableCaption>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="text-center w-50">Status</TableHead>
+                                <TableHead className="text-center">#</TableHead>
+                                <TableHead className="text-center">Status</TableHead>
                                 <TableHead className="text-center">Item Name</TableHead>
                                 <TableHead className="text-center">Price per Unit</TableHead>
                                 <TableHead className="text-center">Amt.</TableHead>
@@ -238,12 +333,32 @@ export default function ViewProjectBudget() {
                             </TableRow>
                         </TableHeader>
                         <TableBody >
-                            {budget.map((data) => (
-                                <TableRow key={data.id}>
-                                    <TableCell className="flex justify-center self-center">
-                                        <p className="text-center font-medium min-w-30 max-w-full px-5 bg-[#052659] rounded-2xl text-white">
-                                            {data.status}
-                                        </p>
+                            {budget.map((data, i) => (
+                                <TableRow key={data.id}
+                                    onClick={() => {
+                                        if (normalizedRole !== 'treasurer') return
+                                        if (data.status === "Approved") return
+                                        setSelectedRows((prev) => prev.includes(data.id) ? selectedRows.filter((id) => id !== data.id) : [...prev, data.id])
+
+                                    }}
+                                    className={` transition-all ${selectedRows.includes(data.id) ? 'bg-gray-200 border border-gray-300 hover:bg-gray-400' : " "}`}
+                                >
+                                    <TableCell className="text-center">
+                                        {i + 1}
+                                    </TableCell>
+                                    <TableCell className="text-center align-middle">
+                                        <div className="flex justify-center">
+                                            <p
+                                                className={`font-medium px-5 py-1 max-w-30 w-full  rounded-2xl whitespace-nowrap ${data.status === "Approved" ? "bg-green-100 text-green-800"
+                                                    : data.status === "Rejected" ? "bg-red-100 text-red-800"
+                                                        : data.status === "Resubmit" ? "bg-orange-100 text-orange-800"
+                                                            : data.status === "For Approval" ? "bg-blue-100 text-blue-800"
+                                                                : "bg-gray-100 text-gray-800"}
+                                                    `}
+                                            >
+                                                {data.status}
+                                            </p>
+                                        </div>
                                     </TableCell>
                                     <TableCell className="max-w-[150px] text-center">{data.item_name}</TableCell>
                                     <TableCell className="text-center">
@@ -282,7 +397,7 @@ export default function ViewProjectBudget() {
                                                 {normalizedRole == 'treasurer' && (
                                                     <button
                                                         className="text-xs cursor-pointer bg-red-500 rounded-sm transition-transform duration-300 hover:scale-110 hover:bg-red-600"
-                                                        onClick={async (e) => {
+                                                        onClick={async () => {
                                                             await deletePhoto(data.id, false);
                                                             setRefresh((prev) => prev + 1);
                                                         }}
@@ -294,7 +409,7 @@ export default function ViewProjectBudget() {
                                         ) : (normalizedRole == 'treasurer' ? (
                                             <label className="flex items-center cursor-pointer">
                                                 <span className="px-3 py-2 bg-gray-100 border rounded-md hover:bg-gray-200 cursor-pointer w-fit">
-                                                    Upload Item Photo
+                                                    Upload Receipt Photo
                                                 </span>
                                                 <input
                                                     type="file"
@@ -377,7 +492,7 @@ export default function ViewProjectBudget() {
 
                             {normalizedRole == 'treasurer' && (
                                 <TableRow>
-                                    <TableCell colSpan={6} className="px-2 py-1">
+                                    <TableCell colSpan={7} className="px-2 py-1">
 
                                         <Dialog>
                                             <DialogTrigger asChild>
@@ -485,9 +600,8 @@ export default function ViewProjectBudget() {
                                 </TableRow>
                             )}
                         </TableBody>
-
-
                     </Table>
+
                 </div>
 
 
