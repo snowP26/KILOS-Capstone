@@ -5,12 +5,30 @@ import { locNameToID } from "./convert";
 // =================================================== Ordinances ======================================================
 // =====================================================================================================================
 
-export const getAllOrdinances = async (location: string) => {
+export const getAllOrdinances = async (location: string | null) => {
   let dbQuery = client.from("ordinances").select("*").eq("status", "Uploaded")
 
-  if (location && location !== "") {
+  if (location && location !== null) {
     const locID = await locNameToID(location as string)
     dbQuery = dbQuery.eq("location", locID)
+  }
+
+  const { data, error } = await dbQuery
+
+  if (error) {
+    console.log("Error retrieving ordinances: ", error)
+    return []
+  }
+
+  console.log("Data retrieval successful!", data);
+  return data
+}
+
+export const getAllOrdinancesByLocation = async (location: number | null) => {
+  let dbQuery = client.from("ordinances").select("*").eq("status", "Uploaded")
+
+  if (location && location !== null) {
+    dbQuery = dbQuery.eq("location", location)
   }
 
   const { data, error } = await dbQuery

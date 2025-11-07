@@ -89,6 +89,7 @@ export default function Ordinances() {
         >
           <OrdinancesCard
             className="transition-transform duration-300 hover:-translate-y-1 rounded-xl"
+            id={data.id}
             title={data.title}
             description={data.description}
             author={data.author}
@@ -105,7 +106,7 @@ export default function Ordinances() {
 
   if (normalizedRole === "legislative") {
     return (
-      <div className="bg-[#E6F1FF] min-h-screen max-h-full">
+      <div className="bg-[#E6F1FF] min-h-screen max-h-full pb-10">
         <div className="flex flex-col sm:flex-row justify-between mt-15 mx-3 lg:mx-40">
           <p className="font-bold text-2xl sm:text-3xl">Ordinances & Resolutions</p>
 
@@ -142,8 +143,6 @@ export default function Ordinances() {
             </SelectContent>
           </Select>
         </div>
-
-        {/* Ordinances or Skeleton */}
         {loadingOrdinances ? <SkeletonList /> : <OrdinanceList />}
       </div>
     );
@@ -151,14 +150,13 @@ export default function Ordinances() {
 
   if (normalizedRole === "executive" || normalizedRole === "treasurer") {
     return (
-      <div className="bg-[#E6F1FF] min-h-screen max-h-fit">
+      <div className="bg-[#E6F1FF] min-h-screen max-h-full pb-10">
         <div className="mt-15 mx-3 lg:mx-40">
           <p className="font-bold text-2xl sm:text-3xl">Ordinances & Resolutions</p>
         </div>
 
         <hr className="border-t border-black w-[90%] mx-auto my-3" />
 
-        {/* Sort By */}
         <div className="mr-10 xl:mr-35 place-self-end">
           <Select>
             <SelectTrigger className="w-[100%] bg-white cursor-pointer">

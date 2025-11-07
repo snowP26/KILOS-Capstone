@@ -1,6 +1,26 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { authorIDtoName, getUserID } from '../../actions/convert'
 
 export const DateTodayCard = () => {
+  const [user, setUser] = useState("")
+  const [greeting, setGreeting] = useState("");
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+
+    if (hour < 12) setGreeting("Good Morning");
+    else if (hour < 18) setGreeting("Good Afternoon");
+    else setGreeting("Good Evening");
+
+    const getUser = async () => {
+      const userID = await getUserID()
+      const userName = await authorIDtoName(Number(userID))
+      setUser(userName?.split(" ")[0] ?? "")
+    }
+
+    getUser()
+  }, [])
+
   return (
     <div className="bg-[#021024] w-[100%] h-[100%] rounded-md xl:p-7 pt-5 pb-5 flex flex-col items-center">
       <div className="flex flex-row text-md lg:text-sm">
@@ -18,12 +38,12 @@ export const DateTodayCard = () => {
 
         <p className="text-white">.</p>
       </div>
-      
+
       <div className="flex flex-row text-3xl lg:text-md">
-        <div className="flex flex-row gap-2 text-3xl lg:text-md">
-          <p className="text-white font-medium">Good Day, </p>
+        <div className="flex flex-row gap-1 text-2xl sm:text-3xl lg:gap-2 lg:text-3xl lg:text-md">
+          <p className="text-white font-medium">{greeting}, </p>
           <p className="text-[#C1E8FF] font-bold">
-            James
+            {user}
           </p>
         </div>
 
@@ -32,7 +52,7 @@ export const DateTodayCard = () => {
         </p>
       </div>
 
-      
+
 
     </div>
   )

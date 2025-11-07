@@ -66,17 +66,17 @@ export const FeedbackCard = ({
     <Dialog>
       <DialogTrigger className="m-5 xl:m-10">
         <div
-          className={`flex flex-col cursor-pointer w-60 h-60 lg:py-10 lg:px-10 lg:h-100 lg:w-100 p-8 rounded-md shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${bgColor}`}
+          className={` flex flex-col cursor-pointer w-60 h-60 sm:h-70 lg:py-10 lg:px-10 lg:h-100 lg:w-100 p-8 rounded-md shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${bgColor}`}
         >
 
           <div className="justify-around flex flex-col h-full">
             <Quote fill="black" />
 
-            <>
+            <div className="">
               <p className="lg:m-5 font-semibold text-4xl truncate sm:whitespace-normal sm:line-clamp-2">{header}</p>
 
-              <p className="m-5 text-gray-500 text-sm truncate sm:whitespace-normal sm:line-clamp-3">{body}</p>
-            </>
+              <p className="text-gray-500 text-sm truncate sm:whitespace-normal sm:line-clamp-3">{body}</p>
+            </div>
 
             <div className="flex flex-row place-self-end ">
               <p className="font-thin text-xs mr-5 content-center">{date}</p>

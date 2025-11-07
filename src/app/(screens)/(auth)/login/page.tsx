@@ -6,18 +6,30 @@ import { LoginForm } from "@/src/app/components/auth/login-form"
 import { TextIcon } from "@/src/app/components/text-logo";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import Swal from "sweetalert2";
 
 export default function LoginPage() {
     const router = useRouter()
 
     useEffect(() => {
+        Swal.fire({
+            text: "Page is loading, please wait.",
+            title: "Loading...",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        })
+
         const getUser = async () => {
             const { data } = await client.auth.getUser();
-            if (data?.user != null) { 
-                return loginRoute(data.user, router)
-            }else{
-                return
-            }   
+            if (data?.user != null) {
+                loginRoute(data.user, router)
+                return Swal.close()
+            } else {
+                return Swal.close()
+            }
         }
 
         getUser();

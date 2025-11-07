@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ProjectCard } from "@/src/app/components/admin/project-card";
+import { ProjectCard, StatusType } from "@/src/app/components/admin/project-card";
 import { project } from "@/src/app/lib/definitions";
-import { getPendingProjects } from "@/src/app/actions/admin_projects";
+import { getProjects } from "@/src/app/actions/projects";
 
 export default function Projects() {
   const router = useRouter();
@@ -14,8 +14,17 @@ export default function Projects() {
 
   useEffect(() => {
     const getData = async () => {
-      const data = await getPendingProjects();
-      setProjects(data ?? []);
+      const data = await getProjects();
+      if (data) {
+        const sorted = [...data].sort((a, b) => {
+          if (a.status === "Approved" && b.status !== "Approved") return -1;
+          if (a.status !== "Approved" && b.status === "Approved") return 1;
+          return 0;
+        });
+        setProjects(sorted);
+      } else {
+        setProjects([]);
+      }
     };
 
     getData();
@@ -29,20 +38,35 @@ export default function Projects() {
 
   return (
     <div className="bg-[#E6F1FF] min-h-dvh">
-      <p className="font-bold text-3xl m-5 lg:m-10">Proposed Projects</p>
+      <p className="font-bold text-3xl m-5 lg:m-10">Projects</p>
 
       <div className="flex flex-wrap justify-center gap-5 lg:gap-3 xl:gap-5">
         {paginatedProjects.map((project) => (
           <div
             key={project.id}
-            onClick={() => router.push(`/admin/projects/${project.title}-${project.id}`)}
+            onClick={() => {
+              if (project.status === "Approved") {
+                router.push(`/admin/projects/approved-projects/${project.title}-${project.id}`)
+              } else {
+                router.push(`/admin/projects/${project.title}-${project.id}`);
+              }
+            }}
             className="cursor-pointer"
           >
-            <ProjectCard
-              Title={project.title}
-              Status={project.status}
-              ImgURL={project.imageURL}
-            />
+            {project.status === "Approved" ? (
+              <ProjectCard
+                Title={project.title}
+                Status={project.status}
+                ImgURL={project.imageURL}
+                TargetDate={project.target_date}
+              />
+            ) : (
+              <ProjectCard
+                Title={project.title}
+                Status={project.status as StatusType}
+                ImgURL={project.imageURL}
+              />
+            )}
           </div>
         ))}
       </div>
@@ -63,10 +87,11 @@ export default function Projects() {
             <button
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`cursor-pointer px-3 py-1.5 rounded-md text-sm font-semibold transition ${currentPage === i + 1
-                ? "bg-[#052659] text-white border border-[#052659]"
-                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
-                }`}
+              className={`cursor-pointer px-3 py-1.5 rounded-md text-sm font-semibold transition ${
+                currentPage === i + 1
+                  ? "bg-[#052659] text-white border border-[#052659]"
+                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
+              }`}
             >
               {i + 1}
             </button>
