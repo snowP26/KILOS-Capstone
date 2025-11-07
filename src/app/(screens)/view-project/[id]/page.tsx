@@ -52,7 +52,7 @@ export default function ViewProject() {
                 if (projectData === null) {
                     return notFound()
                 }
-                const budgetData = await getProjectBudgetById(projectID)
+                const budgetData = await getProjectBudgetById(projectID, true)
 
                 setProject(projectData)
                 setBudget(budgetData)

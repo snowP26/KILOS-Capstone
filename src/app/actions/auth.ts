@@ -194,6 +194,7 @@ export const loginRoute = async (user: User, router: AppRouterInstance) => {
       router.push("/users/home")
   }
 
+  return true;
 }
 
 
@@ -244,6 +245,7 @@ export const handleLogin = async (e: FormEvent<HTMLFormElement>, router: AppRout
       text: "Please wait while we redirect you...",
       timer: 1500,
       showConfirmButton: false,
+      allowOutsideClick: false
     });
     loginRoute(data.user, router);
 

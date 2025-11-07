@@ -6,24 +6,41 @@ import Swal from "sweetalert2";
 export const getProjects = async () => {
     const loc = await getLocFromAuth();
 
-    const { data: approvedData } = await client
+    const { data: projectsData } = await client
         .from("projects")
         .select("*")
         .eq("location", Number(loc))
 
-    if (!approvedData || approvedData.length === 0) {
+    if (!projectsData || projectsData.length === 0) {
         console.log("Loc Data Error")
         return []
     }
 
-    const approvedProjects = approvedData.filter(
-        (proj) => proj.status == "Approved"
-    );
-
-    console.log("Approved projects:", approvedProjects);
-
-    return approvedProjects;
+    return projectsData;
 };
+
+
+export const getApprovedProjects = async () => {
+    const loc = await getLocFromAuth()
+
+    const { data, error } = await client
+        .from("projects")
+        .select("*")
+        .eq("location", Number(loc))
+        .eq("status", "Approved")
+
+    if (!data || data.length === 0) {
+        console.log("Data error: ")
+        return []
+    }
+
+    if (error) {
+        console.log("Error retrieving data: ", error)
+        return []
+    }
+
+    return data
+}
 
 export const getProposedProjects = async () => {
     const loc = await getLocFromAuth();
@@ -252,12 +269,13 @@ export const updateTargetDate = async (id: number, date: string) => {
     return
 }
 
-export const getProjectBudgetById = async (project_id: number) => {
+export const getProjectBudgetById = async (project_id: number, isHome?: boolean) => {
+    let query = client.from("project_budget").select("*").eq("project_id", project_id);
 
-    const { data, error } = await client
-        .from("project_budget")
-        .select("*")
-        .eq("project_id", project_id)
+    if (isHome) {
+        query = query.eq("status", 'Approved')
+    }
+    const { data, error } = await query
 
     if (error) {
         console.log("error retrieving your project's budget data: ", error)
@@ -266,6 +284,8 @@ export const getProjectBudgetById = async (project_id: number) => {
     console.log(data)
     return data;
 }
+
+
 
 export const addBudget = async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement | null>, project: string, projectID: number) => {
     e.preventDefault();
@@ -638,8 +658,57 @@ export const updateApproval = async (projectID: number) => {
             .update({ status: "Approved" })
             .eq("id", projectID)
 
-        if(error) throw new Error
+        if (error) throw new Error
     } catch (error) {
         console.warn(error)
     }
+}
+
+export type csvType = {
+    item_name: string,
+    price: number | string,
+    amt: number | string,
+}
+
+export const uploadCSVItems = async (projectID: number | undefined, items: csvType[]) => {
+    if (!projectID) return
+
+    const { error } = await client.from("project_budget").insert(items.map((item) => ({
+        project_id: projectID,
+        status: "For Approval",
+        item_name: item.item_name,
+        price: Number(item.price),
+        amt: Number(item.amt)
+    })));
+
+    if (error) {
+        console.log(error)
+        return
+    }
+
+    return
+}
+
+export const deleteBudget = async (itemID: number | number[]) => {
+
+    if (Array.isArray(itemID)) {
+        const { error } = await client
+            .from("project_budget")
+            .delete()
+            .in("id", itemID);
+
+        if(error) return console.log("error: ", error.message)
+    } else {
+        const { error } = await client
+            .from("project_budget")
+            .delete()
+            .eq("id", itemID);
+
+        if(error) return
+    }
+
+
+    console.log("success")
+
+
 }

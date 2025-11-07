@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save } from "lucide-react";
-import { SquarePen } from "lucide-react";
 import { Trash2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -108,8 +107,7 @@ export default function ViewProject() {
             className="text-black bg-[#A3C4A8] w-full h-8 sm:w-fit sm:h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]"
             onClick={() =>
               router.push(
-                `/users/projects/${project.title.trim()}-${
-                  project.id
+                `/users/projects/${project.title.trim()}-${project.id
                 }/view-project-budget`
               )
             }
@@ -206,12 +204,12 @@ export default function ViewProject() {
                   }}
                 />
               </label>
-            ): (
-                 <div className="flex bg-blue-100 w-[80%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 object-contain rounded-md items-center justify-center font-bold text-blue-600">
-                    {project.title.charAt(0).toUpperCase()}
-                </div>
+            ) : (
+              <div className="flex bg-blue-100 w-[80%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 object-contain rounded-md items-center justify-center font-bold text-blue-600">
+                {project.title.charAt(0).toUpperCase()}
+              </div>
             )
-        }
+            }
 
 
             <div className="flex flex-row w-[80%] justify-between my-3">

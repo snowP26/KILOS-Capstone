@@ -47,6 +47,7 @@ export default function ViewOrdinance() {
     ordinance_approvals[]
   >([]);
   const [selected, setSelected] = useState<number[]>([]);
+  const [refresh, setRefresh] = useState(0)
 
   useEffect(() => {
     const setData = async () => {
@@ -58,17 +59,31 @@ export default function ViewOrdinance() {
         const approvals = await getPendingOrdinanceStatus(ordinanceID);
         setOrdinanceApprovals(approvals);
 
+      }
+    };
+
+
+    setData();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchFiles = async () => {
+      if (ordinance.length > 0) {
+        const ordinanceID = ordinance[0].id;
         const file = await getPendingOrdinanceFile(ordinanceID);
+
         if (file) {
           setOrdinanceFile(
             Array.isArray(file) ? (file as ordinanceFiles[]) : ([file] as ordinanceFiles[])
           );
+        } else {
+          setOrdinanceFile([]);
         }
       }
     };
 
-    setData();
-  }, [id, selectedFile]);
+    fetchFiles();
+  }, [ordinance, refresh]); 
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,6 +99,7 @@ export default function ViewOrdinance() {
         timer: 1500,
         showConfirmButton: false,
       });
+      setRefresh((prev) => prev + 1)
     } catch (error) {
       console.error("Upload failed:", error);
       Swal.fire({
@@ -310,7 +326,7 @@ export default function ViewOrdinance() {
           )}
 
 
-          {selectedFile.length === 0 && ordinanceFile.length > 0 && (
+          {selectedFile.length === 0 && (
             <>
               <div className="flex flex-row items-center justify-between w-full gap-3 min-h-11">
                 <p className="text-gray-600 font-medium">Uploaded Files:</p>
@@ -412,7 +428,7 @@ export default function ViewOrdinance() {
                         </div>
                       )
                     })
-                  )
+                )
                 }
               </div>
             </>
