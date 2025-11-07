@@ -312,7 +312,7 @@ export const getOrdinanceURL = async (ordinanceID: number) => {
 
   if (ordinanceFileError) {
     console.log("error reading ordinance");
-    return "";
+    return null;
   }
 
   console.log("ordinance file url: ", ordinancefile.file_path);
@@ -321,7 +321,7 @@ export const getOrdinanceURL = async (ordinanceID: number) => {
     .from("ordinances")
     .getPublicUrl(ordinancefile.file_path)
 
-  return url?.publicUrl || "";
+  return url?.publicUrl || null;
 }
 
 export const openOrdinancePDF = async (ordinanceID: number) => {

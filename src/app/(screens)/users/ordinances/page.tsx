@@ -143,8 +143,6 @@ export default function Ordinances() {
             </SelectContent>
           </Select>
         </div>
-
-        {/* Ordinances or Skeleton */}
         {loadingOrdinances ? <SkeletonList /> : <OrdinanceList />}
       </div>
     );
@@ -159,7 +157,6 @@ export default function Ordinances() {
 
         <hr className="border-t border-black w-[90%] mx-auto my-3" />
 
-        {/* Sort By */}
         <div className="mr-10 xl:mr-35 place-self-end">
           <Select>
             <SelectTrigger className="w-[100%] bg-white cursor-pointer">

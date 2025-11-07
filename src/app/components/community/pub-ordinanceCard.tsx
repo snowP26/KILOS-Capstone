@@ -19,7 +19,7 @@ type ordinanceCard = {
 export const PublishedOrdinanceCard = ({ id, title, description, author, locationID }: ordinanceCard) => {
     const [authorName, setAuthorName] = useState<string | null>("");
     const [location, setLocation] = useState<string>("");
-    const [fileURL, setFileURL] = useState<string>("")
+    const [fileURL, setFileURL] = useState<string | null>(null)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -37,10 +37,6 @@ export const PublishedOrdinanceCard = ({ id, title, description, author, locatio
         <div
             className="flex flex-col items-center lg:flex-row lg:gap-2 rounded-2xl border-[0.2px] border-gray-300 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-[-4px_4px_4px_rgba(0,0,0,0.15)] lg:border-none lg:hover:shadow-none lg:hover:-translate-y-0 lg:cursor-default relative group"
         >
-            {/* Hover overlay */}
-            <div className="absolute z-1 inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center lg:hidden">
-                <FileText className="w-10 h-10 text-white drop-shadow-md" />
-            </div>
 
             <div className="w-70 bg-white lg:bg-transparent py-2 rounded-t-2xl lg:w-[30%]">
                 <Avatar className="object-cover w-35 h-35 place-self-center lg:place-self-end lg:w-50 lg:h-50">

@@ -23,18 +23,18 @@ export const getProjects = async () => {
 export const getApprovedProjects = async () => {
     const loc = await getLocFromAuth()
 
-    const {data, error} = await client
+    const { data, error } = await client
         .from("projects")
         .select("*")
         .eq("location", Number(loc))
         .eq("status", "Approved")
 
-    if(!data || data.length === 0) {
+    if (!data || data.length === 0) {
         console.log("Data error: ")
         return []
     }
 
-    if(error){
+    if (error) {
         console.log("Error retrieving data: ", error)
         return []
     }
@@ -269,12 +269,13 @@ export const updateTargetDate = async (id: number, date: string) => {
     return
 }
 
-export const getProjectBudgetById = async (project_id: number) => {
-
-    const { data, error } = await client
-        .from("project_budget")
-        .select("*")
-        .eq("project_id", project_id)
+export const getProjectBudgetById = async (project_id: number, isHome?: boolean) => {
+    let query = client.from("project_budget").select("*").eq("project_id", project_id);
+    
+    if (isHome) {
+        query = query.eq("status", 'Approved')
+    }
+    const { data, error } = await query
 
     if (error) {
         console.log("error retrieving your project's budget data: ", error)
@@ -283,6 +284,8 @@ export const getProjectBudgetById = async (project_id: number) => {
     console.log(data)
     return data;
 }
+
+
 
 export const addBudget = async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement | null>, project: string, projectID: number) => {
     e.preventDefault();
@@ -655,7 +658,7 @@ export const updateApproval = async (projectID: number) => {
             .update({ status: "Approved" })
             .eq("id", projectID)
 
-        if(error) throw new Error
+        if (error) throw new Error
     } catch (error) {
         console.warn(error)
     }
