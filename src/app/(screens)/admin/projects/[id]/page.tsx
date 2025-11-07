@@ -102,38 +102,13 @@ export default function ViewProposedProj() {
             if (projectData) {
                 setProject(projectData);
                 setApprovals(approvalData);
+                console.log(approvalData)
                 setStatus(await checkStatuses(approvalData, projectID))
             }
 
         };
         fetchProject();
     }, [projectID, refresh]);
-
-
-    const statusUI = (status: string) => {
-        switch (status.toLowerCase().trim()) {
-            case "pending":
-                setStatusColor("bg-yellow-500");
-                setStatusIcon(<Clock />);
-                break;
-            case "under review":
-                setStatusColor("bg-blue-500");
-                setStatusIcon(<Loader2 className="animate-spin" />);
-                break;
-            case "declined":
-                setStatusColor("bg-red-500");
-                setStatusIcon(<XCircle />);
-                break;
-            case "for approval":
-                setStatusColor("bg-green-600");
-                setStatusIcon(<CheckCircle />);
-                break;
-        }
-
-    }
-
-
-
 
     const statusColors: Record<string, string> = {
         Pending: "bg-yellow-500",
@@ -142,15 +117,8 @@ export default function ViewProposedProj() {
         Accepted: "bg-green-600",
         "In Progress": "bg-blue-500",
     };
-    const projectStatusColors: Record<string, string> = {
-        "Action Pending": "bg-orange-500 hover:bg-orange-600 focus:ring-orange-500",
-        "Declined": "bg-red-500 hover:bg-red-600 focus:ring-red-500",
-        "Under Review": "bg-yellow-500 hover:bg-yellow-600 focus:ring-yellow-500",
-        "For Approval": "bg-blue-500 hover:bg-blue-600 focus:ring-blue-500",
-        "Pending": "bg-gray-500 hover:bg-gray-600 focus:ring-gray-500",
-    };
 
-
+    if (!approvals || !project) return;
 
     return (
         <div className="bg-[#E6F1FF] min-h-screen max-h-full mt-10">
@@ -167,19 +135,17 @@ export default function ViewProposedProj() {
                     </div>
 
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/admin/projects">Proposed Projects</BreadcrumbLink>
+                        <BreadcrumbLink href="/admin/projects">View Projects</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbPage className="font-bold">View Proposed Project</BreadcrumbPage>
+                        <BreadcrumbPage className="font-bold">{project?.title}</BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
 
             <div className="mx-2 sm:mx-10 xl:mx-25">
                 <p className="font-bold text-xl xl:text-3xl mt-8 mb-2 xl:mb-6">{project?.title}</p>
-                <Button className="text-black bg-[#A3C4A8] w-full h-8 sm:w-fit sm:h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]" onClick={() => router.push(`/admin/projects/${project?.title}-${project?.id}/view-budget-breakdown`)}>View Budget Breakdown</Button>
-
 
                 <div className="flex flex-col lg:flex-row gap-1 place-items-center min-h-fit max-h-screen">
                     <div className="bg-white mt-10 w-[90%] h-full sm:h-150 lg:w-[35%] lg:h-155 justify-items-center place-content-center">
@@ -448,16 +414,13 @@ export default function ViewProposedProj() {
                                 >
                                     {showDetails ? "View Project Status" : "View Project Details"}
                                 </Button>
-                                {/* <Button
-                                    className="bg-[#A3C4A8] text-black cursor-pointer shadow-md transition-all duration-200 hover:scale-105 hover:shadow-lg hover:text-accent hover:bg-green-800"
-                                    onClick={() => console.log(project?.imageURL)}
-                                >
-                                    Savesss
-                                </Button> */}
-                                {status === "For Approval" ? (
+
                                     <Button
-                                        className="bg-[#A3C4A8] w-fit text-black cursor-pointer hover:bg-blue-500 hover:text-[#A3C4A8]"
+                                        className={`bg-[#A3C4A8] w-fit border transition-all duration-200 ${approvals.length <= 0 || status === "Under Review" ? "bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed opacity-70 hover:bg-gray-200 hover:text-gray-500" : "hover:bg-green-100 hover:text-green-600 hover:border-green-600 text-black cursor-pointer"}`}
                                         onClick={() => {
+                                            if(approvals.length <= 0) {
+                                                return 
+                                            }
                                             Swal.fire({
                                                 title: "Mark as Approved?",
                                                 text: "Are you sure you want to mark this as approved?",
@@ -482,8 +445,7 @@ export default function ViewProposedProj() {
                                         }}
                                     >
                                         Mark as Approved
-                                    </Button>) : (<></>)
-                                }
+                                    </Button>
 
                             </div>
                         </div>
