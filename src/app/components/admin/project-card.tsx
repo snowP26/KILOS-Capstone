@@ -1,10 +1,10 @@
 import React from "react";
 
-type StatusType = "Approved" | "Action Pending" | "Under Review" | "For Approval" | "Declined";
+export type StatusType = "Approved" | "Action Pending" | "Under Review" | "For Approval" | "Declined";
 
 type ProjectCard = {
   Title: string;
-  Status: string;
+  Status: StatusType;
   ImgURL?: string;
   TargetDate?: string;
 };
@@ -35,18 +35,21 @@ export const ProjectCard = ({ Title, Status, ImgURL, TargetDate }: ProjectCard) 
       )}
 
       <p className="my-5 font-semibold truncate">{Title}</p>
-      <div className={`w-fit px-2 py-1 rounded-[10px] text-xs ${colors[Status as keyof typeof colors]}`}>
-        {Status}
-      </div>
-      {TargetDate && (
-        <div className="w-fit px-2 py-1 rounded-[10px] text-xs bg-[#FFD7C8]">
-          {new Date(TargetDate).toLocaleDateString("en-US", {
-            month: "short",
-            day: "2-digit",
-            year: "numeric"
-          })}
+      <div className="flex flex-row space-x-2">
+        <div className={`w-fit px-2 py-1 rounded-[10px] text-xs ${colors[Status]}`}>
+          {Status}
         </div>
-      )}
+        {TargetDate && (
+          <div className="w-fit px-2 py-1 rounded-[10px] text-xs bg-[#FFD7C8]">
+            {new Date(TargetDate).toLocaleDateString("en-US", {
+              month: "short",
+              day: "2-digit",
+              year: "numeric"
+            })}
+          </div>
+        )}
+      </div>
+
     </div>
   );
 };
