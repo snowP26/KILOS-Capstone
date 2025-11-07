@@ -64,7 +64,7 @@ export const FeedbackCard = ({
     <Dialog onOpenChange={(open) => open && loadComments()}>
       <DialogTrigger className="m-5 xl:m-10">
         <div
-          className={`flex flex-col cursor-pointer w-60 h-60 lg:py-10 lg:px-10 lg:h-100 lg:w-100 p-8 rounded-md shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${bgColor}`}
+          className={`flex flex-col cursor-pointer w-60 h-60 h-60 sm:h-70  lg:py-10 lg:px-10 lg:h-100 lg:w-100 p-8 rounded-md shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${bgColor}`}
         >
 
           <div className="justify-around flex flex-col h-full">

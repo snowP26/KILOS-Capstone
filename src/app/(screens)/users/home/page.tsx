@@ -53,22 +53,22 @@ export default function Home() {
 
   return (
     <div className="bg-[#E6F1FF] flex flex-col lg:flex lg:flex-row lg:h-full lg:mx-5 xl:pb-3">
-      <div className="mt-2 h-60 shadow-[-4px_4px_4px_rgba(0,0,0,0.15),4px_4px_4px_rgba(0,0,0,0.15)] mx-5 lg:mx-0 sm:h-70 lg:h-209 rounded-2xl lg:shadow-[-4px_4px_4px_rgba(0,0,0,0.15)] bg-white lg:w-[22%] xl:w-[15%]">
+      <div className="mt-2 h-65 shadow-[-4px_4px_4px_rgba(0,0,0,0.15),4px_4px_4px_rgba(0,0,0,0.15)] mx-5 lg:mx-0 sm:h-70 lg:h-209 rounded-2xl lg:shadow-[-4px_4px_4px_rgba(0,0,0,0.15)] bg-white lg:w-[22%] xl:w-[15%]">
         <p className="font-bold text-3xl lg:text-xl xl:text-3xl text-center mt-5 mb-3">Recent Feedback</p>
-        <ScrollArea className="h-[85%]">
-          <div className="max-h-[350px] sm:h-auto lg:max-h-[570px]">
+        <ScrollArea className="lg:h-[85%]">
+          <div className="h-[190px] max-h-[200px] sm:h-[200px] lg:max-h-[570px]">
             <div className="flex flex-col">
               {feedback.map((data) => (
                 <Dialog key={data.id}>
                   <DialogTrigger onClick={() => loadComments(data.id)} className="my-3 flex justify-center self-center md:w-[40%] lg:w-full">
-                      <DbRecentFeedbackCard
-                        header={data.header}
-                        date={new Date(data.created_at).toLocaleDateString("en-US", {
-                          month: "long",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                      />
+                    <DbRecentFeedbackCard
+                      header={data.header}
+                      date={new Date(data.created_at).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    />
                   </DialogTrigger>
                   <DialogContent className="bg-[#E6F1FF]">
                     <DialogHeader>
@@ -77,7 +77,7 @@ export default function Home() {
                       <div className="flex flex-row text-xs gap-2 mt-5 mb-5 justify-end">
                         <p>{new Date(data.created_at).toLocaleString()}</p>
                       </div>
-                      <hr className="border-t border-black w-[100%] mx-auto " />
+                      <hr className="border-t border-black w-[100%] mx-auto" />
 
                       {activeFeedbackId === data.id &&
                         comments.map((cmt) => {

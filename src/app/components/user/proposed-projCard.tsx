@@ -24,9 +24,17 @@ export const ProposedProjCard = ({ Title, Description, Status, PhotoURL }: Propo
                 )}
 
                 <div className="flex flex-col max-w-[70%] h-[100%] gap-1">
-                    <p className="font-semibold truncate">{Title}</p>
-                    <p className="text-xs h-13 w-[100%] max-h-15 line-clamp-3">{Description}</p>
-                    <p className="text-red-500 text-xs w-fit px-3 bg-white rounded-2xl">{Status}</p>
+                    <p className="max-w-40 font-semibold truncate">{Title}</p>
+                    <p className="text-xs h-13 w-40 max-w-40 truncate max-h-15 lg:line-clamp-3">asdasdaasdasasdasdaasdasasdasdaasdasasdasdaasdasasdasdaasdas</p>
+                    <p className={`text-xs w-fit px-3 rounded-2xl ${Status === "For Approval" ? "text-white bg-blue-800"
+                        : Status === "Approved" ? "text-white bg-green-800"
+                            : Status === "Action Pending" ? "text-white bg-yellow-800"
+                                : Status === "Declined" ? "text-white bg-red-800"
+                                    : Status === "Under Review" ? "text-white bg-purple-800"
+                                        : ""
+                    }`}>
+                        {Status}
+                    </p>
                 </div>
             </div>
         </div>

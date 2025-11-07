@@ -8,7 +8,7 @@ type recentFeedback = {
 
 export const DbRecentFeedbackCard = ({ header, date }: recentFeedback) => {
   return (
-    <div className="p-5 mx-3 lg:mx-5 w-full bg-[#C1E8FF] cursor-pointer rounded-md transform transition-all duration-300 hover:-translate-y-1 hover:shadow-[-4px_4px_4px_rgba(0,0,0,0.15)]">
+    <div className="p-5 mx-3 lg:mx-5 w-40 sm:w-50 md:w-60 lg:w-full bg-[#C1E8FF] cursor-pointer rounded-md transform transition-all duration-300 hover:-translate-y-1 hover:shadow-[-4px_4px_4px_rgba(0,0,0,0.15)]">
 
       <div className="mb-2">
         <Quote fill='black' size={15} />
