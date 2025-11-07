@@ -53,7 +53,7 @@ const ApprovedProjects = () => {
           Loading project details...
         </h1>
         <p className="text-sm text-gray-500 mt-1">
-          Please wait while we fetch the project's data.
+          Please wait while we fetch the project&apos;s data.
         </p>
       </div>
     );
