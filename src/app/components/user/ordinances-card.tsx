@@ -89,7 +89,7 @@ export const OrdinancesCard = ({
         <h1 className="font-bold text-2xl truncate">
           Ordinance {title}
         </h1>
-        <p className="text-black font-semibold mt-3 mb-10 lg:mb-4 line-clamp-3">
+        <p className="text-black font-semibold min-h-19 mt-3 mb-10 lg:mb-4 line-clamp-3">
           {description}
         </p>
         <p className="text-xl font-thin">

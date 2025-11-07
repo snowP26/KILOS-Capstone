@@ -188,7 +188,7 @@ export default function SubmitOrdinances() {
                   <TableHead className="w-32 text-center font-semibold">
                     Stage
                   </TableHead>
-                  <TableHead className="text-center font-semibold">
+                  <TableHead className="min-w-40 text-center font-semibold">
                     Status
                   </TableHead>
                   <TableHead className="text-center font-semibold">
@@ -411,7 +411,7 @@ export default function SubmitOrdinances() {
                       }}
                     >
                       <div className="flex flex-col">
-                        <span className="font-medium text-gray-800">
+                        <span className="font-medium text-gray-800 max-w-90 truncate">
                           {getDisplayName(data.name)}
                         </span>
                         <span className="text-sm text-gray-500">{data.type.toUpperCase()}</span>

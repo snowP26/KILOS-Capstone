@@ -346,19 +346,17 @@ export default function ViewProjectBudget() {
                                     <TableCell className="text-center">
                                         {i + 1}
                                     </TableCell>
-                                    <TableCell className="text-center align-middle">
-                                        <div className="flex justify-center">
-                                            <p
-                                                className={`font-medium px-5 py-1 max-w-30 w-full  rounded-2xl whitespace-nowrap ${data.status === "Approved" ? "bg-green-100 text-green-800"
-                                                    : data.status === "Rejected" ? "bg-red-100 text-red-800"
-                                                        : data.status === "Resubmit" ? "bg-orange-100 text-orange-800"
-                                                            : data.status === "For Approval" ? "bg-blue-100 text-blue-800"
-                                                                : "bg-gray-100 text-gray-800"}
+                                    <TableCell className="place-items-center">
+                                        <p
+                                            className={`font-medium px-5 py-1 max-w-30 w-full text-center rounded-2xl whitespace-nowrap ${data.status === "Approved" ? "bg-green-100 text-green-800"
+                                                : data.status === "Rejected" ? "bg-red-100 text-red-800"
+                                                    : data.status === "Resubmit" ? "bg-orange-100 text-orange-800"
+                                                        : data.status === "For Approval" ? "bg-blue-100 text-blue-800"
+                                                            : "bg-gray-100 text-gray-800"}
                                                     `}
-                                            >
-                                                {data.status}
-                                            </p>
-                                        </div>
+                                        >
+                                            {data.status}
+                                        </p>
                                     </TableCell>
                                     <TableCell className="max-w-[150px] text-center">{data.item_name}</TableCell>
                                     <TableCell className="text-center">
