@@ -3,7 +3,7 @@
 import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CirclePlus, Trash2, Image } from "lucide-react";
+import { ArrowLeft, CirclePlus, Trash2, Image, Download, Upload } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
     Breadcrumb,
@@ -75,7 +75,7 @@ export default function ViewProjectBudget() {
         if (!file) {
             return;
         }
-        
+
         Papa.parse(file, {
             header: true,
             skipEmptyLines: true,
@@ -145,12 +145,12 @@ export default function ViewProjectBudget() {
     }
 
     const handleDelete = async () => {
-        if (selectedRows.length === 0) return; 
+        if (selectedRows.length === 0) return;
 
         // kulang pa ng Swal
         await deleteBudget(selectedRows);
-        setBudgetRefresh((prev) => prev + 1); 
-        setSelectedRows([]); 
+        setBudgetRefresh((prev) => prev + 1);
+        setSelectedRows([]);
     }
 
     if (loading) {
@@ -215,29 +215,6 @@ export default function ViewProjectBudget() {
 
     return (
         <div className="bg-[#E6F1FF] min-h-screen max-h-full py-10">
-
-            <Button onClick={handleExport}>EXPORT</Button>
-            <Button onClick={handleDelete}>Delete</Button>
-            <input
-                id="csv-upload"
-                type="file"
-                accept=".csv"
-                className="hidden"
-                onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                        handleUploadCSV(file);
-                    }
-                }}
-            />
-            <Button
-                onClick={() => document.getElementById("csv-upload")?.click()}
-            >
-                Upload CSV
-            </Button>
-
-
-
             <Breadcrumb className="ml-5 lg:ml-20">
                 <BreadcrumbList>
                     <Button
@@ -281,7 +258,7 @@ export default function ViewProjectBudget() {
                     {project?.title}
                 </h1>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
                     <div className="bg-white rounded-xl p-4 shadow text-center">
                         <p className="text-gray-500 text-sm">Set Budget</p>
                         <p className="text-[#28A745] text-xl font-bold">
@@ -317,8 +294,48 @@ export default function ViewProjectBudget() {
                     </div>
                 </div>
 
+                <div className="space-x-1 flex justify-end">
+                    <Button
+                        onClick={handleDelete}
+                        className="px-2 cursor-pointer bg-red-600 text-white hover:bg-red-600"
+                    >
+                        <Trash2 />
+                        <a className="text-xs">Delete</a>
+                    </Button>
+
+                    <Button
+                        onClick={handleExport}
+                        className="px-2 cursor-pointer bg-[#1877F2] text-white hover:bg-[#1877F2]"
+                    >
+                        <Download />
+                        <a className="text-xs">Export</a>
+                    </Button>
+
+                    <input
+                        id="csv-upload"
+                        type="file"
+                        accept=".csv"
+                        className="hidden"
+                        onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                                handleUploadCSV(file);
+                            }
+                        }}
+                    />
+
+                    <Button
+                        onClick={() => document.getElementById("csv-upload")?.click()}
+                        className="px-2 cursor-pointer text-[#1877F2] bg-white border border-[#1877F2] hover:bg-white"
+                    >
+                        <Upload />
+                        <a className="text-xs">Upload CSV</a>
+                    </Button>
+                </div>
+
+
                 {/* Table */}
-                <div className="mt-20 xl:mt-10">
+                <div className="mt-2 ">
                     <Table className="bg-white w-[100%]">
                         <TableCaption className="mt-2">Breakdown of project materials used in the project.</TableCaption>
                         <TableHeader>
