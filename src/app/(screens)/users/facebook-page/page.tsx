@@ -1,0 +1,377 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Info } from "lucide-react";
+import { MapPin } from "lucide-react";
+import { Mail } from "lucide-react";
+import { Phone } from "lucide-react";
+import { FbInboxCard } from "@/src/app/components/user/fb-inboxCard";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuTrigger,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import client from "@/src/api/client";
+import { fbPosts, pageDetails } from "@/src/app/lib/definitions";
+import Swal from "sweetalert2";
+
+export default function FacebookPage() {
+  const [body, setBody] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [posts, setPosts] = useState<fbPosts[]>([]);
+  const [pageInfo, setPageInfo] = useState<pageDetails | null>(null);
+  const [activeTab, setActiveTab] = useState<"feed" | "inbox" >("feed");
+
+  const fetchPageInfo = async () => {
+    try {
+      const { data: sessionData } = await client.auth.getSession();
+      const session = sessionData?.session;
+
+      if (!session) {
+        setError("You must be logged in!");
+        return;
+      }
+
+      const res = await fetch("/api/details", {
+        method: "GET",
+        headers: {
+          Authorization: session.access_token,
+        },
+      });
+
+      const data = await res.json();
+      if (data.error) {
+        setError(data.error);
+      } else {
+        setPageInfo(data);
+        console.log(data)
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch page info");
+    }
+  };
+
+  const fetchPosts = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data: sessionData } = await client.auth.getSession();
+      const session = sessionData?.session;
+
+      if (!session) {
+        setError("You must be logged in!");
+        setLoading(false);
+        return;
+      }
+
+      const res = await fetch("/api/fbget", {
+        method: "GET",
+        headers: {
+          Authorization: session.access_token,
+        },
+      });
+
+      const data = await res.json();
+      console.log(data);
+
+      if (data.error) {
+        setError(data.error);
+      } else {
+        setPosts(data.data || []);
+      }
+    } catch (err) {
+      setError("Failed to fetch posts");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+    fetchPageInfo();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const {
+      data: { session },
+    } = await client.auth.getSession();
+
+    if (!session) {
+      alert("You must be logged in!");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/fbpost", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session.access_token}`,
+        },
+        body: JSON.stringify({ body }),
+      });
+
+      const data = await res.json();
+      setResponse(data);
+      setBody("");
+
+      if (data.id) {
+        Swal.fire({
+          title: "Successfully Posted!",
+          text: "Your post was posted to the official Facebook Page",
+          icon: "success",
+          timer: 1250,
+          showConfirmButton: false,
+        });
+      } else {
+        Swal.fire({
+          title: "Error!",
+          text: error || "Failed to post.",
+          icon: "error",
+          timer: 1500,
+          showConfirmButton: true,
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire({
+        title: "Error!",
+        text: "Something went wrong. Try again.",
+        icon: "error",
+        timer: 1500,
+        showConfirmButton: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="w-[100%] min-h-screen max-h-full">
+      {/* Title */}
+      <p className="font-bold text-2xl mt-10 mb-5 mx-15 sm:text-3xl">Facebook Page</p>
+      <hr className="border-t border-black w-[90%] lg:w-[95%] mx-auto mt-1" />
+
+      <div className="flex flex-col lg:flex-row">
+        {/* Information */}
+        <div className="bg-white w-[90%] mt-6 pb-6 self-center h-fit rounded-[12px] shadow-sm border border-gray-200 lg:self-start lg:mt-3 lg:ml-3 lg:pt-5 lg:w-[25%] xl:w-1/5 transition-all">
+          {/* Page Name */}
+          <div className="text-center px-4">
+            <p className="text-xl font-semibold mt-4 text-gray-800">
+              {pageInfo?.name || "Loading..."}
+            </p>
+            <hr className="border-t border-gray-300 w-[80%] mx-auto mt-3" />
+          </div>
+
+          {/* Info Section */}
+          <div className="mx-auto w-[90%] mt-4 space-y-5 text-gray-700">
+            {/* Bio */}
+            <div className="flex items-start gap-3">
+              <Info className="w-5 h-5 text-gray-500 flex-shrink-0 mt-1" />
+              <p className="text-sm leading-snug">
+                {pageInfo?.bio || "No bio provided."}
+              </p>
+            </div>
+
+            {/* Location */}
+            <div className="flex items-start gap-3">
+              <MapPin className="w-5 h-5 text-gray-500 flex-shrink-0 mt-1" />
+              <p className="text-sm leading-snug">
+                {pageInfo?.location || "No location specified."}
+              </p>
+            </div>
+
+            {/* Email */}
+            <div className="flex items-start gap-3">
+              <Mail className="w-5 h-5 text-gray-500 flex-shrink-0 mt-1" />
+              <p className="text-sm leading-snug italic underline text-blue-700 break-words">
+                {pageInfo?.emails?.length
+                  ? pageInfo.emails.join(", ")
+                  : "No email address provided."}
+              </p>
+            </div>
+
+            {/* Phone */}
+            <div className="flex items-start gap-3">
+              <Phone className="w-5 h-5 text-gray-500 flex-shrink-0 mt-1" />
+              <p className="text-sm leading-snug italic underline text-blue-700 break-words">
+                {pageInfo?.phone || "No phone number assigned yet."}
+              </p>
+            </div>
+          </div>
+        </div>
+
+
+        {/* Tabs */}
+        <div className="flex flex-row w-[70%] gap-0.5 mt-10 self-center text-center lg:hidden">
+          <div className={`${activeTab === "feed"
+            ? "bg-[#052659] text-white"
+            : "bg-[#052659] opacity-60 text-gray-400"
+          } w-[100%] shadow-md shadow-gray-400 text-xs lg:text-lg p-2 rounded-tl-2xl rounded-bl-2xl cursor-pointer`}
+            onClick={() => setActiveTab("feed")}
+          >
+            <p>Feed</p>
+          </div>
+          <div className={`${activeTab === "inbox"
+            ? "bg-[#052659] text-white"
+            : "bg-[#052659] opacity-60 text-gray-400"
+          } w-[100%] shadow-md shadow-gray-400 text-xs lg:text-lg p-2 rounded-tr-2xl rounded-br-2xl cursor-pointer`}
+            onClick={() => setActiveTab("inbox")}
+          >
+            <p>Page Inbox</p>
+          </div>
+        </div>
+
+        {/* start of fb post card */}
+        <div className="w-[90%] mt-3 self-center lg:w-[50%] lg:self-start lg:my-2 lg:mx-3 xl:w-3/5">
+          <Dialog>
+            <DialogTrigger className="w-[100%]" asChild>
+              <button className="w-[100%] h-10 cursor-pointer rounded-[20px] bg-[#B2D3FF] font-bold text-black hover:bg-black hover:text-blue-400 ">
+                Create a new post
+              </button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogTitle>Create Facebook Post</DialogTitle>
+              <DialogHeader></DialogHeader>
+
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <input
+                  type="text"
+                  name="body"
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  placeholder="What's on your mind?"
+                  className="rounded-md border border-gray-300 p-2"
+                />
+                <Button type="submit" disabled={loading} className="cursor-pointer bg-[#052659] text-white hover:bg-[#052659] hover:text-white">
+                  {loading ? "Posting..." : "Post"}
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+          {posts.map((data) => (
+            <div
+              key={data.id}
+              className={`${activeTab === "feed" ? "block" : "hidden" } transition-all ease-in-out duration-300 bg-white rounded-2xl shadow-sm border border-gray-200 w-[100%] px-5 pb-2 mt-3 mb-2 lg:mt-2`}
+            >
+              <div className="w-full flex flex-row justify-between">
+                <div className="w-full mt-5 flex flex-row gap-2">
+                  <Avatar className="w-12 h-12">
+                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+
+                  <div className="flex flex-col self-center">
+                    <p className="font-semibold text-md xl:text-xl">
+                      Bula Municipal Youth Officials
+                    </p>
+
+                    <div className="flex flex-row gap-1">
+                      {(() => {
+                        const rawDate = data.created_time;
+                        const fixedDate = rawDate.replace(
+                          /([+-]\d{2})(\d{2})$/,
+                          "$1:$2"
+                        );
+                        const dateObj = new Date(fixedDate);
+
+                        const formattedDate = dateObj.toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        );
+
+                        const formattedTime = dateObj.toLocaleTimeString(
+                          "en-US",
+                          {
+                            hour: "numeric",
+                            minute: "2-digit",
+                            hour12: true,
+                          }
+                        );
+
+                        return `${formattedDate} @ ${formattedTime}`;
+                      })()}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="self-center">
+                  <NavigationMenu>
+                    <NavigationMenuList>
+                      <NavigationMenuItem>
+                        <NavigationMenuTrigger></NavigationMenuTrigger>
+                        <NavigationMenuContent className="bg-[#E6F1FF]">
+                          <ul className="grid w-[80px] gap-3">
+                            <li>
+                              <NavigationMenuLink asChild>
+                                <p className="hover:bg-blue-900 hover:text-white text-center">
+                                  Delete
+                                </p>
+                              </NavigationMenuLink>
+                              <NavigationMenuLink asChild>
+                                <p className="hover:bg-blue-900 hover:text-white text-center">
+                                  Copy Link
+                                </p>
+                              </NavigationMenuLink>
+                            </li>
+                          </ul>
+                        </NavigationMenuContent>
+                      </NavigationMenuItem>
+                    </NavigationMenuList>
+                  </NavigationMenu>
+                </div>
+              </div>
+
+              <div className="mt-6 mb-4">
+                <p>{data.message}</p>
+              </div>
+            </div>
+          ))}
+          {/* end of fb post card */}
+        </div>
+
+        <div className={`${activeTab == "inbox" ? "block" : "hidden" } transition-all ease-in-out duration-300 lg:block self-center mb-5 w-[95%] lg:w-[25%] xl:w-1/5 lg:mr-3 lg:self-start`}>
+          {/* <Button className="bg-[#052659] w-[100%] my-2">Create Announcement</Button> */}
+
+          <div className="bg-white shadow-sm border border-gray-200 rounded-[10px] mt-2 pt-5 h-fit pb-5">
+            <p className="text-center text-2xl font-semibold">Page Inbox</p>
+            <hr className="border-t border-black w-[90%] mx-auto mt-5" />
+            <div>
+              <FbInboxCard />
+              <FbInboxCard />
+              <FbInboxCard />
+              <FbInboxCard />
+              <FbInboxCard />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

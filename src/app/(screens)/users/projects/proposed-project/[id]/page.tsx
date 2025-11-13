@@ -1,0 +1,326 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Trash2, Save, Loader2, HelpCircle, Clock, XCircle, CheckCircle } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { SubmitDocCard } from "@/src/app/components/user/submit-docCard";
+import { project } from "@/src/app/lib/definitions";
+import { deleteProjectPhoto, getProposedProjectByID, updateTargetDate, uploadPhotoByID } from "@/src/app/actions/projects";
+import { ProjectTable } from "@/src/app/components/user/table";
+import { ProjectDetails } from "@/src/app/components/user/project-details";
+import Swal from "sweetalert2";
+
+export default function ViewProposedProject() {
+    const router = useRouter();
+    const params = useParams();
+    const slug = params?.id as string;
+    const projectId = slug.split("-").pop();
+
+    const [project, setProject] = useState<project | null>(null);
+    const [showDetails, setShowDetails] = useState(false);
+    const [tempPosterFile, setTempPosterFile] = useState<File | null>(null);
+    const [refresh, setRefresh] = useState(0)
+
+    const [statusColor, setStatusColor] = useState("bg-gray-500");
+    const [statusIcon, setStatusIcon] = useState(<HelpCircle />);
+    const [editing, setEditing] = useState(false);
+    const [targetDate, setTargetDate] = useState<string>("")
+
+    const statusUI = (status: string) => {
+        switch (status.toLowerCase().trim()) {
+            case "pending":
+                setStatusColor("bg-yellow-500");
+                setStatusIcon(<Clock />);
+                break;
+            case "under review":
+                setStatusColor("bg-blue-500");
+                setStatusIcon(<Loader2 className="animate-spin" />);
+                break;
+            case "declined":
+                setStatusColor("bg-red-500");
+                setStatusIcon(<XCircle />);
+                break;
+            case "for approval":
+                setStatusColor("bg-green-600");
+                setStatusIcon(<CheckCircle />);
+                break;
+        }
+
+    }
+
+    useEffect(() => {
+        const fetchData = async () => {
+
+            if (projectId) {
+                const data = await getProposedProjectByID(projectId);
+                setProject(data);
+                statusUI(data.status)
+            }
+        };
+
+        setTempPosterFile(null)
+        fetchData();
+
+    }, [projectId, refresh]);
+
+    return (
+        <div className="bg-[#E6F1FF] h-fit xl:h-screen mt-10 pb-10">
+            <Breadcrumb className="ml-5 xl:ml-20">
+                <BreadcrumbList>
+                    <Button
+                        className="group gap-0 relative bg-[#E6F1FF] cursor-pointer"
+                        variant="link"
+                        onClick={() => router.back()}
+                    >
+                        <ArrowLeft color="black" />
+                        <span className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-12 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
+                            Return
+                        </span>
+                    </Button>
+                    <div className="h-5 w-3">
+                        <Separator className="bg-gray-500" orientation="vertical" />
+                    </div>
+
+                    <BreadcrumbItem>
+                        <BreadcrumbLink
+                            onClick={() => router.push(`/users/projects/`)}
+                            className="cursor-pointer"
+                        >
+                            Current Projects
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbPage className="font-bold">
+                            View Proposed Project: {(decodeURIComponent(slug)).replace(/-\d+$/, "")}
+                        </BreadcrumbPage>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
+
+            <div className="mx-2 sm:mx-10 xl:mx-25">
+                <p className="font-bold text-xl mt-8 mb-2 mx-auto lg:mx-0 xl:text-3xl xl:mb-6">{project?.title}</p>
+
+                <div className="flex flex-col lg:flex-row gap-1 place-items-center min-h-fit max-h-screen">
+                    {/* LEFT SIDE POSTER */}
+                    <div className="bg-white mt-10 w-[90%] h-full sm:h-150 lg:w-[35%] lg:h-155 justify-items-center place-content-center">
+                        {project?.imageURL ? (
+                            <div className="relative w-[80%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 flex items-center justify-center">
+                                <img
+                                    src={`${project.imageURL}?t=${new Date().getTime()}`}
+                                    alt="Project Poster"
+                                    className="w-full h-full object-cover rounded-md"
+                                    onClick={() => console.log(project.imageURL)}
+                                />
+                                <div className="absolute top-3 right-3 flex gap-2">
+                                    <Trash2
+                                        className="cursor-pointer rounded-full bg-white/90 p-2 shadow-md hover:bg-red-50 hover:text-red-500 active:scale-95 transition"
+                                        strokeWidth={2.3}
+                                        size={32}
+                                        onClick={async () => {
+                                            const result = await Swal.fire({
+                                                title: "Delete Project Poster?",
+                                                text: "This action cannot be undone.",
+                                                icon: "warning",
+                                                showCancelButton: true,
+                                                confirmButtonColor: "#d33",
+                                                cancelButtonColor: "#3085d6",
+                                                confirmButtonText: "Yes, delete it!",
+                                                cancelButtonText: "Cancel",
+                                            });
+
+                                            if (result.isConfirmed) {
+                                                await deleteProjectPhoto(project.id);
+                                                Swal.fire("Deleted!", "Your project poster has been removed.", "success");
+                                                setRefresh((prev) => prev + 1)
+                                            }
+                                        }
+                                        }
+                                    />
+                                </div>
+                            </div>
+
+                        ) : tempPosterFile ? (
+                            <div className="flex flex-col items-center justify-center w-[70%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 overflow-hidden">
+                                <img
+                                    src={URL.createObjectURL(tempPosterFile)}
+                                    alt="Temp Poster Preview"
+                                    className="w-full h-full object-cover rounded-md"
+                                />
+                            </div>
+                        ) : (
+                            <label
+                                htmlFor="poster-upload"
+                                className="flex flex-col items-center justify-center mt-2 w-[90%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 border-2 border-dashed border-gray-400 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+                            >
+                                <svg
+                                    className="w-10 h-10 text-gray-400 mb-2"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M7 16V4a1 1 0 011-1h8a1 1 0 011 1v12m-4-4l4 4m0 0l-4 4m4-4H3"
+                                    />
+                                </svg>
+                                <p className="text-gray-500">Drop your poster here</p>
+                                <p className="text-sm text-gray-400">or click to upload</p>
+                                <input
+                                    id="poster-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            setTempPosterFile(file);
+                                        }
+                                    }}
+                                />
+                            </label>
+                        )}
+
+                        <div className="flex flex-row w-[80%] justify-between my-3">
+                            <p className="font-medium text-xl text-[#17A1FA]">Project Poster</p>
+                            <div className="flex flex-row gap-2">
+                                {tempPosterFile && !project?.imageURL && (
+                                    <div className="flex flex-row gap-3">
+                                        {/* Save Poster Button */}
+                                        <button
+                                            onClick={async () => {
+                                                if (project?.id !== undefined && tempPosterFile) {
+                                                    await uploadPhotoByID(project.id, tempPosterFile);
+                                                    setRefresh((prev) => prev + 1);
+                                                }
+                                            }}
+                                            className="group flex items-center gap-2 bg-blue-500 text-white px-3 py-1.5 rounded-md hover:bg-blue-600 active:scale-95 transition cursor-pointer"
+                                        >
+                                            <Save size={18} />
+                                            <span
+                                                className="opacity-0 max-w-0 h-0 p-0 overflow-hidden group-hover:opacity-100 group-hover:max-w-[120px] transition-all duration-300 ease-in-out group-hover:h-5 "
+                                            >Save Poster</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setTempPosterFile(null)}
+                                            className="flex items-center gap-2 bg-gray-200 text-gray-700 px-3 py-1.5 rounded-md hover:bg-gray-300 active:scale-95 transition cursor-pointer"
+                                        >
+                                            <Trash2 size={18} />
+                                            <span>Cancel</span>
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* RIGHT SIDE CONTENT */}
+                    <div className="flex flex-col justify-between bg-white mb-10 w-[90%] xl:w-[80%] lg:h-155 lg:mt-10 lg:mb-0">
+                        <div>
+                            <div className="place-self-center md:mx-10 mt-5 flex flex-col md:flex-row justify-between items-center px-4 py-2 rounded-lg border border-gray-200 shadow-sm bg-gray-50 w-[90%]">
+                                {/* Left side: Status */}
+                                <div className={`flex items-center gap-2 font-medium ${statusColor} text-white px-2 py-1 rounded-md`}>
+                                    <div className="self-center">{statusIcon}</div>
+                                    <p className="capitalize">{project?.status}</p>
+                                </div>
+
+                                {/* Right side: Target Date */}
+                                {!editing ? (
+                                    <div className="flex flex-col items-end text-gray-700">
+                                        <span className="text-xs uppercase tracking-wide text-gray-500">
+                                            Target Implementation Date
+                                        </span>
+                                        <div className="flex items-center gap-3">
+                                            <p className="text-sm font-medium">
+                                                {targetDate ? new Date(targetDate).toLocaleDateString("en-GB", {
+                                                    day: "2-digit",
+                                                    month: "long",
+                                                    year: "numeric"
+                                                }) : "No target date set"}
+                                            </p>
+                                            <button
+                                                onClick={() => setEditing(true)}
+                                                className="cursor-pointer flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                                            >
+                                                Edit
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center md:items-end mt-2 md:mt-0">
+                                        <span className="text-xs uppercase tracking-wide text-gray-500 mb-1">
+                                            Target Implementation Date
+                                        </span>
+                                        <div className="md:flex items-center gap-2">
+                                            <input
+                                                type="date"
+                                                value={targetDate}
+                                                onChange={async (e) => {
+                                                    setTargetDate(e.target.value)
+                                                    const dateString = new Date(targetDate).toISOString();
+                                                    updateTargetDate(project?.id ?? 0, dateString)
+                                                }}
+                                                className="border border-gray-300 rounded-md px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+                                            />
+                                            <div className="flex justify-center mt-2 md:mt-0 gap-2">
+                                                <button
+                                                    onClick={() => setEditing(false)}
+                                                    className="cursor-pointer flex items-center gap-1 text-xs bg-green-500 text-white px-3 py-1.5 rounded-md shadow-sm hover:bg-green-600 transition-colors"
+                                                >
+                                                    Save
+                                                </button>
+                                                <button
+                                                    onClick={() => setEditing(false)}
+                                                    className="cursor-pointer flex items-center gap-1 text-xs bg-gray-200 text-gray-700 px-3 py-1.5 rounded-md shadow-sm hover:bg-gray-300 transition-colors"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+
+
+                                        </div>
+                                        <span className="text-xs text-gray-400 text-center">
+                                            This is the date the project is going to be implemented
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+
+
+                            <hr className="border-t mt-3 border-gray-200 w-full" />
+
+                            <div className="min-h-fit max-h-105 xl:mb-0 w-full">
+                                {showDetails ? <ProjectDetails details={project?.description || ""} /> : <ProjectTable id={project?.id} />}
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="flex flex-col items-center gap-2 justify-end mb-5 lg:flex-row lg:mx-20">
+                                <Button
+                                    onClick={() => setShowDetails((prev) => !prev)}
+                                    className="bg-[#E6F1FF] text-black cursor-pointer w-fit py-2.5 px-4 hover:bg-black hover:text-[#E6F1FF]"
+                                >
+                                    {showDetails ? "View Project Status" : "View Project Details"}
+                                </Button>
+                                <SubmitDocCard projectID={project?.id} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div >
+        </div >
+    );
+}
+
