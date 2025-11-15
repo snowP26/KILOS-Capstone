@@ -132,6 +132,7 @@ const ApprovedProjects = () => {
               <div className="relative w-[70%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 flex items-center justify-center">
                 <Image
                   src={`${project.imageURL}?t=${new Date().getTime()}`}
+                  fill
                   alt="Project Poster"
                   className="w-full h-full object-cover rounded-md"
                   onClick={() => console.log(project.imageURL)}
