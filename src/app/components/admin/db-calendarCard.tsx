@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, FormEvent } from "react";
-import { ContinuousCalendar } from "./calendar"
+import { ContinuousCalendar } from "./calendar";
 import { Input } from "@/components/ui/input";
 import {
   Dialog,
@@ -27,17 +27,21 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import client from "@/src/api/client";
 import { getUserID } from "../../actions/convert";
 import Swal from "sweetalert2";
-import { getMeeting, updateAttendees } from "../../actions/meeting";
+import { getMeeting, getParticipantsByLoc, updateAttendees } from "../../actions/meeting";
 import { Meetings } from "../../lib/definitions";
+import { Participants } from "../user/participants";
 
-interface CustomEvent {
-  id: string;
-  title: string;
-  start: Date;
+
+type Participants = {
+  id: number;
+  firstname: string;
+  lastname: string;
+  role: string
+  position: string;
 }
 
 export const DbCalendarCard = () => {
-  // --- States ---
+
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [currentEvents, setCurrentEvents] = useState<Meetings[]>([]);
   const [selectedDate, setSelectedDate] = useState<{
@@ -47,7 +51,8 @@ export const DbCalendarCard = () => {
   } | null>(null);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [refresh, setRefresh] = useState(0)
+  const [refresh, setRefresh] = useState(0);
+  const [participants, setParticipants] = useState<Participants[] | null>([])
   const [isMeetingDialogOpen, setIsMeetingDialogOpen] = useState(false);
   const [isDatePopoverOpen, setIsDatePopoverOpen] = useState(false);
   const [newEventTitle, setNewEventTitle] = useState<string>("");
@@ -55,46 +60,40 @@ export const DbCalendarCard = () => {
   const [selectedModality, setSelectedModality] = useState<"Online" | "Onsite">(
     "Online"
   );
+  const [createMeeting, setCreateMeeting] = useState(0)
+  const [selected, setSelected] = useState<number[]>([])
 
   // --- Retrieve saved events ---
   const fetchMeetingData = async () => {
     const data = await getMeeting();
-    if (data) setCurrentEvents(data);
+    if (data) {
+      const sorted = [...data].sort((a, b) => {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      });
+      setCurrentEvents(sorted);
+    }
+
+
   };
 
   useEffect(() => {
-    fetchMeetingData();
-  }, []);
+
+  }, [refresh]);
 
   // --- Persist events ---
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("events", JSON.stringify(currentEvents));
     }
-
-    console.log("events updated:", currentEvents);
-
   }, [currentEvents]);
 
   // --- Handle selecting a day ---
   const handleDayClick = (day: number, month: number, year: number) => {
     const newDate = new Date(year, month, day);
     setDate(newDate);
-    console.log({ day, month, year })
+
     setSelectedDate({ day, month, year });
     setIsDialogOpen(true);
-  };
-
-
-  // --- Helper to clean and validate emails ---
-  const cleanEmails = (emails: string) => {
-    if (!emails) return [];
-    const emailArray = emails
-      .split(",")
-      .map((email) => email.trim())
-      .filter((email) => email.length > 0);
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailArray.filter((email) => emailRegex.test(email));
   };
 
   // --- Create meeting handler ---
@@ -102,7 +101,7 @@ export const DbCalendarCard = () => {
     e.preventDefault();
 
     if (!date) {
-      console.error("No date selected.");
+
       return;
     }
 
@@ -110,9 +109,7 @@ export const DbCalendarCard = () => {
     const header = formData.get("header") as string;
     const details = formData.get("details") as string;
     const time = formData.get("time") as string;
-    const rawEmails = formData.get("emails") as string;
 
-    const validEmails = cleanEmails(rawEmails);
 
     if (!date) {
       Swal.fire({
@@ -149,7 +146,7 @@ export const DbCalendarCard = () => {
       return;
     }
 
-    await updateAttendees(validEmails, data.id);
+    await updateAttendees(selected, data.id);
     await fetchMeetingData();
     setDate(undefined);
     setSelectedModality("Online");
@@ -170,9 +167,22 @@ export const DbCalendarCard = () => {
   });
 
   useEffect(() => {
+    const loadData = async () => {
+      await fetchMeetingData();
+    };
+    loadData();
+  }, [refresh]);
 
-  }, [refresh])
-  // --- JSX return ---
+  useEffect(() => {
+    const getParticipants = async () => {
+      setSelected([])
+      const data = await getParticipantsByLoc()
+      setParticipants(data)
+    }
+
+    getParticipants()
+  }, [createMeeting])
+
   return (
     <>
       <div>
@@ -410,7 +420,26 @@ export const DbCalendarCard = () => {
             <hr className="border-t border-black/30 w-[90%] mx-auto mt-3" />
           </DialogHeader>
 
-          <form onSubmit={handleCreateMeeting} className="mt-6 space-y-6">
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+
+              Swal.fire({
+                title: "Please wait...",
+                text: "Processing your request.",
+                allowOutsideClick: false,
+                didOpen: () => {
+                  Swal.showLoading();
+                },
+              });
+
+              await handleCreateMeeting(e);
+              setSelected([])
+              Swal.close();
+
+            }
+            }
+            className="mt-6 space-y-6">
             {/* Header */}
             <div className="flex flex-col gap-2">
               <Label className="text-sm font-medium text-gray-700">
@@ -524,15 +553,32 @@ export const DbCalendarCard = () => {
             {/* Participants */}
             <div className="flex flex-col gap-2">
               <Label className="text-sm font-medium text-gray-700">
-                Participants (comma-separated emails)
+                Participants ({selected?.length} participants are selected)
               </Label>
-              <Textarea
-                name="emails"
-                value={emails}
-                onChange={(e) => setEmails(e.target.value)}
-                placeholder="example@email.com, another@email.com"
-                className="border w-full max-w-112 border-gray-300 rounded-xl h-20 bg-white placeholder:italic focus:ring-2 focus:ring-[#052659]"
-              />
+              <div className="flex flex-row gap-2 overflow-x-auto p-2">
+                {participants?.map((data) => (
+                  <Participants
+                    key={data.id}
+                    onClick={() => {
+                      setSelected((prev) => {
+                        if (prev.includes(data.id)) {
+                          return prev.filter((id) => id !== data.id);
+                        }
+                        return [...prev, data.id]
+                      })
+
+                    }}
+                    className={`${selected.includes(data.id) ? "bg-[#D0E4FF] border-[#052659]" : " bg-[#E6F1FF] border-gray-300 "}`}
+                    firstname={data.firstname}
+                    lastname={data.lastname}
+                    role={data.role}
+                    position={data.position}
+                  />
+                ))
+                }
+
+              </div>
+
             </div>
 
             {/* Submit Button */}
