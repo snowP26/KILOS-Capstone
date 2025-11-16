@@ -13,7 +13,7 @@ import {
 
 import { DateTodayCard } from "./date-todayCard";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronDownIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
@@ -27,13 +27,16 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import client from "@/src/api/client";
 import { getUserID } from "../../actions/convert";
 import Swal from "sweetalert2";
-import { getMeeting, updateAttendees } from "../../actions/meeting";
+import { getMeeting, getParticipantsByLoc, updateAttendees } from "../../actions/meeting";
 import { Meetings } from "../../lib/definitions";
+import { Participants } from "./participants";
 
-interface CustomEvent {
-  id: string;
-  title: string;
-  start: Date;
+type Participants = {
+  id: number;
+  firstname: string;
+  lastname: string;
+  role: string
+  position: string;
 }
 
 export const DbCalendarCard = () => {
@@ -48,6 +51,7 @@ export const DbCalendarCard = () => {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [refresh, setRefresh] = useState(0)
+  const [participants, setParticipants] = useState<Participants[] | null>([])
   const [isMeetingDialogOpen, setIsMeetingDialogOpen] = useState(false);
   const [isDatePopoverOpen, setIsDatePopoverOpen] = useState(false);
   const [newEventTitle, setNewEventTitle] = useState<string>("");
@@ -55,16 +59,23 @@ export const DbCalendarCard = () => {
   const [selectedModality, setSelectedModality] = useState<"Online" | "Onsite">(
     "Online"
   );
+  const [createMeeting, setCreateMeeting] = useState(0)
+  const [selected, setSelected] = useState<number[]>([])
 
   // --- Retrieve saved events ---
   const fetchMeetingData = async () => {
     const data = await getMeeting();
-    if (data) setCurrentEvents(data);
+    if (data) {
+      const sorted = [...data].sort((a, b) => {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      });
+      setCurrentEvents(sorted);
+    }
   };
 
   useEffect(() => {
-    fetchMeetingData();
-  }, []);
+
+  }, [refresh]);
 
   // --- Persist events ---
   useEffect(() => {
@@ -80,7 +91,7 @@ export const DbCalendarCard = () => {
   const handleDayClick = (day: number, month: number, year: number) => {
     const newDate = new Date(year, month, day);
     setDate(newDate);
-    console.log({ day, month, year })
+
     setSelectedDate({ day, month, year });
     setIsDialogOpen(true);
   };
@@ -102,7 +113,7 @@ export const DbCalendarCard = () => {
     e.preventDefault();
 
     if (!date) {
-      console.error("No date selected.");
+
       return;
     }
 
@@ -149,7 +160,7 @@ export const DbCalendarCard = () => {
       return;
     }
 
-    await updateAttendees(validEmails, data.id);
+    await updateAttendees(selected, data.id);
     await fetchMeetingData();
     setDate(undefined);
     setSelectedModality("Online");
@@ -170,9 +181,22 @@ export const DbCalendarCard = () => {
   });
 
   useEffect(() => {
+    const loadData = async () => {
+      await fetchMeetingData();
+    };
+    loadData();
+  }, [refresh]);
 
-  }, [refresh])
-  // --- JSX return ---
+  useEffect(() => {
+    const getParticipants = async () => {
+      setSelected([])
+      const data = await getParticipantsByLoc()
+      setParticipants(data)
+    }
+
+    getParticipants()
+  }, [createMeeting])
+
   return (
     <>
       <div>
@@ -404,13 +428,32 @@ export const DbCalendarCard = () => {
       <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
         <DialogContent className="bg-[#E6F1FF] w-full max-w-2xl rounded-2xl p-6 md:p-8 shadow-lg">
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl md:text-3xl font-semibold text-[#052659]">
+            <DialogTitle className="text-center text-xl md:text-3xl font-semibold text-[#052659]">
               Set Up a Meeting
             </DialogTitle>
             <hr className="border-t border-black/30 w-[90%] mx-auto mt-3" />
           </DialogHeader>
 
-          <form onSubmit={handleCreateMeeting} className="mt-6 space-y-6">
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+
+              Swal.fire({
+                title: "Please wait...",
+                text: "Processing your request.",
+                allowOutsideClick: false,
+                didOpen: () => {
+                  Swal.showLoading();
+                },
+              });
+
+              await handleCreateMeeting(e);
+              setSelected([])
+              Swal.close();
+
+            }
+            }
+            className="md:mt-6 space-y-3 md:space-y-6">
             {/* Header */}
             <div className="flex flex-col gap-2">
               <Label className="text-sm font-medium text-gray-700">
@@ -522,18 +565,35 @@ export const DbCalendarCard = () => {
             </div>
 
             {/* Participants */}
-            <div className="flex flex-col gap-2">
-              <Label className="text-sm font-medium text-gray-700">
-                Participants (comma-separated emails)
-              </Label>
-              <Textarea
-                name="emails"
-                value={emails}
-                onChange={(e) => setEmails(e.target.value)}
-                placeholder="example@email.com, another@email.com"
-                className="border w-full max-w-112 border-gray-300 rounded-xl h-20 bg-white placeholder:italic focus:ring-2 focus:ring-[#052659]"
-              />
-            </div>
+            <Label className="text-sm font-medium text-gray-700 mb-1">
+              Participants ({selected?.length} participants are selected)
+            </Label>
+            <ScrollArea className="max-w-65 md:max-w-110 pb-2">
+              <div className="flex flex-row gap-2 p-2">
+                {participants?.map((data) => (
+                  <Participants
+                    key={data.id}
+                    onClick={() => {
+                      setSelected((prev) => {
+                        if (prev.includes(data.id)) {
+                          return prev.filter((id) => id !== data.id);
+                        }
+                        return [...prev, data.id]
+                      })
+
+                    }}
+                    className={`${selected.includes(data.id) ? "bg-[#D0E4FF] border-[#052659] cursor-pointer" : " bg-[#E6F1FF] border-gray-300 cursor-pointer"}`}
+                    firstname={data.firstname}
+                    lastname={data.lastname}
+                    role={data.role}
+                    position={data.position}
+                  />
+                ))
+                }
+
+              </div>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
 
             {/* Submit Button */}
             <Button

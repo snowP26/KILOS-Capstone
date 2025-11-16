@@ -34,6 +34,7 @@ import {
 } from "@/src/app/actions/ordinances";
 import Swal from "sweetalert2";
 import { getDisplayName } from "@/src/app/actions/convert";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export default function ViewOrdinance() {
   const router = useRouter();
@@ -83,7 +84,7 @@ export default function ViewOrdinance() {
     };
 
     fetchFiles();
-  }, [ordinance, refresh]); 
+  }, [ordinance, refresh]);
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -149,7 +150,7 @@ export default function ViewOrdinance() {
   return (
     <div className="bg-[#E6F1FF] min-h-screen max-h-fit mt-10 pb-10">
       {/* Breadcrumb */}
-      <Breadcrumb className="ml-20">
+      <Breadcrumb className="ml-5 lg:ml-20">
         <BreadcrumbList>
           <Button
             className="group gap-0 relative bg-[#E6F1FF] cursor-pointer"
@@ -187,16 +188,16 @@ export default function ViewOrdinance() {
       {/* Ordinance Title + Description */}
       {ordinance.map((data) => (
         <div key={data.id}>
-          <p className="font-bold text-3xl mt-8 mb-2 ml-30">
+          <p className="font-bold text-3xl mt-8 mb-2 mx-5 lg:ml-30">
             Ordinance {data.title}
           </p>
           <hr className="border-t border-black w-[90%] mx-auto mt-3 mb-2" />
-          <p className="text-md mb-2 ml-30">{data.description}</p>
+          <p className="text-md mb-2 mx-10 lg:ml-30">{data.description}</p>
         </div>
       ))}
 
       {/* Status Table */}
-      <div className="mx-20 mt-10">
+      <div className="mx-5 lg:mx-20 mt-10">
         <Table className="bg-white w-[100%] rounded-xl shadow">
           <TableCaption className="mt-2">
             Status of Ordinance for each Reading.
@@ -258,9 +259,9 @@ export default function ViewOrdinance() {
       </div>
 
       {/* File Section */}
-      <div className="mx-20 mt-10">
+      <div className="mx-7 lg:mx-20 mt-10">
         <p className="font-semibold text-xl pt-5">Ordinance Document</p>
-        <p className="text-gray-500 italic text-md">
+        <p className="text-gray-500 italic text-md mx-3 lg:mx-0">
           Please submit the PDF of the ordinance or any necessary documents.
         </p>
 
@@ -348,89 +349,92 @@ export default function ViewOrdinance() {
                 </div>
               </div>
 
+              <ScrollArea className="w-full px-2 pb-5">
+                <div className="grid grid-flow-col grid-rows-2 gap-4 pb-1 px-1">
 
-              <div className="flex flex-row flex-wrap gap-4">
-
-                <div className="flex items-center justify-between h-[78px] min-w-40 w-full max-w-lg rounded-2xl shadow-md border transition-all duration-200 bg-white">
-                  <form
-                    onSubmit={handleUpload}
-                    className="flex flex-row items-center justify-center gap-3 w-full h-full rounded-2xl"
-                  >
-                    <label className="flex items-center justify-center mx-3 my-2 flex-1 h-[80%] cursor-pointer rounded-2xl border-2 border-dashed border-gray-300 px-4 py-3 text-gray-500 hover:border-blue-400 hover:bg-blue-50 transition-all duration-200">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-8 w-8 text-gray-400 mb-2"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={1.5}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 16v-8m0 0l-3 3m3-3l3 3m6 2v5a2 2 0 01-2 2H7a2 2 0 01-2-2v-5m14-2l-4-4m0 0L12 4l-4 4"
-                        />
-                      </svg>
-                      <div className="ml-3 flex flex-col">
-                        <span className="text-sm font-medium">Upload File</span>
-                        <span className="text-xs text-gray-400">.PDF only</span>
-                      </div>
-
-                      <Input
-                        type="file"
-                        className="hidden"
-                        accept="application/pdf"
-                        multiple
-                        onChange={(e) => {
-                          if (e.target.files) {
-                            const filesArray = Array.from(e.target.files);
-                            console.log(filesArray);
-                            setSelectedFile(filesArray);
-                          }
-                        }}
-                      />
-                    </label>
-                  </form>
-                </div>
-                {ordinanceFile.length > 0 && (
-                  [...ordinanceFile]
-                    .sort((a, b) => (b.uploaded ? 1 : 0) - (a.uploaded ? 1 : 0))
-                    .map((data, i) => {
-                      const isSelected = selected.includes(data.id)
-                      return (
-                        <div
-                          key={i}
-                          className={`flex items-center justify-between h-[78px] p-4 min-w-40 w-full rounded-2xl shadow-md max-w-lg border transition-all duration-200  ${data.uploaded ? "border-green-500 bg-green-200" : isSelected ? "border-blue-300 bg-blue-200" : "border-gray-200 hover:bg-gray-50 bg-white "}`}
-                          onClick={() => {
-                            setSelected((prev) =>
-                              prev.includes(data.id) ? prev.filter((id) => id !== data.id) : [...prev, data.id]
-                            )
-                          }}
+                  <div className="flex items-center justify-between h-[78px] w-70 lg:w-full lg:max-w-lg rounded-2xl shadow-md border transition-all duration-200 bg-white">
+                    <form
+                      onSubmit={handleUpload}
+                      className="flex flex-row items-center justify-center gap-3 w-full h-full rounded-2xl"
+                    >
+                      <label className="flex items-center justify-center mx-3 my-2 flex-1 h-[80%] cursor-pointer rounded-2xl border-2 border-dashed border-gray-300 px-4 py-3 text-gray-500 hover:border-blue-400 hover:bg-blue-50 transition-all duration-200">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-8 w-8 text-gray-400 mb-2"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={1.5}
                         >
-                          <div className="flex flex-col">
-                            <span className="font-medium text-gray-800 max-w-90 truncate">
-                              {getDisplayName(data.name)}
-                            </span>
-                            <span className="text-sm text-gray-500">{data.type.toUpperCase()}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="cursor-pointer flex items-center gap-1"
-                              onClick={() => window.open(data.url, "_blank")}
-                            >
-                              <Eye className="h-4 w-4" />
-                              View
-                            </Button>
-
-                          </div>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M12 16v-8m0 0l-3 3m3-3l3 3m6 2v5a2 2 0 01-2 2H7a2 2 0 01-2-2v-5m14-2l-4-4m0 0L12 4l-4 4"
+                          />
+                        </svg>
+                        <div className="ml-3 flex flex-col">
+                          <span className="text-sm font-medium">Upload File</span>
+                          <span className="text-xs text-gray-400">.PDF only</span>
                         </div>
-                      )
-                    })
-                )
-                }
-              </div>
+
+                        <Input
+                          type="file"
+                          className="hidden"
+                          accept="application/pdf"
+                          multiple
+                          onChange={(e) => {
+                            if (e.target.files) {
+                              const filesArray = Array.from(e.target.files);
+                              console.log(filesArray);
+                              setSelectedFile(filesArray);
+                            }
+                          }}
+                        />
+                      </label>
+                    </form>
+                  </div>
+                  {ordinanceFile.length > 0 && (
+                    [...ordinanceFile]
+                      .sort((a, b) => (b.uploaded ? 1 : 0) - (a.uploaded ? 1 : 0))
+                      .map((data, i) => {
+                        const isSelected = selected.includes(data.id)
+                        return (
+                          <div
+                            key={i}
+                            className={`flex items-center justify-between h-[78px] p-4 w-70 lg:w-lg rounded-2xl shadow-md border transition-all duration-200  ${data.uploaded ? "border-green-500 bg-green-200" : isSelected ? "border-blue-300 bg-blue-200" : "border-gray-200 hover:bg-gray-50 bg-white "}`}
+                            onClick={() => {
+                              setSelected((prev) =>
+                                prev.includes(data.id) ? prev.filter((id) => id !== data.id) : [...prev, data.id]
+                              )
+                            }}
+                          >
+                            <div className="flex flex-col">
+                              <span className="font-medium text-gray-800 max-w-40 lg:max-w-90 truncate">
+                                {getDisplayName(data.name)}
+                              </span>
+                              <span className="text-sm text-gray-500">{data.type.toUpperCase()}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="cursor-pointer flex items-center gap-1"
+                                onClick={() => window.open(data.url, "_blank")}
+                              >
+                                <Eye className="h-4 w-4" />
+                                View
+                              </Button>
+
+                            </div>
+                          </div>
+                        )
+                      })
+                  )
+                  }
+                </div>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
+
             </>
           )}
         </div>

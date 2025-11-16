@@ -148,7 +148,7 @@ export default function ViewProjectBudget() {
                     <BreadcrumbList>
                         <BreadcrumbItem>
                             <Button
-                                className="group gap-1 bg-transparent px-0 hover:bg-transparent"
+                                className="group gap-1 bg-transparent px-0 hover:bg-transparent cursor-pointer"
                                 variant="ghost"
                                 onClick={() => router.back()}
                             >
@@ -189,8 +189,8 @@ export default function ViewProjectBudget() {
                         {project.title}
                     </h1>
 
-                    <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-lg shadow-sm">
-                        <div className=" bg-white rounded-lg shadow-sm p-6 flex flex-col sm:flex-row justify-between items-center gap-8 sm:gap-12">
+                    <div className="flex justify-center lg:items-center gap-3 bg-white px-4 py-2 rounded-lg shadow-sm">
+                        <div className="bg-white rounded-lg w-full shadow-sm p-6 flex flex-col sm:flex-row lg:justify-between lg:items-center gap-8 sm:gap-12">
                             <div className="flex flex-col items-center sm:items-start">
                                 <p className="text-gray-600 text-sm font-medium">Total Spent:</p>
                                 <p className="text-red-600 font-bold text-lg">
@@ -289,7 +289,7 @@ export default function ViewProjectBudget() {
                     <Table>
                         <TableHeader>
                             <TableRow className="bg-gray-100">
-                                <TableHead className="text-center">Status</TableHead>
+                                <TableHead className="text-center min-w-45">Status</TableHead>
                                 <TableHead className="text-center">Item Name</TableHead>
                                 <TableHead className="text-center">Price</TableHead>
                                 <TableHead className="text-center">Amount</TableHead>
