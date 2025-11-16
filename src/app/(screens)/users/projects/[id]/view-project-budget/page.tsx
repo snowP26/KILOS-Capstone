@@ -75,7 +75,7 @@ export default function ViewProjectBudget() {
         if (!file) {
             return;
         }
-        
+
         Papa.parse(file, {
             header: true,
             skipEmptyLines: true,
@@ -145,12 +145,12 @@ export default function ViewProjectBudget() {
     }
 
     const handleDelete = async () => {
-        if (selectedRows.length === 0) return; 
+        if (selectedRows.length === 0) return;
 
         // kulang pa ng Swal
         await deleteBudget(selectedRows);
-        setBudgetRefresh((prev) => prev + 1); 
-        setSelectedRows([]); 
+        setBudgetRefresh((prev) => prev + 1);
+        setSelectedRows([]);
     }
 
     if (loading) {
@@ -328,6 +328,7 @@ export default function ViewProjectBudget() {
                                 <TableHead className="text-center">Item Name</TableHead>
                                 <TableHead className="text-center">Price per Unit</TableHead>
                                 <TableHead className="text-center">Amt.</TableHead>
+                                <TableHead className="text-center">Comment</TableHead>
                                 <TableHead className="text-center">Receipt</TableHead>
                                 <TableHead className="text-center">Photo</TableHead>
                             </TableRow>
@@ -353,7 +354,7 @@ export default function ViewProjectBudget() {
                                                     : data.status === "Resubmit" ? "bg-orange-100 text-orange-800"
                                                         : data.status === "For Approval" ? "bg-blue-100 text-blue-800"
                                                             : "bg-gray-100 text-gray-800"}
-                                                    `}
+                                                        `}
                                         >
                                             {data.status}
                                         </p>
@@ -367,6 +368,34 @@ export default function ViewProjectBudget() {
                                         }).format(data.price)}
                                     </TableCell>
                                     <TableCell className="text-center">{data.amt}</TableCell>
+                                    <TableCell className="text-center">
+                                        {data.comment ? (
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <button className="px-3 py-1 text-blue-600 underline hover:text-blue-800 cursor-pointer">
+                                                        View
+                                                    </button>
+                                                </DialogTrigger>
+
+                                                <DialogContent className="sm:max-w-[400px]">
+                                                    <DialogHeader>
+                                                        <DialogTitle>Comment</DialogTitle>
+                                                        <DialogDescription>
+                                                            Remarks for <strong>{data.item_name}</strong>
+                                                        </DialogDescription>
+                                                    </DialogHeader>
+
+                                                    <div className="mt-4 p-3 bg-gray-100 rounded-md">
+                                                        <p className="text-gray-800 whitespace-pre-wrap">
+                                                            {data.comment}
+                                                        </p>
+                                                    </div>
+                                                </DialogContent>
+                                            </Dialog>
+                                        ) : (
+                                            <p className="text-gray-500 italic">No comment</p>
+                                        )}
+                                    </TableCell>
                                     <TableCell className="flex justify-center text-center">
                                         {data.receiptURL ? (
                                             <div className="flex flex-row items-center gap-2">
@@ -485,12 +514,13 @@ export default function ViewProjectBudget() {
                                         )
                                         )}
                                     </TableCell>
+
                                 </TableRow>
                             ))}
 
                             {normalizedRole == 'treasurer' && (
                                 <TableRow>
-                                    <TableCell colSpan={7} className="px-2 py-1">
+                                    <TableCell colSpan={8} className="px-2 py-1">
 
                                         <Dialog>
                                             <DialogTrigger asChild>
@@ -596,7 +626,9 @@ export default function ViewProjectBudget() {
                                         </Dialog>
                                     </TableCell>
                                 </TableRow>
+
                             )}
+
                         </TableBody>
                     </Table>
 
