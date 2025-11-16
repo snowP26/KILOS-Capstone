@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, FormEvent } from "react";
-import { ContinuousCalendar } from "./calendar"
+import { ContinuousCalendar } from "./calendar";
 import { Input } from "@/components/ui/input";
 import {
   Dialog,
@@ -29,7 +29,8 @@ import { getUserID } from "../../actions/convert";
 import Swal from "sweetalert2";
 import { getMeeting, getParticipantsByLoc, updateAttendees } from "../../actions/meeting";
 import { Meetings } from "../../lib/definitions";
-import { Participants } from "./participants";
+import { Participants } from "../user/participants";
+
 
 type Participants = {
   id: number;
@@ -40,7 +41,7 @@ type Participants = {
 }
 
 export const DbCalendarCard = () => {
-  // --- States ---
+
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [currentEvents, setCurrentEvents] = useState<Meetings[]>([]);
   const [selectedDate, setSelectedDate] = useState<{
@@ -50,7 +51,7 @@ export const DbCalendarCard = () => {
   } | null>(null);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [refresh, setRefresh] = useState(0)
+  const [refresh, setRefresh] = useState(0);
   const [participants, setParticipants] = useState<Participants[] | null>([])
   const [isMeetingDialogOpen, setIsMeetingDialogOpen] = useState(false);
   const [isDatePopoverOpen, setIsDatePopoverOpen] = useState(false);
@@ -71,6 +72,8 @@ export const DbCalendarCard = () => {
       });
       setCurrentEvents(sorted);
     }
+
+
   };
 
   useEffect(() => {
@@ -82,9 +85,6 @@ export const DbCalendarCard = () => {
     if (typeof window !== "undefined") {
       localStorage.setItem("events", JSON.stringify(currentEvents));
     }
-
-    console.log("events updated:", currentEvents);
-
   }, [currentEvents]);
 
   // --- Handle selecting a day ---
@@ -94,18 +94,6 @@ export const DbCalendarCard = () => {
 
     setSelectedDate({ day, month, year });
     setIsDialogOpen(true);
-  };
-
-
-  // --- Helper to clean and validate emails ---
-  const cleanEmails = (emails: string) => {
-    if (!emails) return [];
-    const emailArray = emails
-      .split(",")
-      .map((email) => email.trim())
-      .filter((email) => email.length > 0);
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailArray.filter((email) => emailRegex.test(email));
   };
 
   // --- Create meeting handler ---
@@ -121,9 +109,7 @@ export const DbCalendarCard = () => {
     const header = formData.get("header") as string;
     const details = formData.get("details") as string;
     const time = formData.get("time") as string;
-    const rawEmails = formData.get("emails") as string;
 
-    const validEmails = cleanEmails(rawEmails);
 
     if (!date) {
       Swal.fire({
@@ -592,7 +578,7 @@ export const DbCalendarCard = () => {
                 }
 
               </div>
-              <ScrollBar orientation="horizontal" />
+              <ScrollBar orientation="horizontal" className="[&>div]:bg-gray-400 [&>div:hover]:bg-gray-500 bg-gray-200" />
             </ScrollArea>
 
             {/* Submit Button */}

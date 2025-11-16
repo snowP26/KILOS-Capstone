@@ -29,7 +29,8 @@ import { getUserID } from "../../actions/convert";
 import Swal from "sweetalert2";
 import { getMeeting, getParticipantsByLoc, updateAttendees } from "../../actions/meeting";
 import { Meetings } from "../../lib/definitions";
-import { Participants } from "./participants";
+import { Participants } from "../user/participants";
+
 
 type Participants = {
   id: number;
@@ -84,9 +85,6 @@ export const DbCalendarCard = () => {
     if (typeof window !== "undefined") {
       localStorage.setItem("events", JSON.stringify(currentEvents));
     }
-
-    console.log("events updated:", currentEvents);
-
   }, [currentEvents]);
 
   // --- Handle selecting a day ---
@@ -419,7 +417,7 @@ export const DbCalendarCard = () => {
             <DialogTitle className="text-center text-xl md:text-3xl font-semibold text-[#052659]">
               Set Up a Meeting
             </DialogTitle>
-            <hr className="border-t border-black/30 w-[90%] mx-auto md:mt-3" />
+            <hr className="border-t border-black/30 w-[90%] mx-auto mt-3" />
           </DialogHeader>
 
           <form
@@ -580,7 +578,7 @@ export const DbCalendarCard = () => {
                 }
 
               </div>
-              <ScrollBar orientation="horizontal" />
+              <ScrollBar orientation="horizontal" className="[&>div]:bg-gray-400 [&>div:hover]:bg-gray-500 bg-gray-200" />
             </ScrollArea>
 
             {/* Submit Button */}
@@ -592,7 +590,7 @@ export const DbCalendarCard = () => {
             </Button>
           </form>
         </DialogContent>
-      </Dialog >
+      </Dialog>
 
     </>
   );
