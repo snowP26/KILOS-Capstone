@@ -520,18 +520,11 @@ export const updateBudgetStatus = async (
         return false
     }
 
-
-    // normalize comment: only keep it for Rejected or Resubmit
-    let finalComment: string | null = null
-    if (status === "Rejected" || status === "Resubmit") {
-        finalComment = comment ?? null
-    }
-
     const { error } = await client
         .from("project_budget")
         .update({
             status: status,
-            comment: finalComment
+            comment: comment
         })
         .eq("id", budgetID)
 
@@ -540,7 +533,7 @@ export const updateBudgetStatus = async (
         return false
     }
 
-    console.log(`Updated budgetID ${budgetID} to ${status} ${finalComment ? "with comment" : ""}`)
+    console.log(`Updated budgetID ${budgetID} to ${status} ${comment ? "with comment" : ""}`)
     return true
 }
 

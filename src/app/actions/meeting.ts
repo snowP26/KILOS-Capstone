@@ -1,6 +1,6 @@
 import client from "@/src/api/client";
 import Swal from "sweetalert2";
-import { getLocFromAuth, getUserID, yoEmailtoID } from "./convert";
+import { getLocFromAuth, getUserID } from "./convert";
 
 export const updateAttendees = async (participantsID: number[], meetingID: number) => {
     const authUser = await getUserID();
@@ -105,7 +105,6 @@ export const getMeeting = async () => {
     });
 
     const meetings = await Promise.all(fetchMeeting);
-    console.log(meetings[0].date)
     return meetings;
 };
 
