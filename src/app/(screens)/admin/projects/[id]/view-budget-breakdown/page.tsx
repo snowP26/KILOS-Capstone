@@ -253,7 +253,7 @@ export default function ViewProjectBudget() {
                 </div>
 
                 {/* Table */}
-                <div className="bg-white rounded-xl shadow-md overflow-hidden">
+                <div className="rounded-xl shadow-md overflow-hidden">
                     <Table>
                         <TableHeader>
                             <TableRow className="bg-gray-100">

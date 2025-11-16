@@ -47,7 +47,7 @@ export default function Projects() {
   }
 
   return (
-    <div className="bg-[#E6F1FF] min-h-dvh">
+    <div className="bg-[#E6F1FF] min-h-screen max-h-full pb-10">
       <p className="font-bold text-3xl m-5 lg:m-10">Projects</p>
 
       <div className="flex flex-wrap justify-center gap-5 lg:gap-3 xl:gap-5">

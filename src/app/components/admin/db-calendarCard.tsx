@@ -13,7 +13,7 @@ import {
 
 import { DateTodayCard } from "./date-todayCard";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronDownIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
@@ -414,7 +414,7 @@ export const DbCalendarCard = () => {
       <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
         <DialogContent className="bg-[#E6F1FF] w-full max-w-2xl rounded-2xl p-6 md:p-8 shadow-lg">
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl md:text-3xl font-semibold text-[#052659]">
+            <DialogTitle className="text-center text-xl md:text-3xl font-semibold text-[#052659]">
               Set Up a Meeting
             </DialogTitle>
             <hr className="border-t border-black/30 w-[90%] mx-auto mt-3" />
@@ -439,7 +439,7 @@ export const DbCalendarCard = () => {
 
             }
             }
-            className="mt-6 space-y-6">
+            className="md:mt-6 space-y-3 md:space-y-6">
             {/* Header */}
             <div className="flex flex-col gap-2">
               <Label className="text-sm font-medium text-gray-700">
@@ -551,11 +551,11 @@ export const DbCalendarCard = () => {
             </div>
 
             {/* Participants */}
-            <div className="flex flex-col gap-2">
-              <Label className="text-sm font-medium text-gray-700">
-                Participants ({selected?.length} participants are selected)
-              </Label>
-              <div className="flex flex-row gap-2 overflow-x-auto p-2">
+            <Label className="text-sm font-medium text-gray-700 mb-1">
+              Participants ({selected?.length} participants are selected)
+            </Label>
+            <ScrollArea className="max-w-65 md:max-w-110 pb-2">
+              <div className="flex flex-row gap-2 p-2">
                 {participants?.map((data) => (
                   <Participants
                     key={data.id}
@@ -568,7 +568,7 @@ export const DbCalendarCard = () => {
                       })
 
                     }}
-                    className={`${selected.includes(data.id) ? "bg-[#D0E4FF] border-[#052659]" : " bg-[#E6F1FF] border-gray-300 "}`}
+                    className={`${selected.includes(data.id) ? "bg-[#D0E4FF] border-[#052659] cursor-pointer" : " bg-[#E6F1FF] border-gray-300 cursor-pointer"}`}
                     firstname={data.firstname}
                     lastname={data.lastname}
                     role={data.role}
@@ -578,8 +578,8 @@ export const DbCalendarCard = () => {
                 }
 
               </div>
-
-            </div>
+              <ScrollBar orientation="horizontal" className="[&>div]:bg-gray-400 [&>div:hover]:bg-gray-500 bg-gray-200" />
+            </ScrollArea>
 
             {/* Submit Button */}
             <Button

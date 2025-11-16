@@ -336,7 +336,7 @@ export default function ViewProjectBudget() {
 
                 {/* Table */}
                 <div className="mt-2 ">
-                    <Table className="bg-white w-[100%]">
+                    <Table className="bg-white w-full">
                         <TableCaption className="mt-2">Breakdown of project materials used in the project.</TableCaption>
                         <TableHeader>
                             <TableRow>
