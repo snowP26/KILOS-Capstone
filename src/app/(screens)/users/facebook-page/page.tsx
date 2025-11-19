@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/navigation-menu";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -28,7 +27,6 @@ import {
 import client from "@/src/api/client";
 import { fbPosts, pageDetails } from "@/src/app/lib/definitions";
 import Swal from "sweetalert2";
-import { generateAppSecretProof } from "@/src/app/api/delete/route";
 
 export default function FacebookPage() {
   const [body, setBody] = useState("");
