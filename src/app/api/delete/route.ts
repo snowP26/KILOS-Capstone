@@ -24,7 +24,7 @@ function locationChecker(locID: number) {
   }
 }
 
-export function generateAppSecretProof(token: string, appSecret: string) {
+function generateAppSecretProof(token: string, appSecret: string) {
   return crypto.createHmac("sha256", appSecret).update(token).digest("hex");
 }
 
