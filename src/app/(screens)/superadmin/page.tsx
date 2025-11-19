@@ -1,14 +1,41 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button'
-import { MapPin } from "lucide-react"
-import { useRouter } from 'next/navigation'
-import { useUserRole } from '../../actions/role';
-import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { MapPin } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useUserRole } from "../../actions/role";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import client from "@/src/api/client";
+
+export type locations = {
+  id: number;
+  created_at: string;
+  name: string;
+};
 
 export default function SAPage() {
   const router = useRouter();
   const { role } = useUserRole();
+  const [locations, setLocations] = useState<locations[]>([]);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const { data, error } = await client.from("location").select("*");
+
+        if (error) {
+          throw new Error(error.message);
+        }
+        console.log(data)
+        setLocations(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getData();
+  }, []);
 
   if (role !== "superadmin") {
     return (
@@ -39,31 +66,18 @@ export default function SAPage() {
         </h1>
 
         <div className="flex flex-wrap justify-center gap-6">
-          <Button
-            className="cursor-pointer flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition-all"
-            onClick={() => router.push(`superadmin/locations/naga-city`)}
-          >
-            <MapPin className="h-5 w-5" />
-            Naga City
-          </Button>
-
-          <Button
-            className="cursor-pointer flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition-all"
-            onClick={() => router.push(`superadmin/locations/bula`)}
-          >
-            <MapPin className="h-5 w-5" />
-            Bula
-          </Button>
-
-          <Button
-            className="cursor-pointer flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-4 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition-all"
-            onClick={() => router.push(`superadmin/locations/pili`)}
-          >
-            <MapPin className="h-5 w-5" />
-            Pili
-          </Button>
+          {locations.map((data) => (
+            <Button
+            key={data.id}
+              className="cursor-pointer flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition-all"
+              onClick={() => router.push(`superadmin/locations/${(data.name).toLowerCase().replace(/\s+/g, "-")}`)}
+            >
+              <MapPin className="h-5 w-5" />
+              {data.name}
+            </Button>
+          ))}
         </div>
       </div>
     </div>
-  )
+  );
 }
