@@ -10,10 +10,12 @@ export default function Projects() {
   const router = useRouter();
   const [projects, setProjects] = useState<project[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
   const pageSize = 4;
 
   useEffect(() => {
     const getData = async () => {
+      setLoading(true)
       const data = await getProjects();
       if (data) {
         const sorted = [...data].sort((a, b) => {
@@ -25,6 +27,7 @@ export default function Projects() {
       } else {
         setProjects([]);
       }
+      setLoading(false)
     };
 
     getData();
@@ -35,6 +38,13 @@ export default function Projects() {
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#E6F1FF] min-h-dvh">
@@ -91,7 +101,7 @@ export default function Projects() {
                 currentPage === i + 1
                   ? "bg-[#052659] text-white border border-[#052659]"
                   : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
-              }`}
+                }`}
             >
               {i + 1}
             </button>

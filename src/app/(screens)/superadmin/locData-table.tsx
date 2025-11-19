@@ -88,13 +88,6 @@ export function DataTable<TData, TValue>({
 
         try {
             await createNewCode(locID, positionTitle, positionRole)
-
-            Swal.fire({
-                icon: "success",
-                title: "Position Added",
-                text: `${positionTitle} (${positionRole}) has been successfully created. Please refresh the page.`,
-                timer: 1250
-            })
             setIsDialogOpen(false)
             form.reset()
             onPositionAdded?.();

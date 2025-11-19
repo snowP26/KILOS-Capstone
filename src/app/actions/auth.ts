@@ -1,5 +1,5 @@
 import client from "@/src/api/client";
-import { createClient, User } from "@supabase/supabase-js";
+import { User } from "@supabase/supabase-js";
 import { users } from "@/src/app/lib/definitions";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { FormEvent } from "react";
@@ -52,81 +52,76 @@ export const registerUser = async (
   clearFields: () => void
 ) => {
   const { email, password, firstName, lastName, regCode } = regData;
-  const userType = await checkCode(regCode);
 
   Swal.fire({
     title: "Signing you up...",
-    toast: true,
-    position: "top-end",
-    showConfirmButton: false,
-    timerProgressBar: true,
+    allowOutsideClick: false,
     didOpen: () => {
       Swal.showLoading();
     },
   });
 
-  const { data: posData, error: posError } = await client
-    .from("positions")
-    .select("*")
-    .eq("registration_code", regCode);
+  try {
+    const { data: posData, error: posError } = await client
+      .from("positions")
+      .select("*")
+      .eq("registration_code", regCode);
 
-  if (posError) {
-    Swal.close();
-    return alert(`Query error: ${posError.message}`);
-  }
+    if (posError) throw new Error(`Query error: ${posError.message}`);
+    if (!posData || posData.length === 0) throw new Error("Code does not exist");
+    if (posData[0].assigned_to != null) throw new Error("This registration code has already been used.");
 
-  if (!posData || posData.length <= 0) {
-    Swal.close();
-    return alert("Code does not exist");
-  }
+    const { error: authError } = await client.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+          position: posData[0].position,
+          role: posData[0].role,
+          location: posData[0].location,
+          registration_code: regCode,
+        },
+      },
+    });
 
-  if (posData[0].assigned_to != null) {
-    Swal.close();
-    return console.log("This registration code has already been used.");
-  }
-  const { error: yoError } = await client.from("youth_official").insert([
-    {
-      email: email,
-      firstname: firstName,
-      lastname: lastName,
-      position: posData[0].position,
-      role: posData[0].role,
-      location: posData[0].location,
-    },
-  ]);
+    if (authError) throw new Error(authError.message);
 
-  if (yoError) {
-    Swal.close();
-    return alert(`Registration error: ${yoError.message}`);
-  }
-  const { error } = await client.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        first_name: firstName,
-        last_name: lastName,
+    const { error: yoError } = await client.from("youth_official").insert([
+      {
+        email,
+        firstname: firstName,
+        lastname: lastName,
         position: posData[0].position,
         role: posData[0].role,
         location: posData[0].location,
       },
-      emailRedirectTo: "https://kilos-capstone.vercel.app/",
-    },
+    ]);
 
-  });
+    if (yoError) throw new Error(yoError.message);
 
-  Swal.close();
-  if (error) {
+    const { error: positionsError } = await client
+      .from("positions")
+      .update({ assigned_to: email })
+      .eq("registration_code", regCode);
+
+    if (positionsError) console.error("Error updating position:", positionsError);
+
+    Swal.close();
+    successPopup(); 
+    router.push("/login");
+    clearFields();
+    return
+  } catch (error) {
+    Swal.close();
     await Swal.fire({
       icon: "error",
-      title: "Registration failed: ",
-      text: error.message,
+      title: "Registration failed",
+      text: "An unexpected error occurred",
     });
-    return console.log("error: ", error);
+    console.error(error);
   }
-  router.push("/login");
-  clearFields();
-  return successPopup();
 };
 
 export const logoutUser = async (router: AppRouterInstance) => {
