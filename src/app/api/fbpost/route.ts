@@ -27,10 +27,14 @@ export async function POST(req: Request) {
     .eq("email", authEmail)
     .single();
 
-  if(locationError) return NextResponse.json({ error: "No official of email: ", authEmail }, { status: 401 })
+  if (locationError)
+    return NextResponse.json(
+      { error: "No official of email: ", authEmail },
+      { status: 401 }
+    );
 
-  const locID = Number(locationData.location)
-  console.log("locID: ", locID)
+  const locID = Number(locationData.location);
+  console.log("locID: ", locID);
 
   function generateAppSecretProof(token: string, appSecret: string) {
     const proof = crypto
@@ -42,7 +46,6 @@ export async function POST(req: Request) {
   }
 
   function locationChecker() {
-  
     switch (locID) {
       case 1:
         return {
@@ -73,16 +76,13 @@ export async function POST(req: Request) {
     const proof = generateAppSecretProof(PAGE_TOKEN, APP_SECRET);
 
     const res = await fetch(
-      `https://graph.facebook.com/v21.0/${PAGE_ID}/feed?access_token=${PAGE_TOKEN}&appsecret_proof=${proof}`,
+      `https://graph.facebook.com/v24.0/${PAGE_ID}/feed?access_token=${PAGE_TOKEN}&appsecret_proof=${proof}`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: new URLSearchParams({
           message: body,
-          access_token: PAGE_TOKEN,
-          appsecret_proof: proof,
-          published: true
-        }),
+          published: "true",
+        }).toString(),
       }
     );
 
