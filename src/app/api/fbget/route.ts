@@ -57,7 +57,6 @@ export async function GET(req: Request) {
       .update(PAGE_TOKEN)
       .digest("hex");
 
-    // Fetch posts from the page
     const fbRes = await fetch(
       `https://graph.facebook.com/v21.0/${PAGE_ID}/posts?access_token=${PAGE_TOKEN}&appsecret_proof=${proof}`
     );
