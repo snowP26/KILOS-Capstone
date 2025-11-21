@@ -46,6 +46,7 @@ import {
 import { useUserRole } from "@/src/app/actions/role";
 import { Skeleton } from "@/components/ui/skeleton";
 import Papa from 'papaparse';
+import Swal from "sweetalert2";
 
 
 
@@ -147,11 +148,51 @@ export default function ViewProjectBudget() {
     const handleDelete = async () => {
         if (selectedRows.length === 0) return;
 
-        // kulang pa ng Swal
-        await deleteBudget(selectedRows);
-        setBudgetRefresh((prev) => prev + 1);
-        setSelectedRows([]);
-    }
+        const confirm = await Swal.fire({
+            title: "Delete Selected?",
+            text: `Are you sure you want to delete ${selectedRows.length} item(s)? This action cannot be undone.`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#d33",
+        });
+
+        if (!confirm.isConfirmed) return;
+
+        try {
+            Swal.fire({
+                title: "Deleting...",
+                text: "Please wait while we remove the selected items.",
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading(),
+            });
+
+            await deleteBudget(selectedRows);
+
+            Swal.close();
+
+            await Swal.fire({
+                icon: "success",
+                title: "Deleted!",
+                text: `Successfully deleted ${selectedRows.length} item(s).`,
+                timer: 1200,
+                showConfirmButton: false,
+            });
+
+            setBudgetRefresh((prev) => prev + 1);
+            setSelectedRows([]);
+
+        } catch (error) {
+            Swal.close();
+
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Something went wrong while deleting.",
+            });
+        }
+    };
 
     if (loading) {
         return (
@@ -295,13 +336,18 @@ export default function ViewProjectBudget() {
                 </div>
 
                 <div className="space-x-1 flex justify-end">
-                    <Button
-                        onClick={handleDelete}
-                        className="px-2 cursor-pointer bg-red-600 text-white hover:bg-red-600"
-                    >
-                        <Trash2 />
-                        <a className="text-xs">Delete</a>
-                    </Button>
+                    {selectedRows.length > 0 && (
+                        <Button
+                            onClick={handleDelete}
+                            className="px-2 cursor-pointer bg-red-600 text-white hover:bg-red-600"
+                        >
+                            <Trash2 />
+                            <a className="text-xs">Delete ({selectedRows.length})</a>
+                        </Button>
+                    )
+
+                    }
+
 
                     <Button
                         onClick={handleExport}
@@ -359,7 +405,7 @@ export default function ViewProjectBudget() {
                                         setSelectedRows((prev) => prev.includes(data.id) ? selectedRows.filter((id) => id !== data.id) : [...prev, data.id])
 
                                     }}
-                                    className={` transition-all ${selectedRows.includes(data.id) ? 'bg-gray-200 border border-gray-300 hover:bg-gray-400' : " "}`}
+                                    className={` transition-all ${selectedRows.includes(data.id) ? 'bg-gray-200 border border-gray-300 hover:bg-gray-400' : " "} ${data.status === "Approved" ? "cursor-default" : "cursor-pointer"}`}
                                 >
                                     <TableCell className="text-center">
                                         {i + 1}

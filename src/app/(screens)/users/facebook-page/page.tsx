@@ -293,7 +293,7 @@ export default function FacebookPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex flex-row w-[70%] gap-0.5 mt-10 self-center text-center lg:hidden">
+        {/* <div className="flex flex-row w-[70%] gap-0.5 mt-10 self-center text-center lg:hidden">
           <div
             className={`${
               activeTab === "feed"
@@ -314,7 +314,7 @@ export default function FacebookPage() {
           >
             <p>Page Inbox</p>
           </div>
-        </div>
+        </div> */}
 
         {/* start of fb post card */}
         <div className="w-[90%] mt-3 self-center lg:w-[50%] lg:self-start lg:my-2 lg:mx-3 xl:w-3/5">
@@ -421,11 +421,11 @@ export default function FacebookPage() {
                                   Delete
                                 </p>
                               </NavigationMenuLink>
-                              <NavigationMenuLink asChild>
+                              {/* <NavigationMenuLink asChild>
                                 <p className="hover:bg-blue-900 hover:text-white text-center">
                                   Copy Link
                                 </p>
-                              </NavigationMenuLink>
+                              </NavigationMenuLink> */}
                             </li>
                           </ul>
                         </NavigationMenuContent>
@@ -443,12 +443,12 @@ export default function FacebookPage() {
           {/* end of fb post card */}
         </div>
 
-        <div
+        {/* <div
           className={`${
             activeTab == "inbox" ? "block" : "hidden"
           } transition-all ease-in-out duration-300 lg:block self-center mb-5 w-[95%] lg:w-[25%] xl:w-1/5 lg:mr-3 lg:self-start`}
         >
-          {/* <Button className="bg-[#052659] w-[100%] my-2">Create Announcement</Button> */}
+
 
           <div className="bg-white shadow-sm border border-gray-200 rounded-[10px] mt-2 pt-5 h-fit pb-5">
             <p className="text-center text-2xl font-semibold">Page Inbox</p>
@@ -461,7 +461,7 @@ export default function FacebookPage() {
               <FbInboxCard />
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
