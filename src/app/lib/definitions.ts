@@ -165,7 +165,7 @@ export type project_budget = {
 }
 
 export type fbPosts = {
-    id: number,
+    id: string,
     message: string,
     created_time: string,
 }

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, CircleCheck, Eye } from "lucide-react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -354,8 +355,8 @@ export default function SubmitOrdinances() {
               </TableBody>
             </Table>
           </div>
-          <div className="flex flex-row items-center gap-3 mt-6">
-            <div className="flex flex-col justify-center">
+          <div className="flex flex-row items-center gap-3 mt-6 mb-5 lg:mb-10">
+            <div className="mx-7 lg:mx-0 flex flex-col justify-center">
               <h1 className="text-gray-600 font-medium">Uploaded Files:</h1>
               <p className="text-sm text-gray-400">Select ordinance file to be uploaded</p>
             </div>
@@ -391,52 +392,55 @@ export default function SubmitOrdinances() {
             )}
           </div>
 
-          <div className="flex flex-row flex-wrap gap-4 mt-5">
-            {files.length > 0 ? (
-              [...files]
-                .sort((a, b) => (b.uploaded ? 1 : 0) - (a.uploaded ? 1 : 0))
-                .map((data) => {
-                  const isSelected = selected?.id === data.id;
-                  const hasUploaded = files.some((f) => f.uploaded);
-                  const isLocked = hasUploaded; 
+          <ScrollArea className="w-full px-2 pb-5">
+            <div className="grid grid-flow-col grid-rows-2 gap-4 pb-1 px-1">
+              {files.length > 0 ? (
+                [...files]
+                  .sort((a, b) => (b.uploaded ? 1 : 0) - (a.uploaded ? 1 : 0))
+                  .map((data) => {
+                    const isSelected = selected?.id === data.id;
+                    const hasUploaded = files.some((f) => f.uploaded);
+                    const isLocked = hasUploaded;
 
-                  return (
-                    <div
-                      key={data.id}
-                      className={`flex items-center justify-between h-[78px] p-4 w-full rounded-2xl shadow-md max-w-lg border transition-all duration-200 ${isLocked ? "cursor-auto" : "cursor-pointer"} ${data.uploaded ? "border-green-500 bg-green-200" : isSelected ? "border-blue-300 bg-blue-100" : "border-gray-200 hover:bg-gray-50 bg-white"}`}
-                      onClick={() => {
-                        if (!isLocked) {
-                          setSelected({ id: data.id, uploaded: data.uploaded });
-                        }
-                      }}
-                    >
-                      <div className="flex flex-col">
-                        <span className="font-medium text-gray-800 max-w-90 truncate">
-                          {getDisplayName(data.name)}
-                        </span>
-                        <span className="text-sm text-gray-500">{data.type.toUpperCase()}</span>
-                      </div>
+                    return (
+                      <div
+                        key={data.id}
+                        className={`flex items-center justify-between h-[78px] p-4 w-70 lg:w-lg rounded-2xl shadow-md border transition-all duration-200 ${isLocked ? "cursor-auto" : "cursor-pointer"} ${data.uploaded ? "border-green-500 bg-green-200" : isSelected ? "border-blue-300 bg-blue-100" : "border-gray-200 hover:bg-gray-50 bg-white"}`}
+                        onClick={() => {
+                          if (!isLocked) {
+                            setSelected({ id: data.id, uploaded: data.uploaded });
+                          }
+                        }}
+                      >
+                        <div className="flex flex-col">
+                          <span className="font-medium text-gray-800 max-w-40 lg:max-w-90 truncate">
+                            {getDisplayName(data.name)}
+                          </span>
+                          <span className="text-sm text-gray-500">{data.type.toUpperCase()}</span>
+                        </div>
 
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => window.open(data.url, "_blank")}
-                          className="flex items-center gap-1 cursor-pointer"
-                        >
-                          <Eye className="h-4 w-4" />
-                          View
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => window.open(data.url, "_blank")}
+                            className="flex items-center gap-1 cursor-pointer"
+                          >
+                            <Eye className="h-4 w-4" />
+                            View
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })
-            ) : (
-              <div className="flex justify-center lg:justify-start">
-                <h1 className="mt-10 lg:mt-5 lg:mx-20 bg-white py-2 px-10 w-fit font-semibold italic rounded-[8px]">No files attached.</h1>
-              </div>
-            )}
-          </div>
+                    );
+                  })
+              ) : (
+                <div className="flex justify-center lg:justify-start">
+                  <h1 className="mt-10 lg:mt-5 lg:mx-20 bg-white py-2 px-10 w-fit font-semibold italic rounded-[8px]">No files attached.</h1>
+                </div>
+              )}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
         </div>
       </div>
     );

@@ -28,8 +28,8 @@ export const locNameToID = async (loc: string) => {
   return data[0].id as number;
 };
 
-export const getLocFromAuth = async () => {
-  const { data: userData, error: userError } = await client.auth.getUser();
+export const getLocFromAuth = async (authHeader? : string) => {
+  const { data: userData, error: userError } = await client.auth.getUser(authHeader ? authHeader : "");
 
   if (!userData) {
     console.log("No authenticated user is found.");

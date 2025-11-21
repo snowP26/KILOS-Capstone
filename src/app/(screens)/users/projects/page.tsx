@@ -160,7 +160,7 @@ export default function Projects() {
         );
     } else if (normalizedRole === "executive") {
         content = (
-            <div className="flex flex-col lg:flex-row bg-[#E6F1FF] min-h-screen max-h-full">
+            <div className="flex flex-col lg:flex-row bg-[#E6F1FF] min-h-screen max-h-full pb-10">
                 {/* Projects Section */}
                 <div className="w-full lg:w-[70%] xl:w-[80%] flex flex-col items-center lg:items-start">
                     <p className="lg:hidden font-bold text-3xl text-center my-5">Projects</p>

@@ -35,7 +35,9 @@ export default function FacebookPage() {
   const [error, setError] = useState<string | null>(null);
   const [posts, setPosts] = useState<fbPosts[]>([]);
   const [pageInfo, setPageInfo] = useState<pageDetails | null>(null);
-  const [activeTab, setActiveTab] = useState<"feed" | "inbox" >("feed");
+  const [activeTab, setActiveTab] = useState<"feed" | "inbox">("feed");
+  const [refresh, setRefresh] = useState(0);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const fetchPageInfo = async () => {
     try {
@@ -59,7 +61,7 @@ export default function FacebookPage() {
         setError(data.error);
       } else {
         setPageInfo(data);
-        console.log(data)
+        console.log(data);
       }
     } catch (err) {
       console.error(err);
@@ -107,7 +109,7 @@ export default function FacebookPage() {
   useEffect(() => {
     fetchPosts();
     fetchPageInfo();
-  }, []);
+  }, [refresh]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,6 +147,7 @@ export default function FacebookPage() {
           timer: 1250,
           showConfirmButton: false,
         });
+        setRefresh((prev) => prev + 1);
       } else {
         Swal.fire({
           title: "Error!",
@@ -154,6 +157,7 @@ export default function FacebookPage() {
           showConfirmButton: true,
         });
       }
+      setIsDialogOpen(false);
     } catch (err) {
       console.error(err);
       Swal.fire({
@@ -165,13 +169,78 @@ export default function FacebookPage() {
       });
     } finally {
       setLoading(false);
+      setIsDialogOpen(false);
     }
+  };
+
+  const handleDelete = async (postID: string) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      Swal.fire({
+        title: "Deletion in progress...",
+        text: "Post is being deleted, please wait.",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      const { data: sessionData } = await client.auth.getSession();
+      const session = sessionData?.session;
+
+      if (!session) {
+        setError("You must be logged in!");
+        setLoading(false);
+        return;
+      }
+
+      const res = await fetch("/api/delete", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session.access_token}`,
+        },
+        body: JSON.stringify({
+          postID,
+        }),
+      });
+
+      const data = await res.json();
+      console.log(data.success);
+      
+      Swal.close()
+      if (data.success) {
+        setRefresh((prev) => prev + 1);
+        await Swal.fire({
+          icon: "success",
+          title: "Post Deletion Success",
+          text: "The post has been successfully deleted.",
+          timer: 1250,
+        });
+        return setLoading(false);
+      }
+      
+      setLoading(false);
+      throw new Error(data.error);
+    } catch (error) {
+      Swal.close()
+      Swal.fire({
+        icon: "error",
+        title: "Post Deletion Error",
+        text: "There has been an error deleting your post. Try again later",
+        timer: 1250,
+      });
+    }
+
   };
 
   return (
     <div className="w-[100%] min-h-screen max-h-full">
       {/* Title */}
-      <p className="font-bold text-2xl mt-10 mb-5 mx-15 sm:text-3xl">Facebook Page</p>
+      <p className="font-bold text-2xl mt-10 mb-5 mx-15 sm:text-3xl">
+        Facebook Page
+      </p>
       <hr className="border-t border-black w-[90%] lg:w-[95%] mx-auto mt-1" />
 
       <div className="flex flex-col lg:flex-row">
@@ -223,32 +292,38 @@ export default function FacebookPage() {
           </div>
         </div>
 
-
         {/* Tabs */}
-        <div className="flex flex-row w-[70%] gap-0.5 mt-10 self-center text-center lg:hidden">
-          <div className={`${activeTab === "feed"
-            ? "bg-[#052659] text-white"
-            : "bg-[#052659] opacity-60 text-gray-400"
-          } w-[100%] shadow-md shadow-gray-400 text-xs lg:text-lg p-2 rounded-tl-2xl rounded-bl-2xl cursor-pointer`}
+        {/* <div className="flex flex-row w-[70%] gap-0.5 mt-10 self-center text-center lg:hidden">
+          <div
+            className={`${
+              activeTab === "feed"
+                ? "bg-[#052659] text-white"
+                : "bg-[#052659] opacity-60 text-gray-400"
+            } w-[100%] shadow-md shadow-gray-400 text-xs lg:text-lg p-2 rounded-tl-2xl rounded-bl-2xl cursor-pointer`}
             onClick={() => setActiveTab("feed")}
           >
             <p>Feed</p>
           </div>
-          <div className={`${activeTab === "inbox"
-            ? "bg-[#052659] text-white"
-            : "bg-[#052659] opacity-60 text-gray-400"
-          } w-[100%] shadow-md shadow-gray-400 text-xs lg:text-lg p-2 rounded-tr-2xl rounded-br-2xl cursor-pointer`}
+          <div
+            className={`${
+              activeTab === "inbox"
+                ? "bg-[#052659] text-white"
+                : "bg-[#052659] opacity-60 text-gray-400"
+            } w-[100%] shadow-md shadow-gray-400 text-xs lg:text-lg p-2 rounded-tr-2xl rounded-br-2xl cursor-pointer`}
             onClick={() => setActiveTab("inbox")}
           >
             <p>Page Inbox</p>
           </div>
-        </div>
+        </div> */}
 
         {/* start of fb post card */}
         <div className="w-[90%] mt-3 self-center lg:w-[50%] lg:self-start lg:my-2 lg:mx-3 xl:w-3/5">
-          <Dialog>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger className="w-[100%]" asChild>
-              <button className="w-[100%] h-10 cursor-pointer rounded-[20px] bg-[#B2D3FF] font-bold text-black hover:bg-black hover:text-blue-400 ">
+              <button
+                className="w-[100%] h-10 cursor-pointer rounded-[20px] bg-[#B2D3FF] font-bold text-black hover:bg-black hover:text-blue-400 "
+                onClick={() => setIsDialogOpen(true)}
+              >
                 Create a new post
               </button>
             </DialogTrigger>
@@ -265,7 +340,11 @@ export default function FacebookPage() {
                   placeholder="What's on your mind?"
                   className="rounded-md border border-gray-300 p-2"
                 />
-                <Button type="submit" disabled={loading} className="cursor-pointer bg-[#052659] text-white hover:bg-[#052659] hover:text-white">
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="cursor-pointer bg-[#052659] text-white hover:bg-[#052659] hover:text-white"
+                >
                   {loading ? "Posting..." : "Post"}
                 </Button>
               </form>
@@ -274,7 +353,9 @@ export default function FacebookPage() {
           {posts.map((data) => (
             <div
               key={data.id}
-              className={`${activeTab === "feed" ? "block" : "hidden" } transition-all ease-in-out duration-300 bg-white rounded-2xl shadow-sm border border-gray-200 w-[100%] px-5 pb-2 mt-3 mb-2 lg:mt-2`}
+              className={`${
+                activeTab === "feed" ? "block" : "hidden"
+              } transition-all ease-in-out duration-300 bg-white rounded-2xl shadow-sm border border-gray-200 w-[100%] px-5 pb-2 mt-3 mb-2 lg:mt-2`}
             >
               <div className="w-full flex flex-row justify-between">
                 <div className="w-full mt-5 flex flex-row gap-2">
@@ -330,15 +411,21 @@ export default function FacebookPage() {
                           <ul className="grid w-[80px] gap-3">
                             <li>
                               <NavigationMenuLink asChild>
-                                <p className="hover:bg-blue-900 hover:text-white text-center">
+                                <p
+                                  className="hover:bg-blue-900 hover:text-white text-center"
+                                  onClick={async () => {
+                                    await handleDelete(data.id);
+                                    // console.log(data)
+                                  }}
+                                >
                                   Delete
                                 </p>
                               </NavigationMenuLink>
-                              <NavigationMenuLink asChild>
+                              {/* <NavigationMenuLink asChild>
                                 <p className="hover:bg-blue-900 hover:text-white text-center">
                                   Copy Link
                                 </p>
-                              </NavigationMenuLink>
+                              </NavigationMenuLink> */}
                             </li>
                           </ul>
                         </NavigationMenuContent>
@@ -356,8 +443,12 @@ export default function FacebookPage() {
           {/* end of fb post card */}
         </div>
 
-        <div className={`${activeTab == "inbox" ? "block" : "hidden" } transition-all ease-in-out duration-300 lg:block self-center mb-5 w-[95%] lg:w-[25%] xl:w-1/5 lg:mr-3 lg:self-start`}>
-          {/* <Button className="bg-[#052659] w-[100%] my-2">Create Announcement</Button> */}
+        {/* <div
+          className={`${
+            activeTab == "inbox" ? "block" : "hidden"
+          } transition-all ease-in-out duration-300 lg:block self-center mb-5 w-[95%] lg:w-[25%] xl:w-1/5 lg:mr-3 lg:self-start`}
+        >
+
 
           <div className="bg-white shadow-sm border border-gray-200 rounded-[10px] mt-2 pt-5 h-fit pb-5">
             <p className="text-center text-2xl font-semibold">Page Inbox</p>
@@ -370,7 +461,7 @@ export default function FacebookPage() {
               <FbInboxCard />
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
