@@ -1,6 +1,8 @@
 import client from "@/src/api/client";
 import { FormEvent, RefObject } from "react";
 import { getUserID, locNameToID } from "./convert";
+import Swal from "sweetalert2";
+import { YouthOfficialDetails } from "../components/community/current-YoCard";
 
 
 export const postFeedback = async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement | null>, id: string) => {
@@ -14,14 +16,14 @@ export const postFeedback = async (e: FormEvent<HTMLFormElement>, formRef: RefOb
     const location = await locNameToID(id)
 
     const { error } = await client
-    .from("feedback")
-    .insert([{
-        header: form.header,
-        body: form.body,
-        location: location,
-    }])
+        .from("feedback")
+        .insert([{
+            header: form.header,
+            body: form.body,
+            location: location,
+        }])
 
-    if(error) {
+    if (error) {
         return console.log("Error in creating your feedback: ", error)
     }
 
@@ -29,10 +31,10 @@ export const postFeedback = async (e: FormEvent<HTMLFormElement>, formRef: RefOb
     return console.log("Success")
 }
 
-export const getFeedback = async(id: number) => {
+export const getFeedback = async (id: number) => {
     const { data, error } = await client.from("feedback").select("*").eq("location", id).order("created_at", { ascending: false });
 
-    if(error || data.length == 0) {
+    if (error || data.length == 0) {
         console.log("Error fetching data: ", error)
         return null;
     }
@@ -43,7 +45,7 @@ export const getFeedback = async(id: number) => {
 export const getComments = async (id: number) => {
     const { data, error } = await client.from("feedback_comments").select("*").eq("feedback_id", id);
 
-    if(error){
+    if (error) {
         console.log("Error fetching comments: ", error);
         return []
     }
@@ -52,7 +54,7 @@ export const getComments = async (id: number) => {
     return data ?? []
 }
 
-export const postComment =  async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement | null>, id: number) => {
+export const postComment = async (e: FormEvent<HTMLFormElement>, formRef: RefObject<HTMLFormElement | null>, id: number) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const body = formData.get("comment") as string;
@@ -65,7 +67,43 @@ export const postComment =  async (e: FormEvent<HTMLFormElement>, formRef: RefOb
         content: body
     }])
 
-    if(error){
+    if (error) {
         return console.log("Error posting your announcement: ", error)
     }
+}
+
+
+
+export const getYouthOfficials = async (location: number) => {
+    type dataDetails = {
+        firstname: string;
+        lastname: string;
+        position: string;
+    }
+    try {
+        const { data, error } = await client.from("youth_official").select("firstname, lastname, position").eq("location", location)
+
+        if (error) throw new Error(error.message);
+        if (!data || data.length === 0) throw new Error("No data found.");
+
+        const formattedData: YouthOfficialDetails[] = data.map((item: dataDetails) => ({
+            fullName: `${item.firstname} ${item.lastname}`,
+            title: item.position
+        }));
+
+        return formattedData
+    } catch (err: unknown) {
+        let errorMessage = "Something went wrong!";
+        if (err instanceof Error) {
+            errorMessage = err.message;
+        }
+
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: errorMessage,
+            confirmButtonText: "OK"
+        });
+    }
+
 }

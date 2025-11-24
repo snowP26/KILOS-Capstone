@@ -6,16 +6,17 @@ import { PostFeedbackCard } from "@/src/app/components/community/post-feedbackCa
 import { useParams, notFound } from "next/navigation";
 import { commFeedback, locations } from "@/src/app/lib/definitions";
 import { useEffect, useState } from "react";
-import { getFeedback } from "@/src/app/actions/feedback";
+import { getFeedback, getYouthOfficials } from "@/src/app/actions/feedback";
 import { locNameToID } from "@/src/app/actions/convert";
 import { FeedbackCard } from "@/src/app/components/community/feedbackCard";
-import { CurrentYoCard } from "@/src/app/components/community/current-YoCard";
+import { CurrentYoCard, YouthOfficialDetails } from "@/src/app/components/community/current-YoCard";
 
 export default function Page() {
   const [refresh, setRefresh] = useState(0);
   const [open, setOpen] = useState(false);
   const [feedback, setFeedback] = useState<commFeedback[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1)
+  const [youthOfficial, setYouthOfficial] = useState<YouthOfficialDetails[]>([])
 
   const itemsPerPage = 9;
 
@@ -44,7 +45,7 @@ export default function Page() {
       const locationID = (await locNameToID(loc_name)) as number;
       const data = await getFeedback(locationID);
       setFeedback(data ?? []);
-      setCurrentPage(1); // reset to first page when data refreshes
+      setCurrentPage(1);
     };
     fetchFeedbackData();
   }, [refresh, loc_name]);
@@ -53,7 +54,16 @@ export default function Page() {
     setOpen((prevOpen) => !prevOpen);
   };
 
-  // Pagination logic
+  useEffect(() => {
+    const getData = async () => {
+      const locationID = (await locNameToID(loc_name)) as number;
+      const data = await getYouthOfficials(locationID);
+
+      setYouthOfficial(data ?? [])
+    }
+    getData();
+  }, [open, loc_name])
+
   const totalPages = Math.ceil(feedback.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentFeedback = feedback.slice(startIndex, startIndex + itemsPerPage);
@@ -77,13 +87,16 @@ export default function Page() {
 
           <div className="mx-25">
             <div className="flex flex-wrap justify-center">
-              <CurrentYoCard />
-              <CurrentYoCard />
-              <CurrentYoCard />
-              <CurrentYoCard />
-              <CurrentYoCard />
-              <CurrentYoCard />
-              <CurrentYoCard />
+              {youthOfficial.map((data, i) => (
+                <CurrentYoCard
+                  key={i}
+                  fullName={data.fullName}
+                  title={data.title}
+                />
+              ))
+
+              }
+              {/* add current YO */}
             </div>
           </div>
         </div>
@@ -124,11 +137,10 @@ export default function Page() {
                     <button
                       disabled={currentPage === 1}
                       onClick={() => setCurrentPage((p) => p - 1)}
-                      className={`px-3 py-1 rounded ${
-                        currentPage === 1
+                      className={`px-3 py-1 rounded ${currentPage === 1
                           ? "bg-gray-300 cursor-not-allowed"
                           : "bg-[#052659] text-white hover:bg-[#234c8a] cursor-pointer"
-                      }`}
+                        }`}
                     >
                       Prev
                     </button>
@@ -137,11 +149,10 @@ export default function Page() {
                       <button
                         key={i}
                         onClick={() => setCurrentPage(i + 1)}
-                        className={`px-3 py-1 rounded cursor-pointer ${
-                          currentPage === i + 1
+                        className={`px-3 py-1 rounded cursor-pointer ${currentPage === i + 1
                             ? "bg-[#052659] text-white"
                             : "bg-gray-200 hover:bg-gray-300"
-                        }`}
+                          }`}
                       >
                         {i + 1}
                       </button>
@@ -150,11 +161,10 @@ export default function Page() {
                     <button
                       disabled={currentPage === totalPages}
                       onClick={() => setCurrentPage((p) => p + 1)}
-                      className={`px-3 py-1 rounded ${
-                        currentPage === totalPages
+                      className={`px-3 py-1 rounded ${currentPage === totalPages
                           ? "bg-gray-300 cursor-not-allowed"
                           : "bg-[#052659] text-white hover:bg-[#234c8a] cursor-pointer"
-                      }`}
+                        }`}
                     >
                       Next
                     </button>
