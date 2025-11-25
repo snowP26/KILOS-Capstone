@@ -194,7 +194,7 @@ export default function Home() {
                       <div key={data.id} onClick={async () => await openOrdinancePDF(data.id)}
                         className=""
                       >
-                        <OrdinancesLandingCard id={data.id} title={data.title} description={data.description} author={data.author} />
+                        <OrdinancesLandingCard id={data.id} location={data.location} title={data.title} description={data.description} author={data.author} />
                       </div>
                     ))}
                     </CarouselItem>

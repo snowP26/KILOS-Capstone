@@ -2,19 +2,21 @@ import React, { useEffect, useState } from 'react'
 import { authorIDtoName } from '../../actions/convert';
 import { getOrdinanceURL, openOrdinancePDF } from '../../actions/ordinances';
 import { FileText } from "lucide-react";
-import { getFilesPerOrdinance } from '../../actions/admin_ordinances';
+import Image from 'next/image';
 
 type ordinanceCard = {
     title: string,
     description: string,
     author: number,
     id: number,
+    location: string
 };
 
-export const OrdinancesLandingCard = ({ title, description, author, id }: ordinanceCard) => {
+export const OrdinancesLandingCard = ({ title, description, author, id, location }: ordinanceCard) => {
     const [authorName, setAuthorName] = useState("Loading...");
 
-    const [file, setFile] = useState<string | null>(null)
+    const [file, setFile] = useState<string | null>(null);
+    const [image, setImage] = useState("")
 
     useEffect(() => {
         const fetchAuthor = async () => {
@@ -23,8 +25,17 @@ export const OrdinancesLandingCard = ({ title, description, author, id }: ordina
             const file = await getOrdinanceURL(id)
             setFile(file)
         };
+
+        if (location == "1") {
+            setImage("/NagaYOBanner.jpg")
+        } else if (location == "2") {
+            setImage("/BulaYOBanner.jpg")
+        } else if (location == "3") {
+            setImage("/PiliYOBanner.jpg")
+        }
+
         fetchAuthor();
-    }, [author]);
+    }, [author, id, location]);
 
     return (
         <div
@@ -40,8 +51,14 @@ export const OrdinancesLandingCard = ({ title, description, author, id }: ordina
             }
 
             <div className="flex flex-col gap-5 mt-3 lg:flex-row mx-10">
-                <div className="w-20 h-20 md:w-30 md:min-w-30 md:h-30 lg:min-w-20 lg:w-20 lg:h-20 mt-5 rounded-full bg-gray-300 flex items-center self-center justify-center text-gray-500 group-hover:bg-gray-300 transition-colors">
-                    No Image
+                <div className="relative w-20 h-20 md:w-30 md:h-30 lg:w-20 lg:h-20">
+
+                    <Image
+                        alt='Youth Official Logo'
+                        className="w-20 h-20 md:w-30 md:min-w-30 md:h-30 lg:min-w-20 lg:w-20 lg:h-20 mt-5 rounded-full bg-gray-300 flex items-center self-center justify-center text-gray-500 group-hover:bg-gray-300 transition-colors"
+                        src={image || "/NagaYOBanner.jpg"}
+                        fill
+                    />
                 </div>
 
                 <div className="mt-5 md:gap-2 flex flex-col justify-around sm:ml-10 md:ml-0">
