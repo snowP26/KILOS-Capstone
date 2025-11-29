@@ -4,10 +4,13 @@ import Swal from "sweetalert2";
 import { getLocFromAuth, getUserID, locIDtoName } from "./convert";
 
 const checkTitleDuplicates = async (uploadValue: string) => {
+  const locID = await getLocFromAuth()
+
   const { data, error } = await client
     .from("ordinances")
     .select("id")
-    .eq("title", uploadValue);
+    .eq("title", uploadValue)
+    .eq("location", locID);
 
   if (error) {
     console.error("Error checking the duplicates:", error);
