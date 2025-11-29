@@ -17,7 +17,6 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
-import { PublishedOrdinanceCard } from "../../components/community/pub-ordinanceCard";
 
 export default function SearchPage() {
   const router = useRouter();
@@ -53,6 +52,11 @@ export default function SearchPage() {
 
     fetchData();
   }, [query, locationID, loc]);
+
+  useEffect(() => {
+    setSearchQuery(query);
+    setSearchLoc(locationID ?? null);
+  }, [query, locationID]);
 
   return (
     <Suspense>
@@ -131,6 +135,7 @@ export default function SearchPage() {
                 title={ord.title}
                 description={ord.description}
                 author={ord.author}
+                location={ord.location}
               />
             ))}
           </div>

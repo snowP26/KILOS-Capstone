@@ -65,6 +65,7 @@ export const searchData = async (query?: string, location?: number) => {
   let searchQuery = client
     .from("ordinances")
     .select("*")
+    .eq("status", "Uploaded"); 
 
 
   if (query) {

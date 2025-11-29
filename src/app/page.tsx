@@ -192,9 +192,8 @@ export default function Home() {
                       className=" basis-1/1 sm:basis-1/2 md:basis-1/2 lg:basis-full lg:gap-2 lg:grid lg:grid-cols-2 lg:grid-rows-2"
                     > {group.map((data) => (
                       <div key={data.id} onClick={async () => await openOrdinancePDF(data.id)}
-                        className=""
                       >
-                        <OrdinancesLandingCard id={data.id} title={data.title} description={data.description} author={data.author} />
+                        <OrdinancesLandingCard id={data.id} location={data.location} title={data.title} description={data.description} author={data.author} />
                       </div>
                     ))}
                     </CarouselItem>
