@@ -341,16 +341,17 @@ export const openOrdinancePDF = async (ordinanceID: number) => {
 
   const { data: url } = await client.storage
     .from("ordinances")
-    .createSignedUrl(ordinancefile.file_path, 3600);
+    .getPublicUrl(ordinancefile.file_path)
 
 
-  if (url?.signedUrl) {
-    window.open(url.signedUrl, "_blank");
-    return url?.signedUrl;
+  if (url?.publicUrl) {
+    window.open(url.publicUrl, "_blank");
+    console.log("Success")
+    return url?.publicUrl;
   }
 
   console.log("File does not exist.");
-  return url?.signedUrl || null;
+  return url?.publicUrl || null;
 };
 
 export const getPendingOrdinanceFile = async (ordinanceID: number | undefined) => {
