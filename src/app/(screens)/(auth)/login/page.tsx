@@ -28,6 +28,8 @@ export default function LoginPage() {
                 Swal.close();
                 loginRoute(data.user, router);
             }
+
+            Swal.close()
         }
 
         getUser();
