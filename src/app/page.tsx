@@ -139,23 +139,24 @@ export default function Home() {
                 className=" w-full max-w-auto"
               >
                 <CarouselContent className="-ml-5 gap-5 sm:gap-0">
-                  {projects.map((data) => (
-                    <CarouselItem
-                      className="basis-1/1 sm:basis-1/2 md:basis-1/2 lg:basis-1/3"
-                      key={data.id}
-                    >
-                      <div className="flex justify-center">
-                        <UpcomingEventCard
-                          id={data.id}
-                          title={data.title}
-                          imgURL={data.imageURL}
-                          loc={data.location}
-                          date={data.target_date}
-                        />
-                      </div>
-                    </CarouselItem>
-                  ))
-                  }
+                  {projects
+                    .filter((project) => new Date(project.target_date) >= new Date())
+                    .map((data) => (
+                      <CarouselItem
+                        className="basis-1/1 sm:basis-1/2 md:basis-1/2 lg:basis-1/3"
+                        key={data.id}
+                      >
+                        <div className="flex justify-center">
+                          <UpcomingEventCard
+                            id={data.id}
+                            title={data.title}
+                            imgURL={data.imageURL}
+                            loc={data.location}
+                            date={data.target_date}
+                          />
+                        </div>
+                      </CarouselItem>
+                    ))}
                 </CarouselContent>
                 <CarouselPrevious className="cursor-pointer -left-4 lg:-left-16" />
                 <CarouselNext className="cursor-pointer -right-3 lg:-right-16" />
@@ -205,7 +206,7 @@ export default function Home() {
 
 
             </div>
-            
+
           </>
         ) : (
           <div className="flex flex-col items-center justify-center h-64 text-gray-500">

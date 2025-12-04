@@ -163,7 +163,7 @@ export const getProposedProjectByID = async (id: number | string) => {
 export const uploadPhotoByID = async (id: number | string, file: File) => {
     const locID = await getLocFromAuth();
     const locName = await locIDtoName(locID);
-    const filepath = `photos/${locName}/${id}`
+    const filepath = `photos/${locName}/${id}-${Date.now()}`
 
     const { error: storageError } = await client.storage.from("projects").upload(filepath, file, { upsert: true })
     if (storageError) {

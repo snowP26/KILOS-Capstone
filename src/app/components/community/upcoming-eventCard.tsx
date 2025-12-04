@@ -1,4 +1,5 @@
 import { ImageOff } from 'lucide-react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -19,14 +20,17 @@ export const UpcomingEventCard = ({ id, title, imgURL, loc, date }: cardParams) 
     })
 
     return (
-        <div onClick={ () => router.push(`/view-project/${id}`)} className="cursor-pointer mb-5 relative w-70 h-110 sm:h-110 sm:w-65 md:h-110 md:w-65 bg-white rounded-[45px] shadow-[-4px_4px_10px_rgba(0,0,0,0.4)] transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
+        <div onClick={() => router.push(`/view-project/${id}`)} className="cursor-pointer mb-5 relative w-70 h-110 sm:h-110 sm:w-65 md:h-110 md:w-65 bg-white rounded-[45px] shadow-[-4px_4px_10px_rgba(0,0,0,0.4)] transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
             <div className="flex justify-center rounded-t-md">
                 {imgURL ? (
-                    <img
-                        className="h-75 sm:h-110 object-cover rounded-t-md"
-                        src={imgURL}
-                        alt={title}
-                    />
+                    <div className="mt-2 w-[95%] h-75 max-h-75">
+                        <img
+                            className="w-full max-h-full sm:h-110 rounded-[40px]"
+                            src={imgURL}
+                            alt={title}
+                        />
+                    </div>
+
                 ) : (
                     <div className="mt-2 h-75 w-[95%] sm:h-75 md:h-75 flex flex-col items-center justify-center bg-gray-300 rounded-[40px]">
                         <ImageOff className="w-10 h-10 text-gray-400" />

@@ -94,6 +94,8 @@ export const searchData = async (query?: string, location?: number) => {
 export const getAllProjects = async () => {
   const { data, error } = await client.from("projects").select("*").eq("status", "Approved").order("target_date", { ascending: true })
 
+  
+
   if (error) {
     console.log("Project data retrieval failed: ", error)
     return []
