@@ -46,11 +46,22 @@ import { Input } from "@/components/ui/input";
 import Swal from "sweetalert2";
 import { clearOrdinanceFile, getPendingOrdinanceFile, setOrdinanceFile } from "@/src/app/actions/ordinances";
 import { getDisplayName, getLocFromAuth } from "@/src/app/actions/convert";
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export default function SubmitOrdinances() {
-  const router = useRouter();
+  const OFFICE_OPTIONS = [
+    "Mayor’s Office",
+    "Engineering Office",
+    "Treasurer’s Office",
+    "HR Department",
+    "City Health Office",
+    "Planning Office",
+    "City Administrator",
+  ];
 
+  const router = useRouter();
   const params = useParams();
+  const [officeOptions, setOfficeOptions] = useState(OFFICE_OPTIONS);
   const id = params.id as string;
   const [refresh, setRefresh] = useState(0);
   const [ordinance, setOrdinance] = useState<ordinance | null>(null);
@@ -58,12 +69,15 @@ export default function SubmitOrdinances() {
   const [approval, setApproval] = useState<ordinance_approvals[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<{ id: number, uploaded: boolean } | null>(null);
-  const [uploaded, setUploaded] = useState(0)
-
+  const [uploaded, setUploaded] = useState(0);
+  const [input, setInput] = useState("");
+  const [temp, setTemp] = useState<string[]>([]);
   const [editingRow, setEditingRow] = useState<number | null>(null);
   const [formData, setFormData] = useState<Partial<ordinance_approvals>>({});
+  const [isAdding, setIsAdding] = useState(false)
 
   const handleEdit = (row: ordinance_approvals) => {
+    setTemp([])
     setEditingRow(row.id);
     setFormData(row);
   };
@@ -73,6 +87,21 @@ export default function SubmitOrdinances() {
     value: ordinance_approvals[K]
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+
+  const toggleOffice = (office: string) => {
+    setTemp((prev) =>
+      prev.includes(office)
+        ? prev.filter((o) => o !== office)
+        : [...prev, office]
+    );
+  };
+
+
+
+  const handleConfirm = () => {
+    setFormData(prev => ({ ...prev, approver: temp.join(", ") }));
   };
 
   const handleSave = async () => {
@@ -98,31 +127,37 @@ export default function SubmitOrdinances() {
     setRefresh((prev) => prev + 1);
   };
 
-  const fetchData = async () => {
-    setLoading(true)
-    const location = await getLocFromAuth()
-    const data = await getOrdinanceByName(id);
 
-    if (location !== Number(data?.location)) {
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true)
+      const location = await getLocFromAuth()
+      const data = await getOrdinanceByName(id);
+
+      if (location !== Number(data?.location)) {
+        setLoading(false)
+        return null
+      }
+      setOrdinance(data as ordinance);
+      setSelected(null)
       setLoading(false)
-      return null
-    }
-    const ordinanceStatus = await getApprovalPerOrdinance(data?.id);
-    const pendingFile = await getPendingOrdinanceFile(data?.id);
-    setApproval(ordinanceStatus);
-    setOrdinance(data as ordinance);
-    setFiles(pendingFile);
-    setSelected(null)
-    setLoading(false)
-  };
-
-
-  useEffect(() => {
+    };
     fetchData();
-  }, [refresh, id]);
+  }, [id]);
 
   useEffect(() => {
+    const fetchDetails = async () => {
+      const data = await getOrdinanceByName(id);
+      const ordinanceStatus = await getApprovalPerOrdinance(data?.id);
+      const pendingFile = await getPendingOrdinanceFile(data?.id);
+      setApproval(ordinanceStatus);
+      setFiles(pendingFile);
+    }
     setUploaded(files.filter((f) => f.uploaded).length)
+
+    fetchDetails()
   }, [refresh])
 
   if (loading) {
@@ -293,12 +328,83 @@ export default function SubmitOrdinances() {
                     {/* Approver */}
                     <TableCell className="text-center">
                       {editingRow === a.id ? (
-                        <Input
-                          value={formData.approver ?? ""}
-                          onChange={(e) =>
-                            handleChange("approver", e.target.value)
-                          }
-                        />
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button onClick={() => {
+                              setTemp(a.approver ? a.approver.split(",").map(o => o.trim()) : [])
+                            }}
+                            className="h-[70%] cursor-pointer"
+                            >
+                              Select Responsible Offices
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-md">
+                            <DialogHeader>
+                              <DialogTitle>Select Responsible Offices</DialogTitle>
+                            </DialogHeader>
+
+                            <div className="space-y-2 max-h-72 overflow-y-auto p-3 rounded-md">
+                              {officeOptions.map((office) => (
+                                <label
+                                  key={office}
+                                  className="flex items-center space-x-3 cursor-pointer"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={temp.includes(office)}
+                                    onChange={() => toggleOffice(office)}
+                                  />
+                                  <span>{office}</span>
+                                </label>
+                              ))}
+                            </div>
+                            <p className="text-sm text-gray-600 mt-2">
+                              Office not in the list?{" "}
+                              <a
+                                onClick={() => setIsAdding(!isAdding)}
+                                className="text-blue-600 font-medium hover:underline hover:text-blue-700 cursor-pointer"
+                              >
+                                Click here to add new Office
+                              </a>
+                            </p>
+                            <form
+                              onSubmit={(e) => {
+                                e.preventDefault();
+                                if (!input.trim()) return;
+                                setOfficeOptions((prev) => [...prev, input.trim()])
+                                setIsAdding(false)
+                                setInput("")
+                              }}
+                              className={`flex flex-row space-x-2 items-center ${isAdding ? "block" : "hidden"}`}
+                            >
+                              <input
+                                type="text"
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                className={`border rounded p-2 w-full`}
+                                placeholder="Office of the..."
+                              />
+                              <Button
+                                type="submit"
+                                variant="default"
+                                size="sm"
+                                className="bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 transition-all px-4 py-2 rounded cursor-pointer"
+                              >Add Office</Button>
+                            </form>
+
+
+                            <DialogFooter>
+                              <DialogClose asChild>
+                                <Button variant="ghost">Cancel</Button>
+                              </DialogClose>
+
+                              <DialogClose asChild>
+                                <Button onClick={handleConfirm}>Confirm</Button>
+                              </DialogClose>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
+
                       ) : (
                         a.approver ?? "-"
                       )}
@@ -324,7 +430,18 @@ export default function SubmitOrdinances() {
                         <div className="flex gap-2">
                           <Button
                             size="sm"
-                            onClick={handleSave}
+                            onClick={() => {
+                              if (!a.end_date || (a.approver && a.approver.toLowerCase() === "approved")) {
+                                Swal.fire({
+                                  icon: 'info',
+                                  title: 'Notice',
+                                  text: 'Please check if the approved hearing has an end date or an approver',
+                                  confirmButtonText: 'OK'
+                                });
+                                return
+                              };
+                              handleSave();
+                            }}
                             className="cursor-pointer transition-all"
                           >
                             Save
@@ -441,8 +558,8 @@ export default function SubmitOrdinances() {
             </div>
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
-        </div>
-      </div>
+        </div >
+      </div >
     );
   } else {
     return (

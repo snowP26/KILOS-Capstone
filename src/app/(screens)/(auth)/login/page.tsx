@@ -25,10 +25,8 @@ export default function LoginPage() {
         const getUser = async () => {
             const { data } = await client.auth.getUser();
             if (data?.user != null) {
-                loginRoute(data.user, router)
-                return Swal.close()
-            } else {
-                return Swal.close()
+                Swal.close();
+                loginRoute(data.user, router);
             }
         }
 

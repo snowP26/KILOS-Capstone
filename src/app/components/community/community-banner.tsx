@@ -9,16 +9,20 @@ type CommunityBannerProps = {
 
 export const CommunityBanner = ({ id, onButtonClick, isOpen }: CommunityBannerProps) => {
   let image = '';
+  let description = "";
 
   switch (id) {
     case 'Naga City':
       image = '/NagaYOBanner.jpg'
+      description = "is a highly urbanized and culturally vibrant center known as the “Heart of Bicol.” It serves as a regional hub for education, commerce, and governance, offering modern amenities while preserving rich traditions. The city is also famous for the annual Peñafrancia Festival, which draws millions of devotees and tourists."
       break
     case 'Bula':
       image = '/BulaYOBanner.jpg'
+      description = "is one of the oldest towns in Camarines Sur, characterized by its rural charm and strong agricultural heritage. The municipality is surrounded by lush fields and freshwater resources that support farming and fishing livelihoods. Its serene environment and tight-knit communities reflect a peaceful, countryside lifestyle."
       break
     case 'Pili':
       image = '/PiliYOBanner.jpg'
+      description = "Pili is the provincial capital of Camarines Sur, strategically located at the center of the province. It is known for its growing commercial development, government institutions, and scenic natural attractions. The town also serves as a gateway to nearby destinations, including Mount Isarog and the wider Bicol region."
       break
   }
 
@@ -37,10 +41,7 @@ export const CommunityBanner = ({ id, onButtonClick, isOpen }: CommunityBannerPr
 
       <div className="h-fit rounded-md bg-white sm:w-full sm:h-full lg:w-[30%] lg:h-full border">
         <p className="m-3 mb-5 text-sm">
-          <strong>{id} </strong>is Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-          ea commodo consequat.
+          <strong>{id} </strong>{description}
         </p>
         <div className="flex justify-center mb-3">
           <Button className="bg-[#052659] cursor-pointer hover:text-[#052659] hover:bg-white hover:border-black hover:border"
