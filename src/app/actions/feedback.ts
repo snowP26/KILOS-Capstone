@@ -84,7 +84,7 @@ export const getYouthOfficials = async (location: number) => {
         const { data, error } = await client.from("youth_official").select("firstname, lastname, position").eq("location", location).neq("role", "admin");
 
         if (error) throw new Error(error.message);
-        if (!data || data.length === 0) throw new Error("No data found.");
+        // if (!data || data.length === 0) throw new Error("No data found.");
 
         const formattedData: YouthOfficialDetails[] = data.map((item: dataDetails) => ({
             fullName: `${item.firstname} ${item.lastname}`,
