@@ -33,7 +33,7 @@ export default function Home() {
 
   const [refresh, setRefresh] = useState(0);
 
-  const [projLoc, setProjLoc] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false)
   const [ordinanceLoc, setOrdinanceLoc] = useState<string | null>(null);
   const [ordinances, setOrdinances] = useState<ordinance[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -74,11 +74,13 @@ export default function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true)
       const ordinancesData = await getAllOrdinances(ordinanceLoc ?? "");
       console.log(ordinancesData);
       setOrdinances(ordinancesData);
       const projectsData = await getAllProjects();
       setProjects(projectsData)
+      setLoading(false)
     };
 
     fetchData();
@@ -132,44 +134,39 @@ export default function Home() {
           </Button>
         </div>
 
-        {projects && projects.length > 0 ? (
-          <>
-            <div className="w-[90%] lg:w-[80%] xl:w-[70%] mt-3 flex flex-wrap justify-self-center">
-              <Carousel opts={{ align: "start", }}
-                className=" w-full max-w-auto"
-              >
-                <CarouselContent className="-ml-5 gap-5 sm:gap-0">
-                  {projects
-                    .filter((project) => new Date(project.target_date) >= new Date())
-                    .map((data) => (
-                      <CarouselItem
-                        className="basis-1/1 sm:basis-1/2 md:basis-1/2 lg:basis-1/3"
-                        key={data.id}
-                      >
-                        <div className="flex justify-center">
-                          <UpcomingEventCard
-                            id={data.id}
-                            title={data.title}
-                            imgURL={data.imageURL}
-                            loc={data.location}
-                            date={data.target_date}
-                          />
-                        </div>
-                      </CarouselItem>
-                    ))}
-                </CarouselContent>
-                <CarouselPrevious className="cursor-pointer -left-4 lg:-left-16" />
-                <CarouselNext className="cursor-pointer -right-3 lg:-right-16" />
-              </Carousel>
-
-            </div>
-
-          </>
-
-        ) : (
+        {!loading && projects && projects.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-gray-500">
             <p className="text-lg font-medium">No Projects available</p>
             <p className="text-sm text-gray-400">Please check back later.</p>
+          </div>
+        ) : null}
+
+        {!loading && projects && projects.length > 0 && (
+          <div className="w-[90%] lg:w-[80%] xl:w-[70%] mt-3 flex flex-wrap justify-self-center">
+            <Carousel opts={{ align: "start" }} className="w-full max-w-auto">
+              <CarouselContent className="-ml-5 gap-5 sm:gap-0">
+                {projects
+                  .filter((project) => new Date(project.target_date) >= new Date())
+                  .map((data) => (
+                    <CarouselItem
+                      className="basis-1/1 sm:basis-1/2 md:basis-1/2 lg:basis-1/3"
+                      key={data.id}
+                    >
+                      <div className="flex justify-center">
+                        <UpcomingEventCard
+                          id={data.id}
+                          title={data.title}
+                          imgURL={data.imageURL}
+                          loc={data.location}
+                          date={data.target_date}
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+              </CarouselContent>
+              <CarouselPrevious className="cursor-pointer -left-4 lg:-left-16" />
+              <CarouselNext className="cursor-pointer -right-3 lg:-right-16" />
+            </Carousel>
           </div>
         )
 
