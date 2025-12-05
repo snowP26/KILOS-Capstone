@@ -102,6 +102,7 @@ export default function SubmitOrdinances() {
 
   const handleConfirm = () => {
     setFormData(prev => ({ ...prev, approver: temp.join(", ") }));
+    setTemp(prev => ({ ...prev, approver: temp.join(", ") }))
   };
 
   const handleSave = async () => {
@@ -431,7 +432,7 @@ export default function SubmitOrdinances() {
                           <Button
                             size="sm"
                             onClick={() => {
-                              if (!a.end_date || (a.approver && a.approver.toLowerCase() === "approved")) {
+                              if (!a.end_date || (a.approver && a.remarks.toLowerCase() === "approved")) {
                                 Swal.fire({
                                   icon: 'info',
                                   title: 'Notice',
