@@ -102,7 +102,6 @@ export default function SubmitOrdinances() {
 
   const handleConfirm = () => {
     setFormData(prev => ({ ...prev, approver: temp.join(", ") }));
-    setTemp(prev => ({ ...prev, approver: temp.join(", ") }))
   };
 
   const handleSave = async () => {
@@ -432,15 +431,6 @@ export default function SubmitOrdinances() {
                           <Button
                             size="sm"
                             onClick={() => {
-                              if (!a.end_date || (a.approver && a.remarks.toLowerCase() === "approved")) {
-                                Swal.fire({
-                                  icon: 'info',
-                                  title: 'Notice',
-                                  text: 'Please check if the approved hearing has an end date or an approver',
-                                  confirmButtonText: 'OK'
-                                });
-                                return
-                              };
                               handleSave();
                             }}
                             className="cursor-pointer transition-all"

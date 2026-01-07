@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save } from "lucide-react";
-import { Trash2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
   Breadcrumb,

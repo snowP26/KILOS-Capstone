@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Bell, Save } from "lucide-react";
 import { Trash2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -17,12 +17,20 @@ import {
 import { project } from "@/src/app/lib/definitions";
 import {
   deleteProjectPhoto,
+  fetchNotifs,
   getProjectByID,
   uploadPhotoByID,
 } from "@/src/app/actions/projects";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Swal from "sweetalert2";
 import { useUserRole } from "@/src/app/actions/role";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+
+type Notifs = {
+  id: number;
+  project_id: number;
+  new_amount: number;
+}
 
 export default function ViewProject() {
   const params = useParams();
@@ -33,6 +41,7 @@ export default function ViewProject() {
   const [loading, setLoading] = useState(false);
   const [tempPosterFile, setTempPosterFile] = useState<File | null>(null);
   const [refresh, setRefresh] = useState(0);
+  const [notifs, setNotifs] = useState<Notifs[]>([])
   const { role } = useUserRole();
 
   useEffect(() => {
@@ -41,6 +50,9 @@ export default function ViewProject() {
       try {
         const data = await getProjectByID(projectID);
         setProject(data);
+        const notif = await fetchNotifs(projectID)
+        console.log(notif)
+        setNotifs(notif)
       } finally {
         setLoading(false);
       }
@@ -98,16 +110,65 @@ export default function ViewProject() {
       </Breadcrumb>
 
       <div className="mx-2 sm:mx-10 xl:mx-25">
-        <p className="font-bold text-xl xl:text-3xl mt-8 mb-2 xl:mb-6">
-          {project.title}
-        </p>
+        <div className="flex flex-row items-center">
+          <p className="font-bold text-xl xl:text-3xl mt-8 mb-2 xl:mb-6">
+            {project.title}
+          </p>
+
+<div className="ml-auto relative">
+  <Dialog>
+    <DialogTrigger asChild>
+      <button className="relative p-2 rounded-full hover:bg-gray-100">
+        <Bell className="w-6 h-6 cursor-pointer" />
+
+        {/* Notification Count Badge */}
+        {notifs.length > 0 && (
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full">
+            {notifs.length}
+          </span>
+        )}
+      </button>
+    </DialogTrigger>
+
+    {/* Dialog Content */}
+    <DialogContent className="max-w-md">
+      <DialogHeader>
+        <DialogTitle>Notifications</DialogTitle>
+      </DialogHeader>
+
+      {/* Notification List */}
+      <div className="max-h-[400px] overflow-auto space-y-2">
+        {notifs.length > 0 ? (
+          notifs.map((notif) => (
+            <div
+              key={notif.id}
+              className="border rounded-lg p-3 text-sm hover:bg-gray-50 transition"
+            >
+              <p className="font-medium">Budget Updated</p>
+              <p className="text-gray-600">
+                New Amount: ₱{notif.new_amount}
+              </p>
+            </div>
+          ))
+        ) : (
+          <p className="text-sm text-gray-500 text-center py-6">
+            No notifications available
+          </p>
+        )}
+      </div>
+    </DialogContent>
+  </Dialog>
+</div>
+
+        </div>
 
         <div className="flex flex-col-reverse gap-3 sm:gap-5 sm:h-10 sm:flex-row">
           <Button
             className="text-black bg-[#A3C4A8] w-full h-8 sm:w-fit sm:h-10 cursor-pointer hover:bg-black hover:text-[#A3C4A8]"
             onClick={() =>
               router.push(
-                `/users/projects/${project.title.trim()}-${project.id
+                `/users/projects/${project.title.trim()}-${
+                  project.id
                 }/view-project-budget`
               )
             }
@@ -208,9 +269,7 @@ export default function ViewProject() {
               <div className="flex bg-blue-100 w-[80%] h-120 sm:h-[80%] lg:w-[80%] lg:h-130 object-contain rounded-md items-center justify-center font-bold text-blue-600">
                 {project.title.charAt(0).toUpperCase()}
               </div>
-            )
-            }
-
+            )}
 
             <div className="flex flex-row w-[80%] justify-between my-3">
               <p className="font-medium text-xl text-[#17A1FA]">
